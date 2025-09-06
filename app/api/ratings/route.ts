@@ -106,7 +106,6 @@ export async function POST(request: NextRequest) {
           email: (session.user as any).email ?? null,
           name: session.user.name ?? null,
           image: (session.user as any).image ?? null,
-          updatedAt: new Date(),
         } as any,
       })
     }
