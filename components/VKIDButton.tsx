@@ -23,7 +23,7 @@ export function VKIDButton() {
 
       VKID.Config.init({
         app: 54049644,
-        redirectUrl: 'https://prompthub-lv6gljrtg-alexs-projects-69ecea35.vercel.app/api/auth/callback/vk',
+        redirectUrl: 'https://prompthub-virid.vercel.app/api/auth/callback/vk',
         responseMode: VKID.ConfigResponseMode.Callback,
         source: VKID.ConfigSource.LOWCODE,
         scope: '', // Заполните нужными доступами по необходимости
