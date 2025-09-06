@@ -4,21 +4,25 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Next.js
-.next/
-out/
-build/
-
-# Environment variables
+# Local env files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# Next.js
+.next/
+out/
+
+# Production
+build/
+dist/
+
 # Database
-prisma/dev.db
-prisma/dev.db-journal
+*.db
+*.sqlite
+*.sqlite3
 
 # IDE
 .vscode/
@@ -30,22 +34,5 @@ prisma/dev.db-journal
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Test results
-test-results/
-playwright-report/
-
-# Build outputs
-dist/
-build/
+# Git installer
+git-installer.exe

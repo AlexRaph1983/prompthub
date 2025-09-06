@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 declare global {
   interface Window {
@@ -10,25 +10,9 @@ declare global {
 
 export function VKIDButton() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const scriptRef = useRef<HTMLScriptElement | null>(null)
 
-  useEffect(() => {
-    // Загружаем VK ID SDK
-    const script = document.createElement('script')
-    script.src = 'https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js'
-    script.async = true
-    script.onload = initVKID
-    document.head.appendChild(script)
-
-    return () => {
-      // Очищаем контейнер при размонтировании
-      if (containerRef.current) {
-        containerRef.current.innerHTML = ''
-      }
-      document.head.removeChild(script)
-    }
-  }, [])
-
-  const initVKID = () => {
+  const initVKID = useCallback(() => {
     if ('VKIDSDK' in window && containerRef.current) {
       // Проверяем, не рендерились ли уже кнопки
       if (containerRef.current.children.length > 0) {
@@ -65,7 +49,31 @@ export function VKIDButton() {
           .catch(vkidOnError)
       })
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    // Загружаем VK ID SDK
+    const script = document.createElement('script')
+    script.src = 'https://unpkg.com/@vkid/sdk@<3.0.0/dist-sdk/umd/index.js'
+    script.async = true
+    script.onload = initVKID
+    document.head.appendChild(script)
+    scriptRef.current = script
+
+    // Сохраняем текущий контейнер для cleanup
+    const currentContainer = containerRef.current
+
+    return () => {
+      // Очищаем контейнер при размонтировании
+      if (currentContainer) {
+        currentContainer.innerHTML = ''
+      }
+      if (scriptRef.current && document.head.contains(scriptRef.current)) {
+        document.head.removeChild(scriptRef.current)
+      }
+    }
+  }, [initVKID])
+
 
   function vkidOnSuccess(data: any) {
     console.log('VK ID Success:', data)

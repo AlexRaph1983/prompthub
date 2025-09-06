@@ -10,14 +10,14 @@ import { UserReputationBadge } from '@/components/UserReputationBadge'
 import { ExternalLink, Save, Edit } from 'lucide-react'
 
 interface ProfileData {
-  name: string
-  email: string
-  bio?: string
-  website?: string
-  telegram?: string
-  github?: string
-  twitter?: string
-  linkedin?: string
+  name: string | null
+  email: string | null
+  bio?: string | null
+  website?: string | null
+  telegram?: string | null
+  github?: string | null
+  twitter?: string | null
+  linkedin?: string | null
   reputationScore: number
   reputationPromptCount: number
   reputationLikesCnt: number
@@ -36,12 +36,12 @@ export function ProfileEditForm({ profile, onSave }: Props) {
   const [isLoading, setIsLoading] = useState(false)
   const [currentProfile, setCurrentProfile] = useState(profile)
   const [formData, setFormData] = useState({
-    bio: profile.bio || '',
-    website: profile.website || '',
-    telegram: profile.telegram || '',
-    github: profile.github || '',
-    twitter: profile.twitter || '',
-    linkedin: profile.linkedin || '',
+    bio: profile.bio ?? '',
+    website: profile.website ?? '',
+    telegram: profile.telegram ?? '',
+    github: profile.github ?? '',
+    twitter: profile.twitter ?? '',
+    linkedin: profile.linkedin ?? '',
   })
 
   const tier = currentProfile.reputationScore >= 85 ? 'platinum' : 
@@ -80,12 +80,12 @@ export function ProfileEditForm({ profile, onSave }: Props) {
 
   const handleCancel = () => {
     setFormData({
-      bio: currentProfile.bio || '',
-      website: currentProfile.website || '',
-      telegram: currentProfile.telegram || '',
-      github: currentProfile.github || '',
-      twitter: currentProfile.twitter || '',
-      linkedin: currentProfile.linkedin || '',
+      bio: currentProfile.bio ?? '',
+      website: currentProfile.website ?? '',
+      telegram: currentProfile.telegram ?? '',
+      github: currentProfile.github ?? '',
+      twitter: currentProfile.twitter ?? '',
+      linkedin: currentProfile.linkedin ?? '',
     })
     setIsEditing(false)
   }
@@ -111,11 +111,11 @@ export function ProfileEditForm({ profile, onSave }: Props) {
                       <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-500">Имя</label>
-                <p className="text-lg font-semibold">{currentProfile.name || 'Не указано'}</p>
+                <p className="text-lg font-semibold">{currentProfile.name ?? 'Не указано'}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-500">Email</label>
-                <p className="text-lg">{currentProfile.email || 'Не указано'}</p>
+                <p className="text-lg">{currentProfile.email ?? 'Не указано'}</p>
               </div>
             </div>
         </CardContent>
@@ -296,7 +296,7 @@ export function ProfileEditForm({ profile, onSave }: Props) {
                   Внешние ссылки будут видны другим пользователям при достижении золотого уровня репутации
                 </p>
               )}
-              {!currentProfile.website && !currentProfile.telegram && !currentProfile.github && !currentProfile.twitter && !currentProfile.linkedin && canShowLinks && (
+              {(!currentProfile.website && !currentProfile.telegram && !currentProfile.github && !currentProfile.twitter && !currentProfile.linkedin) && canShowLinks && (
                 <p className="text-gray-500 italic">Ссылки не добавлены</p>
               )}
             </div>
