@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
           email: session.user.email ?? null,
           name: session.user.name ?? null,
           image: (session.user as any).image ?? null,
+          updatedAt: new Date(),
         }
       })
       console.log('User created:', user)
