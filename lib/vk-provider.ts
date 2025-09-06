@@ -28,21 +28,50 @@ export default function VKProvider<P extends VKProfile>(
         v: "5.131"
       }
     },
-    token: "https://oauth.vk.com/access_token",
+    token: {
+      url: "https://oauth.vk.com/access_token",
+      async request({ client, params, checks, provider }) {
+        const response = await fetch(provider.token?.url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            client_id: options.clientId!,
+            client_secret: options.clientSecret!,
+            redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/vk`,
+            code: params.code!,
+          }),
+        })
+        
+        const tokens = await response.json()
+        return { tokens }
+      }
+    },
     userinfo: {
       url: "https://api.vk.com/method/users.get",
       params: {
         fields: "photo_100,photo_200,photo_max_orig,screen_name",
         v: "5.131"
+      },
+      async request({ tokens, provider }) {
+        const response = await fetch(`${provider.userinfo?.url}?${new URLSearchParams({
+          access_token: tokens.access_token,
+          fields: "photo_100,photo_200,photo_max_orig,screen_name",
+          v: "5.131"
+        })}`)
+        
+        const data = await response.json()
+        return data
       }
     },
-    profile(profile: any) {
+    profile(profile: any, tokens: any) {
       // VK API возвращает массив пользователей, берем первого
       const user = Array.isArray(profile.response) ? profile.response[0] : profile
       return {
         id: user.id.toString(),
         name: `${user.first_name} ${user.last_name}`,
-        email: profile.email,
+        email: tokens.email,
         image: user.photo_200 || user.photo_100 || user.photo_max_orig,
       }
     },
