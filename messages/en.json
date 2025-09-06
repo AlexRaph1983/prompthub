@@ -1,0 +1,86 @@
+{
+  "common": {
+    "appName": "PromptHub",
+    "leaders": "Leaders",
+    "addPrompt": "Add Prompt",
+    "profile": "Profile",
+    "myPrompts": "My Prompts",
+    "signOut": "Sign Out",
+    "signIn": "Sign In",
+    "back": "Back",
+    "copyPrompt": "Copy Prompt",
+    "details": "Details",
+    "notFound": "Not found",
+    "license": "License",
+    "reviews": "Reviews",
+    "searchPrompts": "Search prompts..."
+  },
+  "home": {
+    "title": "AI prompts for every use case",
+    "subtitle": "Publish your best prompts, find collections for any tasks and AI platforms. Multilingual. Open. Free.",
+    "searchPlaceholder": "Search by title, tags, goal...",
+    "recommended": "Recommended for you"
+  },
+  "prompts": {
+    "title": "Prompt catalog",
+    "subtitle": "Find a suitable prompt for your task",
+    "reset": "Reset",
+    "allModels": "All models",
+    "allCategories": "All categories",
+    "allLangs": "All languages",
+    "empty": "No prompts found",
+    "tryAdjust": "Try adjusting your search parameters",
+    "removeAuthorFilter": "Remove author filter",
+    "allPrompts": "All prompts",
+    "authorPrompts": "Author prompts",
+    "noPrompts": "No prompts found",
+    "noSearchResults": "No results found for your search",
+    "tryDifferentSearch": "Try a different search term",
+    "beFirstToCreate": "Be the first to create a prompt"
+  },
+  "prompt": {
+    "created": "Created",
+    "instructions": "Usage instructions:",
+    "example": "Example:",
+    "prompt": "Prompt:",
+    "author": "Author:",
+    "rating": "Rating",
+    "similarPrompts": "Similar prompts"
+  },
+  "add": {
+    "title": "Add prompt",
+    "submit": "Publish",
+    "cancel": "Cancel",
+    "name": "Prompt title *",
+    "namePh": "Enter prompt title",
+    "desc": "Short description *",
+    "descPh": "Describe the purpose of the prompt",
+    "lang": "Language *",
+    "model": "AI model *",
+    "category": "Category *",
+    "tags": "Tags",
+    "tagsPh": "Enter tags separated by comma",
+    "license": "License",
+    "prompt": "Prompt text *",
+    "promptPh": "Enter prompt text",
+    "instructions": "Usage instructions",
+    "instructionsPh": "Describe how to use the prompt",
+    "example": "Usage example",
+    "examplePh": "Provide an example"
+  },
+  "leaders": {
+    "title": "Authors Ranking",
+    "subtitle": "Top authors by reputation and prompt quality",
+    "loading": "Loading ranking...",
+    "error": "Error loading data",
+    "retry": "Try again",
+    "noData": "No data to display",
+    "anonymous": "Anonymous user"
+  },
+  "metadata": {
+    "title": "PromptHub",
+    "description": "A platform for sharing prompts"
+  }
+}
+
+
