@@ -13,7 +13,8 @@ const nextConfig = {
   swcMinify: true,
   compress: true,
   poweredByHeader: false,
-
+  
+  
   // Оптимизация бандла
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
@@ -26,7 +27,6 @@ const nextConfig = {
     }
     return config;
   },
-  // experimental: {}, // Server Actions включены по умолчанию в Next 14
 }
 
 module.exports = withNextIntl(nextConfig)
