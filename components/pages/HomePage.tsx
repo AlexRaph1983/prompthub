@@ -14,12 +14,17 @@ import { useAuth } from '@/hooks/useAuth'
 
 export default function HomePage() {
   const t = useTranslations()
-  const { getFilteredPrompts } = usePromptStore()
-  const { searchValue, setSearchValue } = useSearch()
+  const { dispatch, getFilteredPrompts } = usePromptStore()
+  const { searchValue, setSearchValue, debouncedValue } = useSearch()
   const { session } = useAuth()
   const router = useRouter()
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
+
+  // синхронизация строки поиска со стором
+  React.useEffect(() => {
+    dispatch({ type: 'SET_SEARCH_QUERY', payload: debouncedValue })
+  }, [debouncedValue, dispatch])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
