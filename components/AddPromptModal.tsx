@@ -10,11 +10,13 @@ import { usePromptStore } from '@/contexts/PromptStore'
 import { PromptFormData, PROMPT_MODELS, PROMPT_CATEGORIES, PROMPT_LANGS } from '@/types/prompt'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 export function AddPromptModal() {
   const { state, toggleModal, addPrompt } = usePromptStore()
   const { isAuthenticated, signIn } = useAuth()
   const router = useRouter()
+  const t = useTranslations()
   const [formData, setFormData] = React.useState<PromptFormData>({
     title: '',
     description: '',
@@ -169,8 +171,12 @@ export function AddPromptModal() {
               value={formData.category} 
               onChange={handleChange}
             >
-              <option value="">Категория</option>
-              {PROMPT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              <option value="">{t('add.category')}</option>
+              {PROMPT_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {t(`categories.${c}`)}
+                </option>
+              ))}
             </select>
             
             <Input 

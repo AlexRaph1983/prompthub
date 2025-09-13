@@ -77,6 +77,31 @@
     "noData": "No data to display",
     "anonymous": "Anonymous user"
   },
+  "categories": {
+    "Chat": "Chat",
+    "Code": "Code",
+    "SEO": "SEO",
+    "Design": "Design",
+    "Legal": "Legal",
+    "Education": "Education",
+    "Image": "Image",
+    "Video": "Video",
+    "Music": "Music",
+    "Audio": "Audio",
+    "3D": "3D",
+    "Animation": "Animation",
+    "Business": "Business",
+    "Marketing": "Marketing",
+    "Writing": "Writing",
+    "Translation": "Translation",
+    "Research": "Research",
+    "Analysis": "Analysis",
+    "Creative": "Creative",
+    "Productivity": "Productivity",
+    "Gaming": "Gaming",
+    "Health": "Health",
+    "Finance": "Finance"
+  },
   "metadata": {
     "title": "PromptHub",
     "description": "A platform for sharing prompts"

@@ -186,6 +186,7 @@ export async function GET(request: Request) {
         description: prompt.description,
         model: prompt.model,
         lang: prompt.lang,
+        category: prompt.category,
         tags: prompt.tags.split(',').map((tag: string) => tag.trim()),
         rating: avg,
         ratingCount,

@@ -208,6 +208,9 @@ export default function PromptDetailsPage() {
                   <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-medium">
                     {prompt.lang}
                   </span>
+                  <span className="bg-green-100 text-green-700 px-2 py-1 rounded-lg text-xs font-medium">
+                    {t(`categories.${prompt.category}`)}
+                  </span>
                   <Badge variant={getLicenseVariant(prompt.license)} className="ml-auto">
                     {prompt.license}
                   </Badge>

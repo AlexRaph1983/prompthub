@@ -77,6 +77,31 @@
     "noData": "Нет данных для отображения",
     "anonymous": "Анонимный пользователь"
   },
+  "categories": {
+    "Chat": "Чат",
+    "Code": "Код",
+    "SEO": "SEO",
+    "Design": "Дизайн",
+    "Legal": "Право",
+    "Education": "Образование",
+    "Image": "Изображения",
+    "Video": "Видео",
+    "Music": "Музыка",
+    "Audio": "Аудио",
+    "3D": "3D",
+    "Animation": "Анимация",
+    "Business": "Бизнес",
+    "Marketing": "Маркетинг",
+    "Writing": "Письмо",
+    "Translation": "Перевод",
+    "Research": "Исследования",
+    "Analysis": "Анализ",
+    "Creative": "Творчество",
+    "Productivity": "Продуктивность",
+    "Gaming": "Игры",
+    "Health": "Здоровье",
+    "Finance": "Финансы"
+  },
   "metadata": {
     "title": "PromptHub",
     "description": "Платформа для обмена промптами"

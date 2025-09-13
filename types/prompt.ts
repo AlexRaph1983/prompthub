@@ -4,6 +4,7 @@ export interface Prompt {
   description: string
   model: string
   lang: string
+  category: string
   tags: string[]
   rating: number
   ratingCount?: number

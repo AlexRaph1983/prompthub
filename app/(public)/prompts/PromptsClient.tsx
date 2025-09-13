@@ -240,6 +240,8 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             <span>{prompt.model}</span>
             <span>•</span>
             <span>{prompt.lang}</span>
+            <span>•</span>
+            <span>{t(`categories.${prompt.category}`)}</span>
           </div>
           <span className="text-violet-600 font-semibold text-sm flex items-center gap-1">
             <Star className="w-3 h-3 fill-current" />
