@@ -8,6 +8,7 @@ import AuthProvider from '@/components/AuthProvider';
 import { PromptProvider } from '@/contexts/PromptStore';
 import { Navigation } from '@/components/Navigation';
 import { AddPromptModal } from '@/components/AddPromptModal';
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,11 +25,14 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   const messages = (await import(`@/messages/${locale}.json`)).default as any;
   const title = messages?.metadata?.title || 'PromptHub';
   const description = messages?.metadata?.description || '';
+  const keywords = messages?.metadata?.keywords || '';
+  const ogImage = messages?.metadata?.ogImage || '/og/prompt-hub.png';
 
   return {
     metadataBase: new URL(host),
     title,
     description,
+    keywords,
     alternates: {
       canonical: `${host}/${locale}`,
       languages: {
@@ -43,6 +47,17 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       siteName: 'PromptHub',
       locale,
       type: 'website',
+      images: [{ url: ogImage }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
@@ -55,7 +70,23 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className={inter.className}>
+        {/* Yandex.Metrika */}
+        <Script id="yandex-metrika" strategy="afterInteractive">{`
+          (function(m,e,t,r,i,k,a){
+              m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+              m[i].l=1*new Date();
+              for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+              k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+          })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104142063', 'ym');
+          ym(104142063, 'init', { ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true });
+        `}</Script>
+        <noscript><div><img src="https://mc.yandex.ru/watch/104142063" style={{position:'absolute', left:'-9999px'}} alt="" /></div></noscript>
+
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <PromptProvider>

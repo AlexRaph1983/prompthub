@@ -5,7 +5,6 @@
 1. Аккаунт на reg.ru с VPS/VDS сервером
 2. Зарегистрированный домен
 3. PostgreSQL база данных на reg.ru или внешнем хостинге
-4. OAuth приложения (Google, VK) настроенные для production домена
 
 ## 🔧 Настройка сервера
 
@@ -58,10 +57,6 @@ DATABASE_URL=postgresql://username:password@host:port/database_name
 # Google OAuth
 GOOGLE_CLIENT_ID=ваш-production-client-id
 GOOGLE_CLIENT_SECRET=ваш-production-client-secret
-
-# VK OAuth
-VK_CLIENT_ID=ваш-production-vk-client-id
-VK_CLIENT_SECRET=ваш-production-vk-client-secret
 
 # Production
 NODE_ENV=production
@@ -138,7 +133,7 @@ pm2 start prompthub
    - Убедитесь что БД доступна с сервера
 
 2. **OAuth не работает**
-   - Проверьте production redirect URIs в Google/VK
+   - Проверьте production redirect URIs в Google
    - Убедитесь что NEXTAUTH_URL правильный
 
 3. **Приложение не запускается**

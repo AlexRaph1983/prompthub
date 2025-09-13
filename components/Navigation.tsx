@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown, LogOut, User, FileText, Plus, Trophy } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
-import { VKIDButton } from '@/components/VKIDButton'
 
 export function Navigation() {
   const { session, isAuthenticated, isLoading, signIn, signOut } = useAuth()
@@ -71,7 +70,7 @@ export function Navigation() {
             <Button 
               onClick={toggleModal} 
               size="sm"
-              className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+              className="hidden md:inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
             >
               <Plus className="w-4 h-4" />
               <span>{t('addPrompt')}</span>
@@ -139,18 +138,6 @@ export function Navigation() {
                       </svg>
                       Google
                     </Button>
-                    
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white px-2 text-gray-500">или</span>
-                      </div>
-                    </div>
-                    
-                    <div className="text-sm text-gray-600 mb-2">Войти через VK ID:</div>
-                    <VKIDButton />
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
