@@ -211,11 +211,11 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
   const router = useRouter()
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200">
+    <Card className="hover:shadow-lg transition-shadow duration-200 overflow-hidden">
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{prompt.title}</h3>
-          <Badge variant="outline" className="text-xs">
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words flex-1 min-w-0">{prompt.title}</h3>
+          <Badge variant="outline" className="text-xs whitespace-nowrap">
             {prompt.license}
           </Badge>
         </div>
@@ -235,15 +235,15 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
           )}
         </div>
 
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <span>{prompt.model}</span>
+        <div className="flex items-center justify-between mb-3 gap-2">
+          <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
+            <span className="whitespace-nowrap">{prompt.model}</span>
             <span>•</span>
-            <span>{prompt.lang}</span>
+            <span className="whitespace-nowrap">{prompt.lang}</span>
             <span>•</span>
-            <span>{prompt.category}</span>
+            <span className="whitespace-nowrap">{prompt.category}</span>
           </div>
-          <span className="text-violet-600 font-semibold text-sm flex items-center gap-1">
+          <span className="text-violet-600 font-semibold text-sm flex items-center gap-1 whitespace-nowrap">
             <Star className="w-3 h-3 fill-current" />
             {(prompt.rating ?? 0).toFixed(1)}
             <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
