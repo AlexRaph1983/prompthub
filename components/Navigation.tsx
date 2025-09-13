@@ -50,19 +50,19 @@ export function Navigation() {
   return (
     <nav className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between min-h-16">
           <div className="flex items-center">
               <Link href={`/${currentLocale}`} className="text-xl font-bold text-gray-900">
                 {t('appName')}
             </Link>
-            <Link href={`/${currentLocale}/leaders`} className="ml-6 text-sm text-gray-600 hover:text-gray-900">{t('leaders')}</Link>
+            <Link href={`/${currentLocale}/leaders`} className="ml-6 text-sm text-gray-600 hover:text-gray-900 hidden md:block">{t('leaders')}</Link>
           </div>
           
           <div className="flex items-center space-x-4">
             <LocaleSwitcher currentLocale={currentLocale} />
             <Button 
               onClick={toggleModal} 
-              className="flex items-center space-x-2 bg-violet-600 hover:bg-violet-700"
+              className="flex items-center space-x-2 bg-violet-600 hover:bg-violet-700 hidden md:flex"
             >
               <Plus className="w-4 h-4" />
               <span>{t('addPrompt')}</span>
@@ -147,6 +147,16 @@ export function Navigation() {
               </DropdownMenu>
             )}
           </div>
+        </div>
+        <div className="flex justify-between items-center py-2 md:hidden border-t">
+          <Link href={`/${currentLocale}/leaders`} className="text-sm text-gray-600 hover:text-gray-900">{t('leaders')}</Link>
+          <Button 
+            onClick={toggleModal} 
+            className="flex items-center space-x-2 bg-violet-600 hover:bg-violet-700"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{t('addPrompt')}</span>
+          </Button>
         </div>
       </div>
     </nav>
