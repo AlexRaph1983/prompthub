@@ -174,7 +174,7 @@ export function AddPromptModal() {
               <option value="">{t('add.category')}</option>
               {PROMPT_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
-                  {t(`categories.${c}`)}
+                  {t(`categories.${c}`, { fallback: c })}
                 </option>
               ))}
             </select>
