@@ -14,7 +14,7 @@ import { useAuth } from '@/hooks/useAuth'
 
 export default function HomePage() {
   const t = useTranslations()
-  const { dispatch, getFilteredPrompts } = usePromptStore()
+  const { state, dispatch, getFilteredPrompts } = usePromptStore()
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
   const { session } = useAuth()
   const router = useRouter()
@@ -43,6 +43,36 @@ export default function HomePage() {
   const handleViewDetails = (promptId: string) => {
     try { fetch('/api/interactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'open', promptId }) }) } catch {}
     router.push(`/prompt/${promptId}`)
+  }
+
+  // Хелперы фильтрации как в сторе
+  const normalizeModel = (value: string): string =>
+    value?.toString().toLowerCase().replace(/[^a-z0-9]/g, '') || ''
+  const langToCode = (value: string): string => {
+    const v = value?.toString().toLowerCase()
+    const map: Record<string, string> = {
+      english: 'en', en: 'en',
+      'русский': 'ru', ru: 'ru', rus: 'ru',
+      español: 'es', espanol: 'es', es: 'es', spanish: 'es',
+      deutsch: 'de', german: 'de', de: 'de',
+    }
+    return map[v] || v || ''
+  }
+  const filterByState = (p: any): boolean => {
+    const search = state.searchQuery.trim().toLowerCase()
+    const selectedModel = normalizeModel(state.selectedModel)
+    const selectedLang = langToCode(state.selectedLang)
+
+    const matchesSearch = !search ||
+      p.title?.toLowerCase().includes(search) ||
+      p.description?.toLowerCase().includes(search) ||
+      (Array.isArray(p.tags) && p.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+
+    const matchesModel = !selectedModel || normalizeModel(p.model) === selectedModel
+    const matchesCategory = !state.selectedCategory || (Array.isArray(p.tags) && p.tags.map((t: string) => t.toLowerCase()).includes(state.selectedCategory.toLowerCase()))
+    const matchesLang = !selectedLang || langToCode(p.lang) === selectedLang
+
+    return matchesSearch && matchesModel && matchesCategory && matchesLang
   }
 
   // Загружаем рекомендованные промпты
@@ -100,24 +130,18 @@ export default function HomePage() {
 
   const filteredPrompts = getFilteredPrompts()
   
-  // Объединяем рекомендованные и обычные промпты
+  // Объединяем рекомендованные и обычные промпты (рекомендованные тоже фильтруем)
   const allPrompts = React.useMemo(() => {
-    console.log('Recommended prompts count:', recommendedPrompts.length)
-    console.log('Filtered prompts count:', filteredPrompts.length)
-    
-    const recommendedIds = new Set(recommendedPrompts.map(p => p.id))
+    const filteredRecommended = recommendedPrompts.filter(filterByState)
+
+    const recommendedIds = new Set(filteredRecommended.map(p => p.id))
     const regularPrompts = filteredPrompts.filter(p => !recommendedIds.has(p.id))
-    
-    const result = [
-      ...recommendedPrompts.map(p => ({ ...p, isRecommended: true })),
-      ...regularPrompts.map(p => ({ ...p, isRecommended: false }))
+
+    return [
+      ...filteredRecommended.map(p => ({ ...p, isRecommended: true })),
+      ...regularPrompts.map(p => ({ ...p, isRecommended: false })),
     ]
-    
-    console.log('Total prompts in feed:', result.length)
-    console.log('Recommended prompts in feed:', result.filter(p => p.isRecommended).length)
-    
-    return result
-  }, [recommendedPrompts, filteredPrompts])
+  }, [recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
 
   return (
     <main className="bg-gray-50 min-h-screen pb-12">
