@@ -100,11 +100,14 @@
     "Productivity": "Productivity",
     "Gaming": "Gaming",
     "Health": "Health",
-    "Finance": "Finance"
+    "Finance": "Finance",
+    "Cooking": "Cooking"
   },
   "metadata": {
-    "title": "PromptHub",
-    "description": "A platform for sharing prompts"
+    "title": "PromptHub — AI Prompt Library & Marketplace",
+    "description": "Discover, publish and optimize AI prompts for ChatGPT, Claude, Gemini and more. Curated collections, ratings, multilingual, open & free.",
+    "keywords": "AI prompts, prompt marketplace, ChatGPT prompts, Claude prompts, Gemini prompts, SEO prompts, design prompts, coding prompts, cooking prompts",
+    "ogImage": "/og/prompt-hub-en.png"
   }
 }
 

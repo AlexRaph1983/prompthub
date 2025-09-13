@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import VKProvider from "@/lib/vk-provider"
 import type { NextAuthOptions } from "next-auth"
 
 export const authOptions: NextAuthOptions = {
@@ -8,10 +7,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "test-client-id",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "test-client-secret",
-    }),
-    VKProvider({
-      clientId: process.env.VK_CLIENT_ID || "test-vk-client-id",
-      clientSecret: process.env.VK_CLIENT_SECRET || "test-vk-client-secret",
     }),
   ],
   session: {

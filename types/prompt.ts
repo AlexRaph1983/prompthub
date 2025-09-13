@@ -61,7 +61,7 @@ export const PROMPT_MODELS = [
 export const PROMPT_CATEGORIES = [
   "Chat", "Code", "SEO", "Design", "Legal", "Education", "Image", "Video", "Music", 
   "Audio", "3D", "Animation", "Business", "Marketing", "Writing", "Translation", 
-  "Research", "Analysis", "Creative", "Productivity", "Gaming", "Health", "Finance"
+  "Research", "Analysis", "Creative", "Productivity", "Gaming", "Health", "Finance", "Cooking"
 ] as const
 
 export const PROMPT_LANGS = ["English", "Русский", "Español", "Deutsch"] as const 
