@@ -9,13 +9,14 @@ import { isLocale } from '@/i18n/index'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, LogOut, User, FileText, Plus } from 'lucide-react'
+import { ChevronDown, LogOut, User, FileText, Plus, Trophy } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { VKIDButton } from '@/components/VKIDButton'
 
@@ -30,7 +31,7 @@ export function Navigation() {
 
   if (isLoading) {
     return (
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -48,21 +49,29 @@ export function Navigation() {
   }
 
   return (
-    <nav className="bg-white shadow-sm border-b">
+    <nav className="bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between min-h-16">
-          <div className="flex items-center">
-              <Link href={`/${currentLocale}`} className="text-xl font-bold text-gray-900">
-                {t('appName')}
+          <div className="flex items-center gap-4">
+            <Link href={`/${currentLocale}`} className="group inline-flex items-center gap-2" aria-label="PromptHub home">
+              <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">{t('appName')}</span>
+              <Badge className="uppercase text-[10px] tracking-wide bg-amber-500 text-white shadow-sm">beta</Badge>
             </Link>
-            <Link href={`/${currentLocale}/leaders`} className="ml-6 text-sm text-gray-600 hover:text-gray-900 hidden md:block">{t('leaders')}</Link>
+
+            <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
+              <Link href={`/${currentLocale}/leaders`} className="inline-flex items-center gap-2">
+                <Trophy className="w-4 h-4" />
+                <span>{t('leaders')}</span>
+              </Link>
+            </Button>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <LocaleSwitcher currentLocale={currentLocale} />
             <Button 
               onClick={toggleModal} 
-              className="flex items-center space-x-2 bg-violet-600 hover:bg-violet-700 hidden md:flex"
+              size="sm"
+              className="inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
             >
               <Plus className="w-4 h-4" />
               <span>{t('addPrompt')}</span>
@@ -148,11 +157,18 @@ export function Navigation() {
             )}
           </div>
         </div>
-        <div className="flex justify-between items-center py-2 md:hidden border-t">
-          <Link href={`/${currentLocale}/leaders`} className="text-sm text-gray-600 hover:text-gray-900">{t('leaders')}</Link>
+        {/* Мобильная строка действий */}
+        <div className="flex justify-between items-center gap-3 py-2 md:hidden border-t">
+          <Button asChild variant="outline" size="sm" className="flex-1">
+            <Link href={`/${currentLocale}/leaders`} className="inline-flex items-center gap-2">
+              <Trophy className="w-4 h-4" />
+              <span>{t('leaders')}</span>
+            </Link>
+          </Button>
           <Button 
             onClick={toggleModal} 
-            className="flex items-center space-x-2 bg-violet-600 hover:bg-violet-700"
+            size="sm"
+            className="flex-1 inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
           >
             <Plus className="w-4 h-4" />
             <span>{t('addPrompt')}</span>
