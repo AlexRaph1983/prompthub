@@ -185,25 +185,25 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
   const router = useRouter()
 
   return (
-    <Card className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}>
-      <div className="flex items-center gap-2">
+    <Card className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 overflow-hidden ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}>
+      <div className="flex items-center gap-2 flex-wrap">
         {prompt.isRecommended && (
           <div className="flex items-center gap-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
             <Sparkles className="w-3 h-3" />
             РЕКОМЕНДУЕТСЯ
           </div>
         )}
-        <span className="bg-violet-100 text-violet-800 px-2 py-1 rounded-lg text-xs font-medium">{prompt.model}</span>
-        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-medium">{prompt.lang}</span>
-        <Badge variant={getLicenseVariant(prompt.license)} className="ml-auto text-xs">
+        <span className="bg-violet-100 text-violet-800 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap">{prompt.model}</span>
+        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap">{prompt.lang}</span>
+        <Badge variant={getLicenseVariant(prompt.license)} className="ml-auto text-xs whitespace-nowrap">
           {prompt.license}
         </Badge>
       </div>
-      <h2 className="font-bold text-lg">{prompt.title}</h2>
-      <div className="text-gray-500 text-sm">{prompt.description}</div>
-      <div className="flex gap-2 mt-1">
+      <h2 className="font-bold text-lg break-words">{prompt.title}</h2>
+      <div className="text-gray-500 text-sm break-words">{prompt.description}</div>
+      <div className="flex gap-2 mt-1 flex-wrap">
         {prompt.tags.map((tag, i) => (
-          <span key={i} className="bg-gray-100 rounded px-2 py-0.5 text-xs">{tag}</span>
+          <span key={i} className="bg-gray-100 rounded px-2 py-0.5 text-xs whitespace-nowrap">{tag}</span>
         ))}
       </div>
       <div className="flex items-center justify-between mt-2">
@@ -219,10 +219,10 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
           <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
         </span>
       </div>
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2 mt-2 flex-wrap">
           <Button
           size="sm"
-          className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl"
+          className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl flex-1 min-w-0"
           onClick={() => onCopy(prompt.prompt)}
         >
           <Copy className="w-4 h-4 mr-1" />
@@ -231,7 +231,7 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
         <Button 
           size="sm" 
           variant="outline" 
-          className="rounded-xl"
+          className="rounded-xl flex-1 min-w-0"
           onClick={() => onViewDetails(prompt.id)}
         >
             {t('common.details')}
