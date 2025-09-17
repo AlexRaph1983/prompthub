@@ -5,6 +5,10 @@ const prisma = new PrismaClient()
 
 export async function GET(request: NextRequest) {
   try {
+    // Block in production
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_ROUTES !== '1') {
+      return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
+    }
     console.log('Checking database status...')
 
     // Проверяем подключение к базе данных

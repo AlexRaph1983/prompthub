@@ -3,6 +3,10 @@ import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
   try {
+    // Block in production
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_ROUTES !== '1') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
     const { userId, userName } = await request.json()
     
     // Создаем простую тестовую сессию

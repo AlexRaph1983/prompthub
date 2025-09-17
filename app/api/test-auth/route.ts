@@ -5,6 +5,10 @@ import { auth } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
+    // Block in production
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_ROUTES !== '1') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
     const session = await auth()
     console.log('Test auth - session:', session)
     
