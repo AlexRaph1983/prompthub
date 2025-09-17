@@ -17,7 +17,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          command_timeout: 10m
+          command_timeout: 20m
+          debug: true
           script: |
             set -e
             cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh

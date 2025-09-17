@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 import { NextIntlClientProvider } from 'next-intl';
+import { unstable_setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n/index';
 import AuthProvider from '@/components/AuthProvider';
@@ -65,6 +66,9 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = params;
   if (!locales.includes(locale)) notFound();
+
+	// Ensure static rendering works with next-intl in App Router
+	unstable_setRequestLocale(locale);
 
   const messages = (await import(`@/messages/${locale}.json`)).default as any;
 
