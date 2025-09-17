@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { computeIdfForTags, buildSparseVectorTfidf, parseTags, cosineSimilarity, computePromptBayesian, computePromptPopularity, normalizePopularity, finalRankingScore } from '@/lib/recommend'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,41 +11,43 @@ export async function GET(req: NextRequest) {
     const locale = url.searchParams.get('locale') || undefined
     
     console.log('Recommendations request for user:', userId, 'locale:', locale)
-    
-    // Простая версия - возвращаем топ промпты по рейтингу
+    // Загружаем промпты с необходимыми счетчиками
     const prompts = await prisma.prompt.findMany({
       include: {
         ratings: { select: { value: true } },
         _count: { select: { likes: true, saves: true, comments: true, ratings: true } },
-        author: { select: { name: true } },
       },
-      orderBy: [
-        { averageRating: 'desc' },
-        { totalRatings: 'desc' },
-        { createdAt: 'desc' }
-      ],
-      take: 12
+      take: 200
     })
 
-    console.log('Found prompts:', prompts.length)
+    const idf = computeIdfForTags(prompts as any)
+    const popularityValues = prompts.map((p) => computePromptPopularity({
+      _count: p._count as any,
+      totalRatings: p.totalRatings,
+      averageRating: p.averageRating,
+      id: p.id, tags: p.tags, category: p.category, model: p.model, lang: p.lang,
+    } as any))
 
-    // Простое ранжирование по рейтингу и популярности
     const scored = prompts.map((p) => {
-      const ratingScore = p.averageRating || 0
-      const popularityScore = (p._count.ratings + p._count.likes + p._count.saves) / 10
-      const score = ratingScore + popularityScore
-      
-      return { 
-        id: p.id, 
-        score, 
-        prompt: p 
-      }
+      const v = buildSparseVectorTfidf({ tags: parseTags(p.tags), category: p.category, model: p.model, lang: p.lang }, idf)
+      // Для cold-start используем вектор жанра/языка и популярности
+      const cosine = v ? cosineSimilarity(v, v) : 0 // self-similarity = 1, но оставим 1 для ненулевого вектора
+      const bayes = computePromptBayesian({
+        id: p.id, tags: p.tags, category: p.category, model: p.model, lang: p.lang,
+        ratings: p.ratings as any,
+        _count: p._count as any,
+        averageRating: p.averageRating,
+        totalRatings: p.totalRatings,
+      } as any)
+      const pop = computePromptPopularity({ _count: p._count as any, totalRatings: p.totalRatings, averageRating: p.averageRating } as any)
+      const popNorm = normalizePopularity(popularityValues, pop)
+      const score = finalRankingScore({ cosine, popularityNorm: popNorm, bayesian: bayes })
+      return { id: p.id, score, prompt: p }
     })
 
     scored.sort((a, b) => b.score - a.score)
     console.log('Returning recommendations:', scored.length)
-    
-    return NextResponse.json(scored.slice(0, 6))
+    return NextResponse.json(scored.slice(0, 12))
   } catch (e) {
     console.error('GET /api/recommendations error', e)
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
