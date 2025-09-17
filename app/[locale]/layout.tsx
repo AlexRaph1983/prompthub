@@ -10,6 +10,7 @@ import { PromptProvider } from '@/contexts/PromptStore';
 import { Navigation } from '@/components/Navigation';
 import { AddPromptModal } from '@/components/AddPromptModal';
 import Script from 'next/script';
+export const dynamic = 'force-dynamic';
 
 const inter = Inter({ subsets: ['latin'] });
 
