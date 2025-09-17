@@ -5,6 +5,10 @@ const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
   try {
+    // Block in production
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_ROUTES !== '1') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
     console.log('🌱 Seeding database with test data...')
 
     // Создаём 5 тестовых пользователей
