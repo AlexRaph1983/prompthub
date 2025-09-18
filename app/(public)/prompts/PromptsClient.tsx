@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star } from 'lucide-react'
+import { Copy, Star, Eye } from 'lucide-react'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
 
 interface Prompt {
@@ -249,7 +249,10 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             {typeof (prompt as any).viewsCount === 'number' && (
               <>
                 <span>•</span>
-                <span className="whitespace-nowrap">{t('common.views', { fallback: 'Просмотры' })}: {(prompt as any).viewsCount}</span>
+                <span className="whitespace-nowrap inline-flex items-center gap-1 text-gray-500">
+                  <Eye className="w-3 h-3" />
+                  {(prompt as any).viewsCount}
+                </span>
               </>
             )}
           </div>

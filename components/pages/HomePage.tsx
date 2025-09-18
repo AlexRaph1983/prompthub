@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Copy, Star, Sparkles } from 'lucide-react'
+import { Eye } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useSearch } from '@/hooks/useSearch'
 import { useRouter } from 'next/navigation'
@@ -251,7 +252,10 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
       </div>
       <div className="text-xs text-gray-500 flex items-center gap-2">
         {typeof (prompt as any).viewsCount === 'number' && (
-          <span>{t('common.views', { fallback: 'Просмотры' })}: {(prompt as any).viewsCount}</span>
+          <span className="inline-flex items-center gap-1 text-gray-500">
+            <Eye className="w-3 h-3" />
+            {(prompt as any).viewsCount}
+          </span>
         )}
       </div>
       <div className="flex gap-2 mt-2 flex-wrap">
