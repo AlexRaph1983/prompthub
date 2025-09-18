@@ -150,6 +150,15 @@ export async function GET(request: Request) {
       },
     })
 
+    // Группируем просмотры (view/open) за все промпты одним запросом
+    const viewRows = await prisma.promptInteraction.groupBy({
+      by: ['promptId'],
+      where: { type: { in: ['view', 'open'] } },
+      _count: { _all: true },
+    })
+    const viewCountByPrompt: Record<string, number> = {}
+    for (const r of viewRows) viewCountByPrompt[r.promptId as string] = (r as any)._count?._all || 0
+
     // Преобразуем в формат интерфейса и считаем репутацию авторов на лету
     const authorCache = new Map<string, { score: number; tier: 'bronze' | 'silver' | 'gold' | 'platinum' }>()
     const formattedPrompts = await Promise.all(prompts.map(async (prompt: any) => {
@@ -193,6 +202,7 @@ export async function GET(request: Request) {
         likesCount: (prompt as any)._count?.likes ?? 0,
         savesCount: (prompt as any)._count?.saves ?? 0,
         commentsCount: (prompt as any)._count?.comments ?? 0,
+        viewsCount: viewCountByPrompt[prompt.id] || 0,
         license: prompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
         prompt: prompt.prompt,
         author: prompt.author?.name || 'Anonymous',

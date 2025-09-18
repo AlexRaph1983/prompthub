@@ -246,6 +246,12 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
                 <span className="whitespace-nowrap">{(prompt as any).category}</span>
               </>
             )}
+            {typeof (prompt as any).viewsCount === 'number' && (
+              <>
+                <span>•</span>
+                <span className="whitespace-nowrap">{t('common.views', { fallback: 'Просмотры' })}: {(prompt as any).viewsCount}</span>
+              </>
+            )}
           </div>
           <span className="text-violet-600 font-semibold text-sm flex items-center gap-1 whitespace-nowrap">
             <Star className="w-3 h-3 fill-current" />
