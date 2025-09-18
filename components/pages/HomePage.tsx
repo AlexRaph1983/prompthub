@@ -110,7 +110,8 @@ export default function HomePage() {
              prompt: item.prompt.prompt,
              author: item.prompt.author?.name || 'Unknown',
              authorId: item.prompt.authorId,
-             score: item.score
+             score: item.score,
+             viewsCount: (item.prompt as any).viewsCount || 0,
            }))
            console.log('Processed recommended prompts:', prompts)
            setRecommendedPrompts(prompts)
@@ -247,6 +248,11 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
           {(prompt.rating ?? 0).toFixed(1)}
           <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
         </span>
+      </div>
+      <div className="text-xs text-gray-500 flex items-center gap-2">
+        {typeof (prompt as any).viewsCount === 'number' && (
+          <span>{t('common.views', { fallback: 'Просмотры' })}: {(prompt as any).viewsCount}</span>
+        )}
       </div>
       <div className="flex gap-2 mt-2 flex-wrap">
           <Button
