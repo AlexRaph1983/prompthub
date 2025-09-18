@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Copy, ArrowLeft, Calendar, User, Star } from 'lucide-react'
+import { Copy, ArrowLeft, Calendar, User, Star, Eye } from 'lucide-react'
 import { RatingStars } from '@/components/RatingStars'
 import { UserReputationBadge } from '@/components/UserReputationBadge'
 import { ReviewForm } from '@/components/ReviewForm'
@@ -274,6 +274,12 @@ export default function PromptDetailsPage() {
                     )}
                   </span>
                 </div>
+                {typeof (prompt as any).viewsCount === 'number' && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Eye className="w-4 h-4 text-gray-400" />
+                    <span>{(prompt as any).viewsCount}</span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">{t('prompt.rating')}</span>
                   <div className="text-sm text-gray-700">

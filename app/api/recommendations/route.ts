@@ -11,11 +11,12 @@ export async function GET(req: NextRequest) {
     const locale = url.searchParams.get('locale') || undefined
     
     console.log('Recommendations request for user:', userId, 'locale:', locale)
-    // Загружаем промпты с необходимыми счетчиками
+    // Загружаем промпты с необходимыми счетчиками и автором
     const prompts = await prisma.prompt.findMany({
       include: {
         ratings: { select: { value: true } },
         _count: { select: { likes: true, saves: true, comments: true, ratings: true } },
+        author: { select: { name: true } },
       },
       take: 200
     })
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
       const pop = computePromptPopularity({ _count: p._count as any, totalRatings: p.totalRatings, averageRating: p.averageRating } as any)
       const popNorm = normalizePopularity(popularityValues, pop)
       const score = finalRankingScore({ cosine, popularityNorm: popNorm, bayesian: bayes })
-      return { id: p.id, score, prompt: p }
+      return { id: p.id, score, prompt: { ...p, viewsCount: (p as any).viewsCount ?? 0 } }
     })
 
     scored.sort((a, b) => b.score - a.score)
