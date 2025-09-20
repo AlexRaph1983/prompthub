@@ -21,6 +21,43 @@ export async function GET(req: NextRequest) {
       take: 200
     })
 
+    const promptIds = prompts.map((p) => p.id)
+    const viewTotals = new Map<string, number>()
+    if (promptIds.length) {
+      const aggregates = await prisma.viewAnalytics.groupBy({
+        by: ['promptId'],
+        where: { promptId: { in: promptIds } },
+        _sum: { countedViews: true },
+      })
+      for (const row of aggregates) {
+        viewTotals.set(row.promptId, row._sum.countedViews ?? 0)
+      }
+
+      const missingViewIds = promptIds.filter((id) => !viewTotals.has(id))
+      if (missingViewIds.length) {
+        const fallback = await prisma.promptViewEvent.groupBy({
+          by: ['promptId'],
+          where: { promptId: { in: missingViewIds }, isCounted: true },
+          _count: { _all: true },
+        })
+        for (const row of fallback) {
+          viewTotals.set(row.promptId, row._count._all ?? 0)
+        }
+      }
+
+      const interactionIds = promptIds.filter((id) => !viewTotals.has(id))
+      if (interactionIds.length) {
+        const interactionFallback = await prisma.promptInteraction.groupBy({
+          by: ['promptId'],
+          where: { promptId: { in: interactionIds }, type: { in: ['view', 'open'] } },
+          _count: { _all: true },
+        })
+        for (const row of interactionFallback) {
+          viewTotals.set(row.promptId, row._count._all ?? 0)
+        }
+      }
+    }
+
     const idf = computeIdfForTags(prompts as any)
     const popularityValues = prompts.map((p) => computePromptPopularity({
       _count: p._count as any,
@@ -43,7 +80,7 @@ export async function GET(req: NextRequest) {
       const pop = computePromptPopularity({ _count: p._count as any, totalRatings: p.totalRatings, averageRating: p.averageRating } as any)
       const popNorm = normalizePopularity(popularityValues, pop)
       const score = finalRankingScore({ cosine, popularityNorm: popNorm, bayesian: bayes })
-      return { id: p.id, score, prompt: { ...p, viewsCount: (p as any).viewsCount ?? 0 } }
+      return { id: p.id, score, prompt: { ...p, views: viewTotals.get(p.id) ?? (p as any).views ?? 0, viewsCount: viewTotals.get(p.id) ?? (p as any).views ?? 0 } }
     })
 
     scored.sort((a, b) => b.score - a.score)
@@ -54,5 +91,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
 }
-
-

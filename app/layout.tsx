@@ -1,14 +1,15 @@
-import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
-import Script from 'next/script';
-import './globals.css';
+﻿import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import Script from "next/script";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000'),
-  title: 'PromptHub',
-  description: 'Платформа для обмена промптами',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_HOST || "http://localhost:3000"),
+  title: "PromptHub",
+  description: "Prompt sharing platform",
+  icons: { icon: [{ url: "/favicon.svg", type: "image/svg+xml" }] },
 };
 
 export const viewport: Viewport = {
@@ -17,7 +18,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: 'cover',
 };
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -42,3 +42,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
+
+

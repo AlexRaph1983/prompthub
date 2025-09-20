@@ -9,8 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -70,6 +70,10 @@ model Prompt {
   // Кэш для средней оценки и числа оценок (обновляется после каждого ревью/рейтинга)
   averageRating Float   @default(0)
   totalRatings  Int     @default(0)
+  views       Int     @default(0)
+  viewEvents  PromptViewEvent[]
+
+  @@unique([title, authorId])
 }
 
 model Rating {
@@ -165,3 +169,57 @@ model PromptVector {
   updatedAt DateTime @updatedAt
   prompt   Prompt  @relation(fields: [promptId], references: [id])
 }
+
+
+model PromptViewEvent {
+  id          String   @id @default(cuid())
+  promptId    String
+  prompt      Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  userId      String?
+  ipHash      String?
+  uaHash      String?
+  fpHash      String?
+  viewTokenId String?
+  isCounted   Boolean  @default(false)
+  reason      String?
+  createdAt   DateTime @default(now())
+
+  @@index([promptId, createdAt])
+  @@index([userId, promptId, createdAt])
+  @@index([ipHash, createdAt])
+  @@index([isCounted, createdAt])
+}
+
+/// Система мониторинга и алертов для просмотров
+model ViewMonitoringAlert {
+  id          String   @id @default(cuid())
+  type        String   // SPIKE_DETECTION, HIGH_REJECTION_RATE, SUSPICIOUS_PATTERN
+  severity    String   // LOW, MEDIUM, HIGH, CRITICAL
+  message     String
+  metadata    Json?    // Дополнительные данные для алерта
+  isResolved  Boolean  @default(false)
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([severity, isResolved])
+}
+
+/// Агрегированная статистика просмотров для аналитики
+model ViewAnalytics {
+  id              String   @id @default(cuid())
+  promptId        String
+  date            DateTime
+  totalViews      Int      @default(0)
+  countedViews    Int      @default(0)
+  rejectedViews   Int      @default(0)
+  uniqueUsers     Int      @default(0)
+  uniqueGuests    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([promptId, date])
+  @@index([date])
+  @@index([promptId, date])
+}
+

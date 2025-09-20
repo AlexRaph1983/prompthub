@@ -1,22 +1,24 @@
-# PowerShell скрипт для деплоя на сервер
-Write-Host "Starting deployment of multilingual categories..." -ForegroundColor Green
+param(
+  [string]$Server = 'REDACTED_IP',
+  [string]$User = 'root',
+  [string]$Branch = 'main',
+  [int]$Port = 3000
+)
 
-# Создаем команды для выполнения на сервере
-$commands = "cd ~/prompthub && echo 'Updating code...' && git pull origin main && echo 'Installing dependencies...' && npm install && echo 'Building application...' && npm run build && echo 'Restarting application...' && pm2 restart prompthub && echo 'Deployment completed!' && pm2 status"
+Write-Host 'Starting deployment' -ForegroundColor Green
 
-# Выполняем команды на сервере
+$remotePayload = 'c2V0IC1ldW8gcGlwZWZhaWwKY2Qgfi9wcm9tcHRodWIKaWYgWyAhIC1kIC5naXQgXTsgdGhlbgogIGVjaG8gIlJlcG9zaXRvcnkgbm90IGZvdW5kIGluIH4vcHJvbXB0aHViIiA+JjIKICBleGl0IDEKZmkKZ2l0IGZldGNoIC0tYWxsIC0tcHJ1bmUKQlJBTkNIPSR7QlJBTkNIOi1tYWlufQpnaXQgcmVzZXQgLS1oYXJkICJvcmlnaW4vJHtCUkFOQ0h9IgpjaG1vZCAreCBzY3JpcHRzL2RlcGxveS5zaCB8fCB0cnVlCkFQUF9ESVI9fi9wcm9tcHRodWIgQVBQX05BTUU9cHJvbXB0aHViIFBPUlQ9JHtQT1JUOi0zMDAwfSBiYXNoIC4vc2NyaXB0cy9kZXBsb3kuc2g='
+$remoteCommand = "BRANCH=$Branch PORT=$Port bash -lc 'echo $remotePayload | base64 -d | bash'"
+$sshArgs = @('-o', 'StrictHostKeyChecking=no', "$User@$Server", $remoteCommand)
+
 try {
-    Write-Host "Connecting to server..." -ForegroundColor Yellow
-    $result = ssh root@REDACTED_IP -o StrictHostKeyChecking=no $commands
-    Write-Host "Commands executed successfully!" -ForegroundColor Green
-    Write-Host $result
+  Write-Host "Connecting to $User@$Server..." -ForegroundColor Yellow
+  $result = & ssh @sshArgs
+  Write-Host 'Remote deployment output:' -ForegroundColor Green
+  Write-Host $result
+  Write-Host 'Deployment finished successfully.' -ForegroundColor Green
 } catch {
-    Write-Host "Error executing commands: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "Try executing commands manually:" -ForegroundColor Yellow
-    Write-Host "ssh root@REDACTED_IP" -ForegroundColor Cyan
-    Write-Host "cd ~/prompthub" -ForegroundColor Cyan
-    Write-Host "git pull origin main" -ForegroundColor Cyan
-    Write-Host "pm2 restart prompthub" -ForegroundColor Cyan
+  Write-Host "Deployment failed: $(.Exception.Message)" -ForegroundColor Red
+  exit 1
 }
 
-Write-Host "Deployment completed! Check https://prompt-hub.site" -ForegroundColor Green

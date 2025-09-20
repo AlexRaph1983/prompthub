@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
 import { NextIntlClientProvider } from 'next-intl';
@@ -30,20 +30,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   const keywords = messages?.metadata?.keywords || '';
   const ogImage = messages?.metadata?.ogImage || '/og/prompt-hub.png';
 
-  return {
-    metadataBase: new URL(host),
-    title,
-    description,
-    keywords,
-    alternates: {
-      canonical: `${host}/${locale}`,
-      languages: { en: `${host}/en`, ru: `${host}/ru` },
-    },
-    openGraph: { title, description, url: `${host}/${locale}`, siteName: 'PromptHub', locale, type: 'website', images: [{ url: ogImage }] },
-    twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
-    robots: { index: true, follow: true },
-    icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }] },
-  };
+  return {\n    metadataBase: new URL(host),\n    title,\n    description,\n    keywords,\n    alternates: {\n      canonical: ${host}/ ,\n      languages: { en: ${host}/en, ru: ${host}/ru },\n    },\n    openGraph: { title, description, url: ${host}/, siteName: 'PromptHub', locale, type: 'website', images: [{ url: ogImage }] },\n    twitter: { card: 'summary_large_image', title, description, images: [ogImage] },\n    robots: { index: true, follow: true },\n    icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }] },\n  };
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps) {
@@ -89,3 +76,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
     </html>
   );
 }
+
+
+
+
+
+

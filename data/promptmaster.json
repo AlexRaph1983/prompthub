@@ -1,0 +1,108 @@
+﻿{
+  "version": "1.0",
+  "submitted_by": { "username": "PromptMaster", "user_id": "", "profile_url": "" },
+  "taxonomy": {
+    "languages": ["ru", "en", "multi"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Proprietary"],
+    "categories": ["writing", "coding", "data-analysis", "design", "marketing", "seo", "social-media", "education", "productivity", "business", "sales", "customer-support", "research", "translation", "summarization", "idea-generation", "legal", "finance", "health", "lifestyle", "arts", "image", "audio", "video", "devops", "data-science", "ecommerce", "gaming", "utilities"],
+    "models": ["any", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "claude-3.5-sonnet", "claude-3.5-haiku", "claude-3-opus", "gemini-1.5-pro", "gemini-1.5-flash", "llama-3.1-8b-instruct", "llama-3.1-70b-instruct", "mistral-large-latest", "mistral-small-latest", "command-r-plus", "command-r"]
+  },
+  "items": [
+    {
+      "title": "Создание уникального поста для социальных сетей",
+      "summary": "Промпт помогает быстро подготовить привлекательный пост для соцсетей с акцентом на вовлеченность и ясный призыв к действию.",
+      "language": "ru",
+      "model": "gpt-4o",
+      "category": "social-media",
+      "license": "CC-BY",
+      "tags": ["соцсети", "контент", "копирайтинг", "вовлечение"],
+      "prompt_text": "Напиши короткий пост для {платформа} на тему {тема}, в стиле {тон}, добавь эмодзи и понятный призыв к действию.",
+      "variables": [
+        { "name": "платформа", "type": "string", "required": true, "description": "Название соцсети", "example": "Instagram" },
+        { "name": "тема", "type": "string", "required": true, "description": "Основная тема поста", "example": "здоровое питание" },
+        { "name": "тон", "type": "string", "required": false, "description": "Стиль и настроение текста", "example": "дружелюбный" }
+      ],
+      "usage_instructions": "Укажите платформу и тему. Используйте синонимы для разнообразия.",
+      "examples": ["Instagram, тема: летний фитнес, тон: вдохновляющий"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Резюме статьи в три предложения",
+      "summary": "Быстрый инструмент для сокращения длинных текстов в краткое резюме, понятное широкой аудитории.",
+      "language": "ru",
+      "model": "gpt-4o-mini",
+      "category": "summarization",
+      "license": "CC-BY-SA",
+      "tags": ["резюме", "сжатие текста", "краткость", "обзор"],
+      "prompt_text": "Сократи следующий текст в три предложения, сохранив главные идеи: {текст}",
+      "variables": [
+        { "name": "текст", "type": "string", "required": true, "description": "Исходный текст для сжатия", "example": "Длинная статья про экологию..." }
+      ],
+      "usage_instructions": "Вставьте длинный текст и получите сжатое резюме. Подходит для статей, отчетов, лекций.",
+      "examples": ["Тема: статья о пользе сна. Результат: 3 ключевых предложения."],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Генерация бизнес-идей по ключевым словам",
+      "summary": "Промпт помогает придумать несколько бизнес-идей, исходя из заданных ключевых слов и области применения.",
+      "language": "ru",
+      "model": "gemini-1.5-pro",
+      "category": "idea-generation",
+      "license": "CC0",
+      "tags": ["бизнес", "стартап", "идеи", "предпринимательство"],
+      "prompt_text": "Предложи 5 бизнес-идей на основе ключевых слов {ключевые_слова} в сфере {сфера}.",
+      "variables": [
+        { "name": "ключевые_слова", "type": "string", "required": true, "description": "Основные слова для генерации идей", "example": "здоровье, фитнес, мобильное приложение" },
+        { "name": "сфера", "type": "string", "required": true, "description": "Область применения", "example": "технологии" }
+      ],
+      "usage_instructions": "Используйте разные комбинации слов и сфер. Отлично подходит для мозгового штурма.",
+      "examples": ["ключевые слова: экология, переработка; сфера: услуги."],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Перевод текста с сохранением стиля",
+      "summary": "Промпт переводит текст на другой язык, сохраняя стиль и эмоциональный тон оригинала.",
+      "language": "multi",
+      "model": "claude-3.5-sonnet",
+      "category": "translation",
+      "license": "Proprietary",
+      "tags": ["перевод", "стиль", "тон", "мультиязычность"],
+      "prompt_text": "Переведи следующий текст с {язык_источник} на {язык_цель}, сохранив стиль и эмоциональный тон: {текст}",
+      "variables": [
+        { "name": "язык_источник", "type": "string", "required": true, "description": "Язык оригинала", "example": "русский" },
+        { "name": "язык_цель", "type": "string", "required": true, "description": "Целевой язык", "example": "английский" },
+        { "name": "текст", "type": "string", "required": true, "description": "Исходный текст", "example": "Прекрасный день для новых идей!" }
+      ],
+      "usage_instructions": "Укажите исходный и целевой языки. Подходит для художественных и деловых текстов.",
+      "examples": ["Перевод с русского на английский: «Это вдохновляющий проект» → «This is an inspiring project»"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Оптимизация SEO-заголовков",
+      "summary": "Промпт помогает создавать заголовки для статей и страниц, которые хорошо индексируются поисковыми системами.",
+      "language": "ru",
+      "model": "mistral-large-latest",
+      "category": "seo",
+      "license": "CC-BY",
+      "tags": ["seo", "заголовки", "оптимизация", "контент"],
+      "prompt_text": "Составь 5 вариантов SEO-заголовков для статьи на тему {тема}, длиной не более 60 символов, с использованием ключевых слов {ключевые_слова}.",
+      "variables": [
+        { "name": "тема", "type": "string", "required": true, "description": "Основная тема статьи", "example": "рецепты для аэрогриля" },
+        { "name": "ключевые_слова", "type": "string", "required": true, "description": "Ключевые слова для оптимизации", "example": "аэрогриль, рецепты, кухня" }
+      ],
+      "usage_instructions": "Старайтесь проверять длину заголовков. Используйте полученные варианты для A/B тестирования.",
+      "examples": ["Тема: здоровое питание, ключевые слова: диета, меню."],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}

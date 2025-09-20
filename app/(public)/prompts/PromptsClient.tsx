@@ -107,7 +107,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
     router.push(`/prompt/${promptId}`)
   }
 
-  // Фильтруем промпты по поиску
+  // Filter prompts by search
   const filteredPrompts = React.useMemo(() => {
     if (!searchValue) return prompts
     const searchLower = searchValue.toLowerCase()
@@ -209,10 +209,12 @@ interface PromptCardProps {
 function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) {
   const t = useTranslations()
   const router = useRouter()
+  const rawViews = (prompt as any).views ?? (prompt as any).viewsCount
+  const views = typeof rawViews === 'number' ? rawViews : null
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200 overflow-hidden">
-      <CardContent className="p-6">
+      <CardContent className="p-6 flex flex-col h-full">
         <div className="flex items-start justify-between mb-3 gap-2">
           <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words flex-1 min-w-0">{prompt.title}</h3>
           <Badge variant="outline" className="text-xs whitespace-nowrap">
@@ -235,24 +237,15 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
           )}
         </div>
 
-        <div className="flex items-center justify-between mb-3 gap-2">
+        <div className="flex items-center justify-between mb-4 gap-2">
           <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
             <span className="whitespace-nowrap">{prompt.model}</span>
-            <span>•</span>
+            <span aria-hidden="true">•</span>
             <span className="whitespace-nowrap">{prompt.lang}</span>
-            {( (prompt as any)?.category ) && (
+            {(prompt as any)?.category && (
               <>
-                <span>•</span>
+                <span aria-hidden="true">•</span>
                 <span className="whitespace-nowrap">{(prompt as any).category}</span>
-              </>
-            )}
-            {typeof (prompt as any).viewsCount === 'number' && (
-              <>
-                <span>•</span>
-                <span className="whitespace-nowrap inline-flex items-center gap-1 text-gray-500">
-                  <Eye className="w-3 h-3" />
-                  {(prompt as any).viewsCount}
-                </span>
               </>
             )}
           </div>
@@ -263,40 +256,52 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
           </span>
         </div>
 
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-gray-400">By <button
-            type="button"
-            className="underline hover:text-gray-600"
-            onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
-            disabled={!prompt.authorId}
-          >{prompt.author}</button></span>
-        </div>
-
-        {prompt.authorProfile && (
-          <div className="mt-3">
-            <AuthorProfileBadge author={prompt.authorProfile} />
+        <div className="mt-auto flex flex-col gap-3">
+          <div className="flex items-center justify-between text-xs text-gray-400">
+            <span>By <button
+              type="button"
+              className="underline hover:text-gray-600"
+              onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
+              disabled={!prompt.authorId}
+            >{prompt.author}</button></span>
+            {views !== null && (
+              <span
+                title="Unique views with anti-fraud protection"
+                className="inline-flex items-center gap-1 text-sm text-gray-500"
+              >
+                <Eye className="w-3 h-3" />
+                {views}
+              </span>
+            )}
           </div>
-        )}
 
-        <div className="flex gap-2 mt-4">
-          <Button
-            size="sm"
-            className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl"
-            onClick={() => onCopy(prompt.prompt, prompt.id)}
-          >
-            <Copy className="w-4 h-4 mr-1" />
-            {t('common.copyPrompt')}
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="rounded-xl"
-            onClick={() => onViewDetails(prompt.id)}
-          >
-            {t('common.details')}
-          </Button>
+          {prompt.authorProfile && (
+            <div>
+              <AuthorProfileBadge author={prompt.authorProfile} />
+            </div>
+          )}
+
+          <div className="flex gap-2 mt-1">
+            <Button
+              size="sm"
+              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl"
+              onClick={() => onCopy(prompt.prompt, prompt.id)}
+            >
+              <Copy className="w-4 h-4 mr-1" />
+              {t('common.copyPrompt')}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-xl"
+              onClick={() => onViewDetails(prompt.id)}
+            >
+              {t('common.details')}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
   )
 }
+
