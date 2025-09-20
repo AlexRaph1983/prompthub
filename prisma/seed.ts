@@ -8,6 +8,7 @@ async function main() {
     where: { email: 'test@example.com' },
     update: {},
     create: {
+      id: 'test-user',
       email: 'test@example.com',
       name: 'Test User',
       image: 'https://via.placeholder.com/150',
@@ -51,13 +52,25 @@ async function main() {
     },
   ]
 
-  // Очищаем существующие промпты
-  await prisma.prompt.deleteMany()
-
-  // Создаем новые промпты
+  // Создаем новые промпты (идемпотентно - не удаляем существующие)
   for (const promptData of prompts) {
-    await prisma.prompt.create({
-      data: promptData,
+    await prisma.prompt.upsert({
+      where: {
+        title_authorId: {
+          title: promptData.title,
+          authorId: promptData.authorId,
+        }
+      },
+      update: {
+        description: promptData.description,
+        prompt: promptData.prompt,
+        model: promptData.model,
+        lang: promptData.lang,
+        category: promptData.category,
+        tags: promptData.tags,
+        license: promptData.license,
+      },
+      create: promptData,
     })
   }
 
