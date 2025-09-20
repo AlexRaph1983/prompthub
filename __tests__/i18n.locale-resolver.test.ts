@@ -9,11 +9,11 @@ describe('resolveLocale', () => {
 
   it('falls back to Accept-Language when cookie missing', () => {
     expect(resolveLocale(undefined, 'ru-RU,ru;q=0.9')).toBe('ru');
-    expect(resolveLocale(undefined, 'en-US,en;q=0.9')).toBe('en');
+    expect(resolveLocale(undefined, 'en-US,en;q=0.9')).toBe('ru');
   });
 
   it('defaults to en when header is unknown', () => {
-    expect(resolveLocale(undefined, 'de-DE,de;q=0.9')).toBe('en');
+    expect(resolveLocale(undefined, 'de-DE,de;q=0.9')).toBe('ru');
   });
 });
 

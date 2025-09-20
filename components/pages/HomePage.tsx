@@ -3,11 +3,10 @@
 import React from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star, Sparkles } from 'lucide-react'
-import { Eye } from 'lucide-react'
+import { Copy, Star, Sparkles, Eye } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useSearch } from '@/hooks/useSearch'
 import { useRouter } from 'next/navigation'
@@ -54,7 +53,7 @@ export default function HomePage() {
     const map: Record<string, string> = {
       english: 'en', en: 'en',
       'русский': 'ru', ru: 'ru', rus: 'ru',
-      español: 'es', espanol: 'es', es: 'es', spanish: 'es',
+      'espa\u00f1ol': 'es', 'espanol': 'es', es: 'es', spanish: 'es',
       deutsch: 'de', german: 'de', de: 'de',
     }
     return map[v] || v || ''
@@ -98,24 +97,33 @@ export default function HomePage() {
          console.log('Recommendations data:', data)
          if (!ignore) {
            // Извлекаем данные промптов из ответа API
-           const prompts = (data || []).slice(0, 6).map((item: any) => ({
-             id: item.id,
-             title: item.prompt.title,
-             description: item.prompt.description,
-             model: item.prompt.model,
-             lang: item.prompt.lang,
-             tags: item.prompt.tags ? item.prompt.tags.split(',').map((tag: string) => tag.trim()) : [],
-             rating: item.prompt.averageRating || 0,
-             ratingCount: item.prompt.totalRatings || 0,
-             license: item.prompt.license,
-             prompt: item.prompt.prompt,
-             author: item.prompt.author?.name || 'Unknown',
-             authorId: item.prompt.authorId,
-             score: item.score,
-             viewsCount: (item.prompt as any).viewsCount || 0,
-           }))
-           console.log('Processed recommended prompts:', prompts)
-           setRecommendedPrompts(prompts)
+           const prompts = (data || []).slice(0, 6).map((item: any) => {
+            const viewsRaw = typeof item.prompt?.views === 'number'
+              ? item.prompt.views
+              : ((item.prompt as any)?.viewsCount ?? 0)
+            const likesCount = (item.prompt as any)?._count?.likes ?? 0
+
+            return ({
+              id: item.id,
+              title: item.prompt.title,
+              description: item.prompt.description,
+              model: item.prompt.model,
+              lang: item.prompt.lang,
+              tags: item.prompt.tags ? item.prompt.tags.split(',').map((tag: string) => tag.trim()) : [],
+              rating: item.prompt.averageRating || 0,
+              ratingCount: item.prompt.totalRatings || 0,
+              license: item.prompt.license,
+              prompt: item.prompt.prompt,
+              author: item.prompt.author?.name || 'Unknown',
+              authorId: item.prompt.authorId,
+              score: item.score,
+              likesCount,
+              views: viewsRaw,
+              viewsCount: viewsRaw,
+            })
+           })
+          console.log('Processed recommended prompts:', prompts)
+          setRecommendedPrompts(prompts)
          }
       } catch (error) {
         console.error('Failed to load recommendations:', error)
@@ -196,6 +204,10 @@ interface PromptCardProps {
     license: 'CC-BY' | 'CC0' | 'Custom' | 'Paid'
     prompt: string
     author: string
+    authorId?: string
+    likesCount?: number
+    views?: number
+    viewsCount?: number
     isRecommended?: boolean
   }
   onCopy: (prompt: string) => void
@@ -214,14 +226,16 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
     }
   }
   const router = useRouter()
+  const rawViews = (prompt as any).views ?? (prompt as any).viewsCount
+  const views = typeof rawViews === 'number' ? rawViews : null
 
   return (
     <Card className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 overflow-hidden ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}>
       <div className="flex items-center gap-2 flex-wrap">
         {prompt.isRecommended && (
           <div className="flex items-center gap-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-            <Sparkles className="w-3 h-3" />
-            РЕКОМЕНДУЕТСЯ
+            <Sparkles className="w-3 h-3" aria-hidden="true" />
+            <span className="sr-only">{t('home.recommended')}</span>
           </div>
         )}
         <span className="bg-violet-100 text-violet-800 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap">{prompt.model}</span>
@@ -237,47 +251,52 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
           <span key={i} className="bg-gray-100 rounded px-2 py-0.5 text-xs whitespace-nowrap">{tag}</span>
         ))}
       </div>
-      <div className="flex items-center justify-between mt-2">
-        <span className="text-xs text-gray-400">By <button
-          type="button"
-          className="underline hover:text-gray-600"
-          onClick={() => (prompt as any).authorId && router.push(`/prompts?authorId=${encodeURIComponent((prompt as any).authorId)}`)}
-          disabled={!(prompt as any).authorId}
-        >{prompt.author}</button></span>
-        <span className="text-violet-600 font-semibold text-sm flex items-center gap-1">
-          <Star className="w-3 h-3 fill-current" />
-          {(prompt.rating ?? 0).toFixed(1)}
-          <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
-        </span>
-      </div>
-      <div className="text-xs text-gray-500 flex items-center gap-2">
-        {typeof (prompt as any).viewsCount === 'number' && (
-          <span className="inline-flex items-center gap-1 text-gray-500">
-            <Eye className="w-3 h-3" />
-            {(prompt as any).viewsCount}
-          </span>
-        )}
-      </div>
-      <div className="flex gap-2 mt-2 flex-wrap">
+
+      <div className="mt-auto flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400">By <button
+            type="button"
+            className="underline hover:text-gray-600"
+            onClick={() => (prompt as any).authorId && router.push(`/prompts?authorId=${encodeURIComponent((prompt as any).authorId)}`)}
+            disabled={!(prompt as any).authorId}
+          >{prompt.author}</button></span>
+          <div className="flex items-center gap-3">
+            <span className="text-violet-600 font-semibold text-sm flex items-center gap-1">
+              <Star className="w-3 h-3 fill-current" />
+              {(prompt.rating ?? 0).toFixed(1)}
+              <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
+            </span>
+            {views !== null && (
+              <span
+                title="Unique views with anti-fraud protection"
+                className="inline-flex items-center gap-1 text-sm text-gray-500"
+              >
+                <Eye className="w-3 h-3" />
+                {views}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-1 flex-wrap">
           <Button
-          size="sm"
-          className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl flex-1 min-w-0"
-          onClick={() => onCopy(prompt.prompt)}
-        >
-          <Copy className="w-4 h-4 mr-1" />
+            size="sm"
+            className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl flex-1 min-w-0"
+            onClick={() => onCopy(prompt.prompt)}
+          >
+            <Copy className="w-4 h-4 mr-1" />
             {t('common.copyPrompt')}
-        </Button>
-        <Button 
-          size="sm" 
-          variant="outline" 
-          className="rounded-xl flex-1 min-w-0"
-          onClick={() => onViewDetails(prompt.id)}
-        >
+          </Button>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="rounded-xl flex-1 min-w-0"
+            onClick={() => onViewDetails(prompt.id)}
+          >
             {t('common.details')}
-        </Button>
+          </Button>
+        </div>
       </div>
     </Card>
   )
 }
-
-

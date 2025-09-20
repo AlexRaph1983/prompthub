@@ -1,4 +1,4 @@
-name: Deploy to reg.ru
+﻿name: Deploy to reg.ru
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
           debug: true
           script: |
             set -e
-            cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh
+            cd /home/deploy/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh
 
 
 

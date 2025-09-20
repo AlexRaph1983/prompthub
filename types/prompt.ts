@@ -8,6 +8,9 @@ export interface Prompt {
   tags: string[]
   rating: number
   ratingCount?: number
+  likesCount?: number
+  savesCount?: number
+  commentsCount?: number
   license: 'CC-BY' | 'CC0' | 'Custom' | 'Paid'
   prompt: string
   author: string
@@ -17,6 +20,7 @@ export interface Prompt {
   createdAt: string
   updatedAt?: string
   myRating?: number
+  views?: number
   viewsCount?: number
 }
 
@@ -66,3 +70,4 @@ export const PROMPT_CATEGORIES = [
 ] as const
 
 export const PROMPT_LANGS = ["English", "Русский", "Español", "Deutsch"] as const 
+

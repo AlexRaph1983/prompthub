@@ -27,8 +27,36 @@ export default function PromptDetailsPage() {
   
   const prompt = state.prompts.find(p => p.id === promptId)
   const isOwner = !!(prompt?.authorId && session?.user?.id && prompt.authorId === session.user.id)
+  const rawViews = prompt ? (prompt as any).views ?? (prompt as any).viewsCount : null
+  const promptViews = typeof rawViews === 'number' ? rawViews : null
   const [myReview, setMyReview] = React.useState<{ rating: number | null; comment: string | null } | null>(null)
   const [similar, setSimilar] = React.useState<Array<{ id: string; cosine: number }>>([])
+
+  const fingerprintRef = React.useRef<string | null>(null)
+  const [fingerprintReady, setFingerprintReady] = React.useState(false)
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') {
+      setFingerprintReady(true)
+      return
+    }
+
+    const storageKey = 'ph_view_fp'
+    try {
+      let stored = window.localStorage.getItem(storageKey)
+      if (!stored || stored.length < 16) {
+        const fallback = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
+        stored = fallback.replace(/[^a-zA-Z0-9]/g, '').slice(0, 64)
+        window.localStorage.setItem(storageKey, stored)
+      }
+      fingerprintRef.current = stored
+    } catch (error) {
+      console.warn('Unable to prepare anonymous fingerprint', error)
+      fingerprintRef.current = null
+    } finally {
+      setFingerprintReady(true)
+    }
+  }, [])
 
   React.useEffect(() => {
     if (!promptId) return
@@ -42,10 +70,72 @@ export default function PromptDetailsPage() {
       .catch(() => setRatingData(null))
   }, [promptId, isAuthenticated])
 
+  React.useEffect(() => {
+    if (!promptId || !fingerprintReady || isOwner) return
+
+    const storageKey = `ph_prompt_viewed_${promptId}`
+    if (typeof window !== 'undefined' && window.sessionStorage.getItem(storageKey) === '1') {
+      return
+    }
+
+    let cancelled = false
+    let viewAttempted = false
+
+    const trackView = async () => {
+      try {
+        const tokenResponse = await fetch('/api/view-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ cardId: promptId, fingerprint: fingerprintRef.current }),
+        })
+        if (!tokenResponse.ok) {
+          return
+        }
+        const tokenPayload = await tokenResponse.json().catch(() => null)
+        if (!tokenPayload?.viewToken) {
+          return
+        }
+
+        const trackResponse = await fetch('/api/track-view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ cardId: promptId, viewToken: tokenPayload.viewToken }),
+        })
+        viewAttempted = true
+        const payload = await trackResponse.json().catch(() => null)
+        if (!cancelled && payload && typeof payload.views === 'number') {
+          dispatch({ type: 'UPDATE_PROMPT_VIEWS', payload: { promptId, views: payload.views } })
+        }
+        if (!cancelled) {
+          try {
+            await fetch('/api/interactions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ type: 'view', promptId }),
+            })
+          } catch {}
+        }
+      } catch (error) {
+        console.warn('Failed to track prompt view', error)
+      } finally {
+        if (!cancelled && viewAttempted && typeof window !== 'undefined') {
+          window.sessionStorage.setItem(storageKey, '1')
+        }
+      }
+    }
+
+    trackView()
+
+    return () => {
+      cancelled = true
+    }
+  }, [promptId, fingerprintReady, dispatch, isOwner])
+
   // log view and load similar prompts
   React.useEffect(() => {
     if (!promptId) return
-    try { fetch('/api/interactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'view', promptId }) }) } catch {}
     ;(async () => {
       try {
         const r = await fetch(`/api/prompts/${encodeURIComponent(promptId)}/similar`, { cache: 'no-store' as any })
@@ -274,12 +364,6 @@ export default function PromptDetailsPage() {
                     )}
                   </span>
                 </div>
-                {typeof (prompt as any).viewsCount === 'number' && (
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Eye className="w-4 h-4 text-gray-400" />
-                    <span>{(prompt as any).viewsCount}</span>
-                  </div>
-                )}
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">{t('prompt.rating')}</span>
                   <div className="text-sm text-gray-700">
@@ -308,6 +392,17 @@ export default function PromptDetailsPage() {
                   </span>
                 </div>
               </div>
+              {promptViews !== null && (
+                <div className="flex justify-end mt-4">
+                  <span
+                    title="Unique views with anti-fraud protection"
+                    className="inline-flex items-center gap-2 text-sm text-gray-500"
+                  >
+                    <Eye className="w-4 h-4 text-gray-400" />
+                    <span>{promptViews}</span>
+                  </span>
+                </div>
+              )}
             </Card>
 
             <Card className="shadow-md rounded-2xl p-6">

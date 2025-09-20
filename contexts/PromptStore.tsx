@@ -19,6 +19,7 @@ type PromptAction =
   | { type: 'SET_PROMPTS'; payload: Prompt[] }
   | { type: 'ADD_PROMPT'; payload: Prompt }
   | { type: 'UPDATE_PROMPT_RATING'; payload: { promptId: string; rating: number; ratingCount: number } }
+  | { type: 'UPDATE_PROMPT_VIEWS'; payload: { promptId: string; views: number } }
   | { type: 'TOGGLE_MODAL' }
   | { type: 'SET_SEARCH_QUERY'; payload: string }
   | { type: 'SET_FILTER'; payload: { key: string; value: string } }
@@ -53,6 +54,13 @@ function promptReducer(state: PromptState, action: PromptAction): PromptState {
       return {
         ...state,
         prompts: state.prompts.map(p => p.id === promptId ? { ...p, rating, ratingCount } : p),
+      }
+    }
+    case 'UPDATE_PROMPT_VIEWS': {
+      const { promptId, views } = action.payload
+      return {
+        ...state,
+        prompts: state.prompts.map(p => p.id === promptId ? { ...p, views, viewsCount: views } : p),
       }
     }
     case 'TOGGLE_MODAL':
@@ -103,6 +111,15 @@ export function PromptProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(promptReducer, initialState)
   const { isAuthenticated } = useAuth()
 
+  const normalizePromptViews = (prompt: any) => {
+    const value = typeof prompt?.views === 'number'
+      ? prompt.views
+      : typeof prompt?.viewsCount === 'number'
+        ? prompt.viewsCount
+        : 0
+    return { ...prompt, views: value, viewsCount: value }
+  }
+
   const loadPrompts = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true })
@@ -112,16 +129,17 @@ export function PromptProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         const prompts = await response.json()
         console.log('Loaded prompts:', prompts)
-        dispatch({ type: 'SET_PROMPTS', payload: prompts })
+        const normalized = Array.isArray(prompts) ? prompts.map(normalizePromptViews) : []
+        dispatch({ type: 'SET_PROMPTS', payload: normalized })
       } else {
         console.log('API failed, using demo prompts')
         // Fallback to demo prompts if API fails
-        dispatch({ type: 'SET_PROMPTS', payload: DEMO_PROMPTS })
+        dispatch({ type: 'SET_PROMPTS', payload: DEMO_PROMPTS.map(normalizePromptViews) })
       }
     } catch (error) {
       console.error('Error loading prompts:', error)
       // Fallback to demo prompts
-      dispatch({ type: 'SET_PROMPTS', payload: DEMO_PROMPTS })
+      dispatch({ type: 'SET_PROMPTS', payload: DEMO_PROMPTS.map(normalizePromptViews) })
     }
   }
 

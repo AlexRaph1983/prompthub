@@ -1,0 +1,34 @@
+[33mcommit 67836b109d46c0e503835818e67f76807610e667[m
+Author: Alex <alex@example.com>
+Date:   Thu Sep 18 00:23:59 2025 +0700
+
+    fix(auth): make signin page client+dynamic to avoid static rendering error
+
+[1mdiff --git a/app/[locale]/auth/signin/page.tsx b/app/[locale]/auth/signin/page.tsx[m
+[1mindex 59a5b20..0145a7f 100644[m
+[1m--- a/app/[locale]/auth/signin/page.tsx[m
+[1m+++ b/app/[locale]/auth/signin/page.tsx[m
+[36m@@ -1,18 +1,18 @@[m
+ "use client"[m
+ [m
+[32m+[m[32mexport const dynamic = 'force-dynamic'[m
+[32m+[m
+ import { signIn } from "next-auth/react"[m
+[31m-import { useTranslations } from "next-intl"[m
+ import { Button } from "@/components/ui/button"[m
+ [m
+ export default function SignInPage() {[m
+[31m-  const t = useTranslations()[m
+   return ([m
+     <main className="min-h-screen flex items-center justify-center p-6">[m
+       <div className="w-full max-w-sm rounded-2xl border p-6 shadow-md bg-white">[m
+[31m-        <h1 className="text-xl font-semibold mb-4">{t('auth.signInTitle', { fallback: 'Вход' })}</h1>[m
+[31m-        <p className="text-sm text-gray-500 mb-6">{t('auth.signInSubtitle', { fallback: 'Войдите через Google' })}</p>[m
+[32m+[m[32m        <h1 className="text-xl font-semibold mb-4">Вход</h1>[m
+[32m+[m[32m        <p className="text-sm text-gray-500 mb-6">Войдите через Google</p>[m
+         <Button className="w-full" onClick={() => signIn('google', { callbackUrl: '/' })}>[m
+[31m-          {t('auth.signInWithGoogle', { fallback: 'Войти через Google' })}[m
+[32m+[m[32m          Войти через Google[m
+         </Button>[m
+       </div>[m
+     </main>[m
