@@ -151,21 +151,21 @@ export class PromptRepository {
     switch (sort) {
       case 'rating':
         return [
-          { averageRating: order },
-          { createdAt: 'desc' },
-          { id: 'desc' }
+          { averageRating: order as 'asc' | 'desc' },
+          { createdAt: 'desc' as const },
+          { id: 'desc' as const }
         ]
       case 'views':
         return [
-          { views: order },
-          { createdAt: 'desc' },
-          { id: 'desc' }
+          { views: order as 'asc' | 'desc' },
+          { createdAt: 'desc' as const },
+          { id: 'desc' as const }
         ]
       case 'createdAt':
       default:
         return [
-          { createdAt: order },
-          { id: 'desc' }
+          { createdAt: order as 'asc' | 'desc' },
+          { id: 'desc' as const }
         ]
     }
   }
