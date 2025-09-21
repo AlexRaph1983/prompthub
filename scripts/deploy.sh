@@ -129,7 +129,8 @@ module.exports = {
       NEXTAUTH_SECRET: '${NEXTAUTH_SECRET}',
       IMPERSONATION_SECRET: '${IMPERSONATION_SECRET}',
       GOOGLE_CLIENT_ID: '${GOOGLE_CLIENT_ID:-}',
-      GOOGLE_CLIENT_SECRET: '${GOOGLE_CLIENT_SECRET:-}'
+      GOOGLE_CLIENT_SECRET: '${GOOGLE_CLIENT_SECRET:-}',
+      REDIS_URL: '${REDIS_URL:-}'
     },
     autorestart: true,
     max_restarts: 10
