@@ -124,11 +124,13 @@ export function PromptProvider({ children }: { children: ReactNode }) {
     try {
       dispatch({ type: 'SET_LOADING', payload: true })
       console.log('Loading prompts from API...')
-      const response = await fetch('/api/prompts')
+      const response = await fetch('/api/prompts?limit=50')
       console.log('API response status:', response.status)
       if (response.ok) {
-        const prompts = await response.json()
-        console.log('Loaded prompts:', prompts)
+        const data = await response.json()
+        console.log('Loaded prompts data:', data)
+        // Новый API возвращает объект с items, а не массив
+        const prompts = data.items || data || []
         const normalized = Array.isArray(prompts) ? prompts.map(normalizePromptViews) : []
         dispatch({ type: 'SET_PROMPTS', payload: normalized })
       } else {

@@ -75,7 +75,7 @@ export default function InfinitePromptList({
         body: JSON.stringify({ type: 'open', promptId })
       })
     } catch {}
-    router.push(`/${locale}/prompt/${promptId}`)
+    router.push(`/prompt/${promptId}`)
   }
 
   // Объединяем все страницы в один массив
