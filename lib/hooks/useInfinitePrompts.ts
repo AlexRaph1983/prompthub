@@ -43,12 +43,42 @@ async function fetchPrompts(params: PromptListParams & { cursor?: string | null 
   return response.json()
 }
 
-export function useInfinitePrompts(params: PromptListParams = {}) {
+interface UseInfinitePromptsParams extends PromptListParams {
+  initialPrompts?: PromptCardDTO[]
+  initialNextCursor?: string | null
+}
+
+export function useInfinitePrompts({
+  initialPrompts = [],
+  initialNextCursor = null,
+  authorId,
+  search,
+  category,
+  model,
+  lang,
+  tags,
+  sort = 'createdAt',
+  order = 'desc',
+}: UseInfinitePromptsParams = {}) {
   return useInfiniteQuery({
-    queryKey: ['prompts', params],
-    queryFn: ({ pageParam }) => fetchPrompts({ ...params, cursor: pageParam }),
+    queryKey: ['prompts', { authorId, search, category, model, lang, tags, sort, order }],
+    queryFn: ({ pageParam }) => fetchPrompts({ 
+      authorId, 
+      search, 
+      category, 
+      model, 
+      lang, 
+      tags, 
+      sort, 
+      order, 
+      cursor: pageParam 
+    }),
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-    initialPageParam: null as string | null,
+    initialPageParam: initialNextCursor,
+    initialData: initialPrompts.length > 0 ? {
+      pages: [{ items: initialPrompts, nextCursor: initialNextCursor, hasMore: !!initialNextCursor }],
+      pageParams: [initialNextCursor],
+    } : undefined,
     staleTime: 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000, // 5 minutes
   })
