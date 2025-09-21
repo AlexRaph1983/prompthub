@@ -1,13 +1,12 @@
 ИНСТРУКЦИИ ПО ДЕПЛОЮ НА СЕРВЕР
 ================================
 
-Сервер: REDACTED_IP
-Логин: root  
-Пароль: REDACTED_PASSWORD
+Сервер: <SERVER_IP>
+Логин: <USER>
 
 КОМАНДЫ ДЛЯ ВЫПОЛНЕНИЯ:
 1. Подключиться к серверу:
-   ssh root@REDACTED_IP
+   ssh <USER>@<SERVER_IP>
 
 2. Выполнить команды деплоя:
    cd /root/prompthub
@@ -22,7 +21,7 @@
    systemctl restart nginx
 
 3. Проверить результат:
-   http://REDACTED_IP
+   http://<SERVER_IP>
 
 ИСПРАВЛЕНИЯ В ЭТОЙ ВЕРСИИ:
 - ✅ Исправлены ошибки гидрации Next.js

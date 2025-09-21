@@ -1,24 +1,33 @@
 Param(
   [string]$Server = "REDACTED_IP",
   [string]$User = "root",
-  [int]$Port = 22,
-  [switch]$UsePassword
+  [int]$Port = 22
 )
 
 $ErrorActionPreference = "Stop"
 
-function Invoke-Remote($cmd) {
+function Invoke-RemoteBash {
+  param([string]$BashInline)
   $target = "$User@$Server"
-  & ssh -o StrictHostKeyChecking=no -p $Port $target $cmd
+  $escaped = $BashInline.Replace("`"", "\`"")
+  & ssh -o StrictHostKeyChecking=no -p $Port $target "bash -lc \"$escaped\""
 }
 
-Write-Host "🔐 Creating remote code+db snapshot before deploy..." -ForegroundColor Cyan
-Invoke-Remote "mkdir -p /root && SNAP=\"/root/backup_prompthub_$(date +%Y%m%d-%H%M%S)\" && mkdir -p \"$SNAP\" && cd /root/prompthub && tar -czf \"$SNAP/code.tgz\" . || true && if [ -f prisma/dev.db ]; then cp prisma/dev.db \"$SNAP/dev.db\"; fi && echo Snapshot: \"$SNAP\""
+Write-Host "Creating remote snapshot..." -ForegroundColor Cyan
+Invoke-RemoteBash @"
+set -e
+SNAP="/root/backup_prompthub_$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$SNAP"
+cd /root/prompthub
+tar -czf "$SNAP/code.tgz" . || true
+if [ -f prisma/dev.db ]; then cp prisma/dev.db "$SNAP/dev.db"; fi
+echo "Snapshot: $SNAP"
+"@
 
-Write-Host "🚀 Deploying via server-side script per workspace rules" -ForegroundColor Green
-Invoke-Remote "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
+Write-Host "Deploying per workspace rules..." -ForegroundColor Green
+Invoke-RemoteBash "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
 
-Write-Host "🩺 Health check" -ForegroundColor Green
+Write-Host "Health check" -ForegroundColor Green
 try {
   $resp = Invoke-WebRequest -Uri ("http://" + $Server + "/api/health") -UseBasicParsing -TimeoutSec 10
   Write-Host ("Health: " + $resp.StatusCode + " " + $resp.Content)
@@ -26,8 +35,8 @@ try {
   Write-Host ("Health check failed: " + $_.Exception.Message) -ForegroundColor Yellow
 }
 
-Write-Host "📜 Tail logs (pm2)" -ForegroundColor Green
-Invoke-Remote "pm2 logs prompthub --lines 50 --nostream || true"
+Write-Host "PM2 last logs" -ForegroundColor Green
+Invoke-RemoteBash "pm2 logs prompthub --lines 50 --nostream || true"
 
 # Deploy to Production Server
 # Автоматический деплой исправленной версии на сервер
