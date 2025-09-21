@@ -28,6 +28,11 @@ export default function InfinitePromptList({
 }: InfinitePromptListProps) {
   const t = useTranslations()
   const router = useRouter()
+
+  // Скроллим наверх при заходе на страницу авторов
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
   
   const {
     data,
@@ -130,6 +135,12 @@ export default function InfinitePromptList({
 
   return (
     <div className="space-y-6">
+      {/* Бейдж автора в самом верху, если authorId и есть authorProfile у первого промпта */}
+      {authorId && allPrompts[0]?.authorProfile && (
+        <div className="mb-4">
+          <AuthorProfileBadge author={allPrompts[0].authorProfile} />
+        </div>
+      )}
       {/* Список промптов */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {allPrompts.map((prompt) => (
