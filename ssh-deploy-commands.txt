@@ -1,0 +1,39 @@
+ИНСТРУКЦИИ ПО ДЕПЛОЮ НА СЕРВЕР
+================================
+
+Сервер: 83.166.244.71
+Логин: root  
+Пароль: yqOdhMhP41s5827h
+
+КОМАНДЫ ДЛЯ ВЫПОЛНЕНИЯ:
+1. Подключиться к серверу:
+   ssh root@83.166.244.71
+
+2. Выполнить команды деплоя:
+   cd /root/prompthub
+   git fetch origin
+   git reset --hard origin/main
+   npm install
+   npm run build
+   pm2 stop prompthub || true
+   pm2 delete prompthub || true
+   pm2 start ecosystem.config.js
+   pm2 save
+   systemctl restart nginx
+
+3. Проверить результат:
+   http://83.166.244.71
+
+ИСПРАВЛЕНИЯ В ЭТОЙ ВЕРСИИ:
+- ✅ Исправлены ошибки гидрации Next.js
+- ✅ Устранены проблемы с vendor-chunks
+- ✅ Восстановлены 18 промптов в базе данных
+- ✅ Исправлена конфигурация webpack
+- ✅ Удален проблемный QueryProvider
+- ✅ Добавлен новый ClientProviders компонент
+- ✅ Сайт полностью работает локально (статус 200)
+
+АЛЬТЕРНАТИВНЫЙ СПОСОБ:
+Можно скопировать файл temp-deploy.sh на сервер и выполнить:
+scp temp-deploy.sh root@83.166.244.71:/tmp/
+ssh root@83.166.244.71 'chmod +x /tmp/temp-deploy.sh && /tmp/temp-deploy.sh'
