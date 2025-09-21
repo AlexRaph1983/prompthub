@@ -117,167 +117,38 @@ export async function POST(request: NextRequest) {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
+    
+    // Параметры пагинации
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50)
+    const cursor = searchParams.get('cursor')
+    const sort = searchParams.get('sort') as 'createdAt' | 'rating' | 'views' || 'createdAt'
+    const order = searchParams.get('order') as 'asc' | 'desc' || 'desc'
+    
+    // Фильтры
     const authorId = searchParams.get('authorId')
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '20')
-    const skip = (page - 1) * limit
-    
-    const whereClause = authorId ? { authorId } : {}
-    
-    // Получаем общее количество промптов для пагинации
-    const totalCount = await prisma.prompt.count({ where: whereClause })
-    
-    const prompts = await prisma.prompt.findMany({
-      where: whereClause,
-      include: {
-        author: {
-          select: {
-            name: true,
-            image: true,
-            bio: true,
-            website: true,
-            telegram: true,
-            github: true,
-            twitter: true,
-            linkedin: true,
-            reputationScore: true,
-            reputationPromptCount: true,
-            reputationRatingsCnt: true,
-            reputationLikesCnt: true,
-            reputationSavesCnt: true,
-            reputationCommentsCnt: true,
-          },
-        },
-        _count: { select: { ratings: true, likes: true, saves: true, comments: true } },
-        ratings: { select: { value: true } },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      skip,
-      take: limit,
+    const search = searchParams.get('q')
+    const category = searchParams.get('category')
+    const model = searchParams.get('model')
+    const lang = searchParams.get('lang')
+    const tags = searchParams.get('tags')?.split(',').filter(Boolean)
+
+    // Импортируем репозиторий
+    const { promptRepository } = await import('@/lib/repositories/promptRepository')
+
+    const result = await promptRepository.listPrompts({
+      limit,
+      cursor: cursor || null,
+      sort,
+      order,
+      authorId: authorId || undefined,
+      search: search || undefined,
+      category: category || undefined,
+      model: model || undefined,
+      lang: lang || undefined,
+      tags: tags || undefined,
     })
 
-    const promptIds = prompts.map((p) => p.id)
-    const viewTotals = new Map<string, number>()
-    if (promptIds.length) {
-      const aggregates = await prisma.viewAnalytics.groupBy({
-        by: ['promptId'],
-        where: { promptId: { in: promptIds } },
-        _sum: { countedViews: true },
-      })
-      for (const row of aggregates) {
-        viewTotals.set(row.promptId, row._sum.countedViews ?? 0)
-      }
-
-      const missingViewIds = promptIds.filter((id) => !viewTotals.has(id))
-      if (missingViewIds.length) {
-        const fallback = await prisma.promptViewEvent.groupBy({
-          by: ['promptId'],
-          where: { promptId: { in: missingViewIds }, isCounted: true },
-          _count: { _all: true },
-        })
-        for (const row of fallback) {
-          viewTotals.set(row.promptId, row._count._all ?? 0)
-        }
-      }
-
-      const interactionIds = promptIds.filter((id) => !viewTotals.has(id))
-      if (interactionIds.length) {
-        const interactionFallback = await prisma.promptInteraction.groupBy({
-          by: ['promptId'],
-          where: { promptId: { in: interactionIds }, type: { in: ['view', 'open'] } },
-          _count: { _all: true },
-        })
-        for (const row of interactionFallback) {
-          viewTotals.set(row.promptId, row._count._all ?? 0)
-        }
-      }
-    }
-
-    // Summarize counted views from viewAnalytics for all prompts
-    // Преобразуем в формат интерфейса и считаем репутацию авторов на лету
-    const authorCache = new Map<string, { score: number; tier: 'bronze' | 'silver' | 'gold' | 'platinum' }>()
-    const formattedPrompts = await Promise.all(prompts.map(async (prompt: any) => {
-      const ratings: number[] = (prompt.ratings || []).map((r: any) => r.value)
-      const ratingCount = ratings.length
-      const avg = ratingCount ? Number((ratings.reduce((a, b) => a + b, 0) / ratingCount).toFixed(1)) : 0
-
-      // Получаем или рассчитываем репутацию автора
-      let authorScore = prompt.author?.reputationScore || 0
-      let authorTier: 'bronze' | 'silver' | 'gold' | 'platinum' = 'bronze'
-      
-      if (authorCache.has(prompt.authorId)) {
-        const cached = authorCache.get(prompt.authorId)!
-        authorScore = cached.score
-        authorTier = cached.tier
-      } else {
-        // Рассчитываем репутацию на лету
-        const breakdown = calculateReputation({
-          avgPromptRating: avg,
-          ratingsCount: ratingCount,
-          promptCount: prompt.author?.reputationPromptCount || 0,
-          likesCount: (prompt as any)._count?.likes ?? 0,
-          savesCount: (prompt as any)._count?.saves ?? 0,
-          commentsCount: (prompt as any)._count?.comments ?? 0,
-        })
-        authorScore = breakdown.score0to100
-        authorTier = breakdown.tier
-        authorCache.set(prompt.authorId, { score: authorScore, tier: authorTier })
-      }
-
-      return ({
-        id: prompt.id,
-        title: prompt.title,
-        description: prompt.description,
-        model: prompt.model,
-        lang: prompt.lang,
-        category: prompt.category,
-        tags: prompt.tags.split(',').map((tag: string) => tag.trim()),
-        rating: avg,
-        ratingCount,
-        likesCount: (prompt as any)._count?.likes ?? 0,
-        savesCount: (prompt as any)._count?.saves ?? 0,
-        commentsCount: (prompt as any)._count?.comments ?? 0,
-        viewsCount: viewTotals.get(prompt.id) ?? prompt.views ?? 0,
-        license: prompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
-        prompt: prompt.prompt,
-        author: prompt.author?.name || 'Anonymous',
-        authorId: prompt.authorId,
-        authorReputationScore: authorScore,
-        authorReputationTier: authorTier,
-        authorProfile: {
-          id: prompt.authorId,
-          name: prompt.author?.name || 'Anonymous',
-          image: prompt.author?.image,
-          bio: prompt.author?.bio,
-          website: prompt.author?.website,
-          telegram: prompt.author?.telegram,
-          github: prompt.author?.github,
-          twitter: prompt.author?.twitter,
-          linkedin: prompt.author?.linkedin,
-          reputationScore: authorScore,
-          reputationPromptCount: prompt.author?.reputationPromptCount || 0,
-          reputationLikesCnt: prompt.author?.reputationLikesCnt || 0,
-          reputationSavesCnt: prompt.author?.reputationSavesCnt || 0,
-          reputationRatingsCnt: prompt.author?.reputationRatingsCnt || 0,
-          reputationCommentsCnt: prompt.author?.reputationCommentsCnt || 0,
-        },
-        createdAt: prompt.createdAt.toISOString().split('T')[0],
-      })
-    }))
-
-    return NextResponse.json({
-      prompts: formattedPrompts,
-      pagination: {
-        page,
-        limit,
-        totalCount,
-        totalPages: Math.ceil(totalCount / limit),
-        hasNextPage: page < Math.ceil(totalCount / limit),
-        hasPrevPage: page > 1,
-      }
-    })
+    return NextResponse.json(result)
   } catch (error) {
     console.error('Error fetching prompts:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

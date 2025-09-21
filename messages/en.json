@@ -40,7 +40,8 @@
     "noSearchResults": "No results found for your search",
     "tryDifferentSearch": "Try a different search term",
     "beFirstToCreate": "Be the first to create a prompt",
-    "allLoaded": "All prompts loaded"
+    "loadMore": "Load more",
+    "allLoaded": "You've seen all prompts"
   },
   "prompt": {
     "created": "Created",

@@ -1,6 +1,7 @@
 ﻿import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { QueryProvider } from "@/lib/providers/QueryProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -37,7 +38,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <img src="https://mc.yandex.ru/watch/104142063" style={{position:'absolute', left:'-9999px'}} alt="" />
           </div>
         </noscript>
-        {children}
+        <QueryProvider>
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );
