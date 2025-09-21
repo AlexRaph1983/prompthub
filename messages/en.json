@@ -13,7 +13,10 @@
     "notFound": "Not found",
     "license": "License",
     "reviews": "Reviews",
-    "searchPrompts": "Search prompts..."
+    "searchPrompts": "Search prompts...",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry"
   },
   "home": {
     "title": "AI prompts for every use case",
@@ -36,7 +39,8 @@
     "noPrompts": "No prompts found",
     "noSearchResults": "No results found for your search",
     "tryDifferentSearch": "Try a different search term",
-    "beFirstToCreate": "Be the first to create a prompt"
+    "beFirstToCreate": "Be the first to create a prompt",
+    "allLoaded": "All prompts loaded"
   },
   "prompt": {
     "created": "Created",

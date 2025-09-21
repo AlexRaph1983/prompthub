@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star, Eye } from 'lucide-react'
+import { Copy, Star, Eye, Loader2 } from 'lucide-react'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 
 interface Prompt {
   id: string
@@ -66,16 +67,58 @@ interface AuthorInfo {
 }
 
 interface PromptsClientProps {
-  prompts: Prompt[]
+  initialPrompts: Prompt[]
+  initialPagination: {
+    page: number
+    limit: number
+    totalCount: number
+    totalPages: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+  }
   authorInfo: AuthorInfo | null
   authorId?: string
   locale: string
 }
 
-export default function PromptsClient({ prompts, authorInfo, authorId, locale }: PromptsClientProps) {
+export default function PromptsClient({ initialPrompts, initialPagination, authorInfo, authorId, locale }: PromptsClientProps) {
   const t = useTranslations()
   const router = useRouter()
   const [searchValue, setSearchValue] = React.useState('')
+
+  // Функция для загрузки дополнительных промптов
+  const loadMorePrompts = async (page: number) => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: '20',
+    })
+    
+    if (authorId) {
+      params.append('authorId', authorId)
+    }
+
+    const response = await fetch(`/api/prompts?${params}`)
+    if (!response.ok) {
+      throw new Error('Failed to load more prompts')
+    }
+    
+    return response.json()
+  }
+
+  // Используем хук бесконечного скролла
+  const {
+    prompts,
+    pagination,
+    isLoading,
+    error,
+    hasNextPage,
+    loadMoreRef
+  } = useInfiniteScroll({
+    initialPrompts,
+    initialPagination,
+    authorId,
+    onLoadMore: loadMorePrompts
+  })
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -182,17 +225,55 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredPrompts.map((prompt) => (
-              <PromptCard
-                key={prompt.id}
-                prompt={prompt}
-                onCopy={handleCopyPrompt}
-                onViewDetails={handleViewDetails}
-                locale={locale}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredPrompts.map((prompt) => (
+                <PromptCard
+                  key={prompt.id}
+                  prompt={prompt}
+                  onCopy={handleCopyPrompt}
+                  onViewDetails={handleViewDetails}
+                  locale={locale}
+                />
+              ))}
+            </div>
+            
+            {/* Лоадер для бесконечного скролла */}
+            {isLoading && (
+              <div className="flex justify-center items-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
+                <span className="ml-2 text-gray-600">{t('common.loading')}</span>
+              </div>
+            )}
+            
+            {/* Обработка ошибок */}
+            {error && (
+              <div className="flex justify-center items-center py-8">
+                <div className="text-center">
+                  <p className="text-red-600 mb-2">{t('common.error')}: {error}</p>
+                  <Button 
+                    onClick={() => window.location.reload()} 
+                    variant="outline"
+                    className="text-violet-600 border-violet-600 hover:bg-violet-50"
+                  >
+                    {t('common.retry')}
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {/* Элемент для отслеживания IntersectionObserver */}
+            {hasNextPage && !isLoading && (
+              <div ref={loadMoreRef} className="h-4" />
+            )}
+            
+            {/* Сообщение о достижении конца списка */}
+            {!hasNextPage && filteredPrompts.length > 0 && (
+              <div className="text-center py-8 text-gray-500">
+                {t('prompts.allLoaded')}
+              </div>
+            )}
+          </>
         )}
       </div>
     </main>

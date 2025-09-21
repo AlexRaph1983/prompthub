@@ -118,8 +118,14 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const authorId = searchParams.get('authorId')
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '20')
+    const skip = (page - 1) * limit
     
     const whereClause = authorId ? { authorId } : {}
+    
+    // Получаем общее количество промптов для пагинации
+    const totalCount = await prisma.prompt.count({ where: whereClause })
     
     const prompts = await prisma.prompt.findMany({
       where: whereClause,
@@ -148,6 +154,8 @@ export async function GET(request: Request) {
       orderBy: {
         createdAt: 'desc',
       },
+      skip,
+      take: limit,
     })
 
     const promptIds = prompts.map((p) => p.id)
@@ -259,7 +267,17 @@ export async function GET(request: Request) {
       })
     }))
 
-    return NextResponse.json(formattedPrompts)
+    return NextResponse.json({
+      prompts: formattedPrompts,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNextPage: page < Math.ceil(totalCount / limit),
+        hasPrevPage: page > 1,
+      }
+    })
   } catch (error) {
     console.error('Error fetching prompts:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

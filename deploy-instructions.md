@@ -74,3 +74,4 @@ AUTH_FORCE_TEST=0
 - `app/[locale]/layout.tsx` - восстановлен layout с AuthProvider
 - `prisma/schema.prisma` - изменен на SQLite для локальной разработки
 
+

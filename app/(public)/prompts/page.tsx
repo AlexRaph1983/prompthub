@@ -58,9 +58,13 @@ interface AuthorInfo {
   reputationCommentsCnt: number
 }
 
-async function getPrompts(authorId?: string): Promise<Prompt[]> {
+async function getPrompts(authorId?: string, page: number = 1, limit: number = 20): Promise<{ prompts: Prompt[], pagination: any }> {
   try {
     const whereClause = authorId ? { authorId } : {}
+    const skip = (page - 1) * limit
+
+    // Получаем общее количество промптов для пагинации
+    const totalCount = await prisma.prompt.count({ where: whereClause })
 
     const prompts = await prisma.prompt.findMany({
       where: whereClause,
@@ -89,6 +93,8 @@ async function getPrompts(authorId?: string): Promise<Prompt[]> {
       orderBy: {
         createdAt: 'desc',
       },
+      skip,
+      take: limit,
     })
 
     // Преобразуем в формат интерфейса и считаем репутацию авторов на лету
@@ -160,10 +166,30 @@ async function getPrompts(authorId?: string): Promise<Prompt[]> {
       })
     }))
 
-    return formattedPrompts
+    return {
+      prompts: formattedPrompts,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNextPage: page < Math.ceil(totalCount / limit),
+        hasPrevPage: page > 1,
+      }
+    }
   } catch (error) {
     console.error('Error fetching prompts:', error)
-    return []
+    return {
+      prompts: [],
+      pagination: {
+        page: 1,
+        limit: 20,
+        totalCount: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+      }
+    }
   }
 }
 
@@ -177,7 +203,7 @@ export default async function PromptsPage({
   unstable_setRequestLocale(locale)
   const authorId = searchParams.authorId
 
-  const prompts = await getPrompts(authorId)
+  const { prompts, pagination } = await getPrompts(authorId, 1, 20)
 
   let authorInfo: AuthorInfo | null = null
   if (authorId && prompts.length > 0) {
@@ -204,7 +230,8 @@ export default async function PromptsPage({
 
   return (
     <PromptsClient
-      prompts={prompts}
+      initialPrompts={prompts}
+      initialPagination={pagination}
       authorInfo={authorInfo}
       authorId={authorId}
       locale={locale}
