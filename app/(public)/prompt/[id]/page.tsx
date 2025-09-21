@@ -16,6 +16,8 @@ import { useParams, useRouter } from 'next/navigation'
 
 export default function PromptDetailsPage() {
   const t = useTranslations()
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
   const { id } = useParams()
   const promptId = Array.isArray(id) ? id[0] : (id as string)
   const router = useRouter()
@@ -258,6 +260,7 @@ export default function PromptDetailsPage() {
     }
   }
 
+  if (!mounted) return null
   if (!prompt) {
     return (
       <main className="bg-gray-50 min-h-screen pb-12">
@@ -388,7 +391,7 @@ export default function PromptDetailsPage() {
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-gray-600">
-                    {t('prompt.created')}: {new Date(prompt.createdAt).toLocaleDateString('ru-RU')}
+                    {t('prompt.created')}: <time suppressHydrationWarning>{new Date(prompt.createdAt).toISOString().slice(0,10)}</time>
                   </span>
                 </div>
               </div>

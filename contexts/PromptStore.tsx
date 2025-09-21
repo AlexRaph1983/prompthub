@@ -146,7 +146,9 @@ export function PromptProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    loadPrompts()
+    if (typeof window !== 'undefined') {
+      loadPrompts()
+    }
   }, [])
 
   const addPrompt = async (formData: PromptFormData) => {

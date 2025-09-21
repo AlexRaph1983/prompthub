@@ -17,6 +17,11 @@ export function AddPromptModal() {
   const { isAuthenticated, signIn } = useAuth()
   const router = useRouter()
   const t = useTranslations()
+  const [mounted, setMounted] = React.useState(false)
+  
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
   const [formData, setFormData] = React.useState<PromptFormData>({
     title: '',
     description: '',
@@ -86,7 +91,7 @@ export function AddPromptModal() {
     }
   }
 
-  if (!state.showModal) return null
+  if (!mounted || !state.showModal) return null
 
   return (
     <AnimatePresence>

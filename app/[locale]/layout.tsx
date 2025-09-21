@@ -9,6 +9,7 @@ import AuthProvider from '@/components/AuthProvider';
 import { PromptProvider } from '@/contexts/PromptStore';
 import { Navigation } from '@/components/Navigation';
 import { AddPromptModal } from '@/components/AddPromptModal';
+import { ClientProviders } from '@/components/ClientProviders';
 import Script from 'next/script';
 export const dynamic = 'force-dynamic';
 
@@ -56,7 +57,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   const messages = (await import(`@/messages/${locale}.json`)).default as any;
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -74,17 +75,19 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         `}</Script>
         <noscript><div><img src="https://mc.yandex.ru/watch/104142063" style={{position:'absolute', left:'-9999px'}} alt="" /></div></noscript>
 
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <AuthProvider>
-            <PromptProvider>
-              <Navigation />
-              <div className="min-h-screen">
-                {children}
-              </div>
-              <AddPromptModal />
-            </PromptProvider>
-          </AuthProvider>
-        </NextIntlClientProvider>
+        <ClientProviders>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <AuthProvider>
+              <PromptProvider>
+                <Navigation />
+                <div className="min-h-screen">
+                  {children}
+                </div>
+                <AddPromptModal />
+              </PromptProvider>
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </ClientProviders>
       </body>
     </html>
   );

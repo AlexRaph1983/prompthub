@@ -13,6 +13,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function HomePage() {
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
   const t = useTranslations()
   const { state, dispatch, getFilteredPrompts } = usePromptStore()
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
@@ -161,6 +163,7 @@ export default function HomePage() {
     ]
   }, [recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
 
+  if (!mounted) return null
   return (
     <main className="bg-gray-50 min-h-screen pb-12">
       <section className="mx-auto max-w-3xl mt-8 px-2">
