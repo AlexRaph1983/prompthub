@@ -17,6 +17,23 @@ interface InfinitePromptListProps {
   initialPrompts: PromptCardDTO[]
   initialNextCursor: string | null
   authorId?: string
+  authorInfo?: {
+    id: string
+    name: string | null
+    image?: string | null
+    bio?: string | null
+    website?: string | null
+    telegram?: string | null
+    github?: string | null
+    twitter?: string | null
+    linkedin?: string | null
+    reputationScore?: number | null
+    reputationPromptCount?: number | null
+    reputationLikesCnt?: number | null
+    reputationSavesCnt?: number | null
+    reputationRatingsCnt?: number | null
+    reputationCommentsCnt?: number | null
+  }
   locale: string
 }
 
@@ -24,6 +41,7 @@ export default function InfinitePromptList({
   initialPrompts, 
   initialNextCursor, 
   authorId, 
+  authorInfo,
   locale 
 }: InfinitePromptListProps) {
   const t = useTranslations()
@@ -136,6 +154,29 @@ export default function InfinitePromptList({
 
   return (
     <div className="space-y-6">
+      {authorId && authorInfo && (
+        <div className="mx-auto max-w-7xl px-0">
+          <AuthorProfileBadge
+            author={{
+              id: authorInfo.id,
+              name: authorInfo.name || 'Anonymous',
+              image: authorInfo.image || undefined,
+              bio: authorInfo.bio || undefined,
+              website: authorInfo.website || undefined,
+              telegram: authorInfo.telegram || undefined,
+              github: authorInfo.github || undefined,
+              twitter: authorInfo.twitter || undefined,
+              linkedin: authorInfo.linkedin || undefined,
+              reputationScore: authorInfo.reputationScore ?? 0,
+              reputationPromptCount: authorInfo.reputationPromptCount ?? 0,
+              reputationLikesCnt: authorInfo.reputationLikesCnt ?? 0,
+              reputationSavesCnt: authorInfo.reputationSavesCnt ?? 0,
+              reputationRatingsCnt: authorInfo.reputationRatingsCnt ?? 0,
+              reputationCommentsCnt: authorInfo.reputationCommentsCnt ?? 0,
+            }}
+          />
+        </div>
+      )}
       {/* Список промптов */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {allPrompts.map((prompt) => (
