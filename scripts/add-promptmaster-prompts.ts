@@ -178,6 +178,7 @@ async function main() {
         category: mapCategory(item.category),
         tags,
         license: mapLicense(item.license),
+        updatedAt: new Date(),
       },
       create: {
         id: promptId,
