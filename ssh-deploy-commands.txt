@@ -1,0 +1,38 @@
+ИНСТРУКЦИИ ПО ДЕПЛОЮ НА СЕРВЕР
+================================
+
+Сервер: <SERVER_IP>
+Логин: <USER>
+
+КОМАНДЫ ДЛЯ ВЫПОЛНЕНИЯ:
+1. Подключиться к серверу:
+   ssh <USER>@<SERVER_IP>
+
+2. Выполнить команды деплоя:
+   cd /root/prompthub
+   git fetch origin
+   git reset --hard origin/main
+   npm install
+   npm run build
+   pm2 stop prompthub || true
+   pm2 delete prompthub || true
+   pm2 start ecosystem.config.js
+   pm2 save
+   systemctl restart nginx
+
+3. Проверить результат:
+   http://<SERVER_IP>
+
+ИСПРАВЛЕНИЯ В ЭТОЙ ВЕРСИИ:
+- ✅ Исправлены ошибки гидрации Next.js
+- ✅ Устранены проблемы с vendor-chunks
+- ✅ Восстановлены 18 промптов в базе данных
+- ✅ Исправлена конфигурация webpack
+- ✅ Удален проблемный QueryProvider
+- ✅ Добавлен новый ClientProviders компонент
+- ✅ Сайт полностью работает локально (статус 200)
+
+АЛЬТЕРНАТИВНЫЙ СПОСОБ:
+Можно скопировать файл temp-deploy.sh на сервер и выполнить:
+scp temp-deploy.sh root@REDACTED_IP:/tmp/
+ssh root@REDACTED_IP 'chmod +x /tmp/temp-deploy.sh && /tmp/temp-deploy.sh'
