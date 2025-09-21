@@ -154,9 +154,10 @@ export default function InfinitePromptList({
 
   return (
     <div className="space-y-6">
-      {authorId && authorInfo && (
-        <div className="mx-auto max-w-7xl px-0">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 pt-6 md:pt-8">
+        {authorId && authorInfo && (
           <AuthorProfileBadge
+            className="mb-6"
             author={{
               id: authorInfo.id,
               name: authorInfo.name || 'Anonymous',
@@ -175,53 +176,54 @@ export default function InfinitePromptList({
               reputationCommentsCnt: authorInfo.reputationCommentsCnt ?? 0,
             }}
           />
+        )}
+
+        {/* Список промптов */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {allPrompts.map((prompt) => (
+            <PromptCard
+              key={prompt.id}
+              prompt={prompt}
+              onCopy={handleCopyPrompt}
+              onViewDetails={handleViewDetails}
+              locale={locale}
+            />
+          ))}
         </div>
-      )}
-      {/* Список промптов */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {allPrompts.map((prompt) => (
-          <PromptCard
-            key={prompt.id}
-            prompt={prompt}
-            onCopy={handleCopyPrompt}
-            onViewDetails={handleViewDetails}
-            locale={locale}
-          />
-        ))}
+
+        {/* Лоадер для следующей страницы */}
+        {isFetchingNextPage && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
+            <span className="ml-2 text-gray-600">{t('common.loading')}</span>
+          </div>
+        )}
+
+        {/* Элемент для отслеживания IntersectionObserver */}
+        {hasNextPage && !isFetchingNextPage && (
+          <div ref={loadMoreRef} className="h-4" />
+        )}
+
+        {/* Кнопка "Показать ещё" как fallback */}
+        {hasNextPage && !isFetchingNextPage && (
+          <div className="flex justify-center py-8">
+            <Button 
+              onClick={() => fetchNextPage()}
+              variant="outline"
+              className="text-violet-600 border-violet-600 hover:bg-violet-50"
+            >
+              {t('prompts.loadMore')}
+            </Button>
+          </div>
+        )}
+
+        {/* Сообщение о достижении конца списка */}
+        {!hasNextPage && allPrompts.length > 0 && (
+          <div className="text-center py-8 text-gray-500">
+            {t('prompts.allLoaded')}
+          </div>
+        )}
       </div>
-
-      {/* Лоадер для следующей страницы */}
-      {isFetchingNextPage && (
-        <div className="flex justify-center items-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-600" />
-          <span className="ml-2 text-gray-600">{t('common.loading')}</span>
-        </div>
-      )}
-
-      {/* Элемент для отслеживания IntersectionObserver */}
-      {hasNextPage && !isFetchingNextPage && (
-        <div ref={loadMoreRef} className="h-4" />
-      )}
-
-      {/* Кнопка "Показать ещё" как fallback */}
-      {hasNextPage && !isFetchingNextPage && (
-        <div className="flex justify-center py-8">
-          <Button 
-            onClick={() => fetchNextPage()}
-            variant="outline"
-            className="text-violet-600 border-violet-600 hover:bg-violet-50"
-          >
-            {t('prompts.loadMore')}
-          </Button>
-        </div>
-      )}
-
-      {/* Сообщение о достижении конца списка */}
-      {!hasNextPage && allPrompts.length > 0 && (
-        <div className="text-center py-8 text-gray-500">
-          {t('prompts.allLoaded')}
-        </div>
-      )}
     </div>
   )
 }
