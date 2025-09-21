@@ -7,7 +7,7 @@ const nextConfig = {
     domains: ['lh3.googleusercontent.com'],
   },
   experimental: {
-    webpackBuildWorker: true,
+    webpackBuildWorker: false,
   },
   // Оптимизации для продакшена
   swcMinify: true,
@@ -17,6 +17,16 @@ const nextConfig = {
   
   // Оптимизация бандла
   webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      // Отключаем проблемные vendor chunks в dev режиме
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+        },
+      }
+    }
     if (!dev && !isServer) {
       // Убираем console.log в продакшене
       config.optimization.minimizer.forEach((minimizer) => {

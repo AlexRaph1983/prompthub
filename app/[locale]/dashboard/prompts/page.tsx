@@ -72,7 +72,7 @@ export default async function MyPromptsPage() {
                   </div>
                   
                   <div className="text-sm text-gray-500">
-                    Создан: {new Date(prompt.createdAt).toLocaleDateString('ru-RU')}
+                    Создан: <time suppressHydrationWarning>{new Date(prompt.createdAt).toISOString().slice(0,10)}</time>
                   </div>
                 </div>
               </CardContent>

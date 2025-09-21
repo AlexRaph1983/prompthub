@@ -3,7 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
-async function requireAdmin(request: NextRequest) {
+type AdminResult = { ok: true; actor: { id: string; email: string | null } } | { ok: false }
+
+async function requireAdmin(request: NextRequest): Promise<AdminResult> {
   const header = request.headers.get('authorization') || request.headers.get('Authorization')
   const apiKey = process.env.ADMIN_API_KEY
 

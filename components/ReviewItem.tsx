@@ -20,9 +20,7 @@ export function ReviewItem({ reviewerName, reviewerImage, rating, comment, creat
     .slice(0, 2)
     .toUpperCase()
 
-  const dateStr = new Date(createdAt).toLocaleDateString('ru-RU', {
-    year: 'numeric', month: 'short', day: '2-digit',
-  })
+  const dateStr = new Date(createdAt).toISOString().slice(0, 10)
 
   return (
     <div className="flex gap-3 py-3">
@@ -35,7 +33,7 @@ export function ReviewItem({ reviewerName, reviewerImage, rating, comment, creat
       <div className="flex-1">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">{reviewerName || 'Пользователь'}</span>
-          <span className="text-xs text-gray-500">{dateStr}</span>
+          <span className="text-xs text-gray-500"><time suppressHydrationWarning>{dateStr}</time></span>
         </div>
         <div className="mt-1">
           <RatingStars value={rating} size="sm" readOnly />

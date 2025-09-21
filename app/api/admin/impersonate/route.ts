@@ -3,7 +3,9 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { SignJWT } from 'jose'
 
-async function requireAdmin(request: NextRequest) {
+type AdminResult = { ok: true; actor: { id: string; email: string | null } } | { ok: false }
+
+async function requireAdmin(request: NextRequest): Promise<AdminResult> {
   const header = request.headers.get('authorization') || request.headers.get('Authorization')
   const apiKey = process.env.ADMIN_API_KEY
 
@@ -36,7 +38,8 @@ export async function POST(request: NextRequest) {
   const now = Math.floor(Date.now() / 1000)
   const exp = now + ttl
 
-  const token = await new SignJWT({ act: admin.actor.id })
+  const actorId = admin.ok ? admin.actor.id : 'unknown'
+  const token = await new SignJWT({ act: actorId })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt(now)
     .setExpirationTime(exp)

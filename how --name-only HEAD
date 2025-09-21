@@ -1,0 +1,20 @@
+* [33m008c811[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m admin api: users & impersonate; bearer auth; prompts PATCH
+* [33medd5c04[m Style: unify container on author pages (max-w-7xl, px-4/6, pt-6/8), align author badge width with grid
+* [33m80bde48[m Feat: Restore author header badge on author prompt pages and scroll-to-top on entry
+* [33m2b8259c[m Remove problematic seed-users.ts file that references non-existent slug field
+* [33m6ab5957[m Fix: Restore author badges and fix scroll position on navigation
+* [33mf31c7d4[m feat: add idempotent user seed script and docs
+* [33me497d3c[m fix: restore author badge design and add scroll-to-top for author pages
+* [33m491b30f[m Fix navigation and data loading issues
+* [33m9be7d72[m Fix TypeScript error in promptRepository orderBy - add proper type assertions
+* [33ma747d1f[m Fix TypeScript error in useIntersection hook - change HTMLElement to HTMLDivElement
+* [33m7c4ee80[m Implement infinite scroll with cursor-based pagination for prompt cards
+* [33m66d0f68[m Implement infinite scroll for prompts with SSR first 20 items
+* [33mc22c560[m Move view count to bottom right after rating on prompt cards
+* [33maa0ce5e[m fix: restore old prompts in seed file
+* [33m230ffd4[m[33m ([m[1;31morigin/feature/import-promptmaster-prompts[m[33m, [m[1;32mfeature/import-promptmaster-prompts[m[33m)[m feat: add unique index for title+author in Prompt model
+* [33mac5437e[m ui(views): eye icon and details; recs include author; types add viewsCount
+* [33mc31c65b[m feat(views): show viewsCount on Home cards
+* [33m90474eb[m feat(views): show viewsCount on cards; fix(i18n) force dynamic locale layout
+* [33mc22ed83[m fix(i18n): force dynamic rendering for locale layout
+* [33m5ce5e37[m fix(i18n): use unstable_setRequestLocale; ci: deploy timeout
