@@ -249,11 +249,22 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
               </>
             )}
           </div>
-          <span className="text-violet-600 font-semibold text-sm flex items-center gap-1 whitespace-nowrap">
-            <Star className="w-3 h-3 fill-current" />
-            {(prompt.rating ?? 0).toFixed(1)}
-            <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-violet-600 font-semibold text-sm flex items-center gap-1 whitespace-nowrap">
+              <Star className="w-3 h-3 fill-current" />
+              {(prompt.rating ?? 0).toFixed(1)}
+              <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
+            </span>
+            {views !== null && (
+              <span
+                title="Unique views with anti-fraud protection"
+                className="inline-flex items-center gap-1 text-sm text-gray-500"
+              >
+                <Eye className="w-3 h-3" />
+                {views}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="mt-auto flex flex-col gap-3">
@@ -264,15 +275,6 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
               onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
               disabled={!prompt.authorId}
             >{prompt.author}</button></span>
-            {views !== null && (
-              <span
-                title="Unique views with anti-fraud protection"
-                className="inline-flex items-center gap-1 text-sm text-gray-500"
-              >
-                <Eye className="w-3 h-3" />
-                {views}
-              </span>
-            )}
           </div>
 
           {prompt.authorProfile && (
