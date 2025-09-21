@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { authFromRequest } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { calculateReputation } from '@/lib/reputation'
 import { recomputeAllPromptVectors } from '@/lib/recommend'
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     
     let session
     try {
-      session = await auth()
+      session = await authFromRequest(request)
       console.log('Session result:', session)
       console.log('Session user:', session?.user)
       console.log('Session user id:', session?.user?.id)
