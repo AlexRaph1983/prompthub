@@ -104,6 +104,8 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
         body: JSON.stringify({ type: 'open', promptId })
       })
     } catch {}
+    // Сбрасываем позицию скролла при переходе
+    window.scrollTo(0, 0)
     router.push(`/prompt/${promptId}`)
   }
 

@@ -41,7 +41,15 @@ export default function HomePage() {
   }
 
   const handleViewDetails = (promptId: string) => {
-    try { fetch('/api/interactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'open', promptId }) }) } catch {}
+    try { 
+      fetch('/api/interactions', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ type: 'open', promptId }) 
+      }) 
+    } catch {}
+    // Сбрасываем позицию скролла при переходе
+    window.scrollTo(0, 0)
     router.push(`/prompt/${promptId}`)
   }
 
