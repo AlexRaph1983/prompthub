@@ -1,5 +1,34 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+
+export async function GET() {
+  const startedAt = Date.now()
+  try {
+    // Lightweight DB ping; works for SQLite and most drivers
+    await prisma.$queryRaw`SELECT 1`
+    const uptimeMs = Date.now() - startedAt
+    return NextResponse.json(
+      {
+        status: 'ok',
+        uptimeMs,
+        timestamp: new Date().toISOString(),
+      },
+      { status: 200 }
+    )
+  } catch (error) {
+    return NextResponse.json(
+      {
+        status: 'error',
+        error: (error as Error)?.message ?? 'unknown',
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    )
+  }
+}
+
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 import { getRedis } from '@/lib/redis'
 
 export async function GET() {
