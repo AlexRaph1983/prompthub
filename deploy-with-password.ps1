@@ -50,3 +50,4 @@ if (Get-Command plink -ErrorAction SilentlyContinue) {
     Write-Host "2. Run: cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh" -ForegroundColor White
 }
 
+
