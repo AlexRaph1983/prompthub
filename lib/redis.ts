@@ -28,6 +28,16 @@ const lazyRedis = async () => {
 
   const url = process.env.REDIS_URL
   if (!url) {
+    // В dev/тестовой среде позволяем работать без Redis, используя ioredis-mock
+    if (process.env.NODE_ENV !== 'production') {
+      const redisMockModule = optionalRequire<any>('ioredis-mock')
+      if (!redisMockModule) {
+        throw new Error('REDIS_URL is not configured and ioredis-mock is not installed')
+      }
+      const mock = new redisMockModule.default()
+      globalForRedis.__promptHubRedis = mock as unknown as Redis
+      return globalForRedis.__promptHubRedis
+    }
     throw new Error('REDIS_URL is not configured')
   }
 

@@ -37,6 +37,10 @@ export interface IssueViewTokenInput {
 function getSalt() {
   const salt = process.env.VIEW_SALT
   if (!salt) {
+    // В dev/тесте позволяем работать без явной конфигурации
+    if (process.env.NODE_ENV !== 'production') {
+      return 'dev-fallback-view-salt'
+    }
     throw new Error('VIEW_SALT must be configured')
   }
   return salt

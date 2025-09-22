@@ -73,7 +73,7 @@ export default function PromptDetailsPage() {
   }, [promptId, isAuthenticated])
 
   React.useEffect(() => {
-    if (!promptId || !fingerprintReady || isOwner) return
+    if (!promptId || !fingerprintReady) return
 
     const storageKey = `ph_prompt_viewed_${promptId}`
     if (typeof window !== 'undefined' && window.sessionStorage.getItem(storageKey) === '1') {
@@ -133,7 +133,7 @@ export default function PromptDetailsPage() {
     return () => {
       cancelled = true
     }
-  }, [promptId, fingerprintReady, dispatch, isOwner])
+  }, [promptId, fingerprintReady, dispatch])
 
   // log view and load similar prompts
   React.useEffect(() => {
