@@ -131,7 +131,28 @@ function normalizeDate(date: Date) {
 }
 
 async function main() {
-  const payloadPath = path.resolve(process.cwd(), 'data', 'promptmaster.json')
+  // CLI args: --file <path> | -f <path>, --skip-updates
+  const argv = process.argv.slice(2)
+  let fileArg: string | undefined
+  let skipUpdates = false
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i]
+    if (arg === '--file' || arg === '-f') {
+      fileArg = argv[i + 1]
+      i++
+      continue
+    }
+    if (arg === '--skip-updates' || arg === '--no-update' || arg === '--skip') {
+      skipUpdates = true
+      continue
+    }
+  }
+
+  const payloadPath = fileArg
+    ? path.isAbsolute(fileArg)
+      ? fileArg
+      : path.resolve(process.cwd(), fileArg)
+    : path.resolve(process.cwd(), 'data', 'promptmaster.json')
   const raw = fs.readFileSync(payloadPath, 'utf8')
   const sanitized = raw.replace(/^[\uFEFF\u200B]+/, '')
   const payload = JSON.parse(sanitized) as PromptSubmission
@@ -157,42 +178,71 @@ async function main() {
   })
 
   const created: string[] = []
+  const skipped: string[] = []
 
   for (const [index, item] of payload.items.entries()) {
-    const promptId = 'promptmaster-' + (index + 1).toString().padStart(2, '0')
     const description = buildDescription(item)
     const tags = toTags(item.tags || [])
 
-    const prompt = await prisma.prompt.upsert({
-      where: { 
-        title_authorId: {
+    let prompt
+    if (skipUpdates) {
+      const existing = await prisma.prompt.findUnique({
+        where: {
+          title_authorId: {
+            title: item.title.trim(),
+            authorId: user.id,
+          },
+        },
+      })
+      if (existing) {
+        skipped.push(existing.id + ': ' + existing.title)
+        continue
+      }
+      prompt = await prisma.prompt.create({
+        data: {
           title: item.title.trim(),
+          description,
+          prompt: item.prompt_text.trim(),
+          model: mapModel(item.model),
+          lang: mapLanguage(item.language),
+          category: mapCategory(item.category),
+          tags,
+          license: mapLicense(item.license),
           authorId: user.id,
-        }
-      },
-      update: {
-        description,
-        prompt: item.prompt_text.trim(),
-        model: mapModel(item.model),
-        lang: mapLanguage(item.language),
-        category: mapCategory(item.category),
-        tags,
-        license: mapLicense(item.license),
-        updatedAt: new Date(),
-      },
-      create: {
-        id: promptId,
-        title: item.title.trim(),
-        description,
-        prompt: item.prompt_text.trim(),
-        model: mapModel(item.model),
-        lang: mapLanguage(item.language),
-        category: mapCategory(item.category),
-        tags,
-        license: mapLicense(item.license),
-        authorId: user.id,
-      },
-    })
+        },
+      })
+    } else {
+      prompt = await prisma.prompt.upsert({
+        where: {
+          title_authorId: {
+            title: item.title.trim(),
+            authorId: user.id,
+          },
+        },
+        update: {
+          description,
+          prompt: item.prompt_text.trim(),
+          model: mapModel(item.model),
+          lang: mapLanguage(item.language),
+          category: mapCategory(item.category),
+          tags,
+          license: mapLicense(item.license),
+          updatedAt: new Date(),
+        },
+        create: {
+          // Let DB generate unique id (cuid)
+          title: item.title.trim(),
+          description,
+          prompt: item.prompt_text.trim(),
+          model: mapModel(item.model),
+          lang: mapLanguage(item.language),
+          category: mapCategory(item.category),
+          tags,
+          license: mapLicense(item.license),
+          authorId: user.id,
+        },
+      })
+    }
 
     const analyticsDate = normalizeDate(new Date())
     await prisma.viewAnalytics.upsert({
@@ -214,6 +264,10 @@ async function main() {
 
   console.log('Imported ' + created.length + ' prompts for ' + user.name)
   created.forEach((line) => console.log(' - ' + line))
+  if (skipped.length) {
+    console.log('Skipped existing: ' + skipped.length)
+    skipped.forEach((line) => console.log(' - ' + line))
+  }
 }
 
 main()
