@@ -22,6 +22,7 @@ export default function HomePage() {
   const router = useRouter()
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
+  const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
 
   // синхронизация строки поиска со стором
   React.useEffect(() => {
@@ -32,13 +33,20 @@ export default function HomePage() {
     setSearchValue(e.target.value)
   }
 
-  const handleCopyPrompt = async (prompt: string) => {
+  const handleCopyPrompt = async (prompt: string, promptId: string) => {
+    setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: true, success: false } }))
     try {
       await navigator.clipboard.writeText(prompt)
+      setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: false, success: true } }))
+      // Скрываем уведомление через 2 секунды
+      setTimeout(() => {
+        setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: false, success: false } }))
+      }, 2000)
       // fire-and-forget interaction log
-      try { fetch('/api/interactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'copy', promptId: (prompt as any).id }) }) } catch {}
+      try { fetch('/api/interactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'copy', promptId }) }) } catch {}
     } catch (err) {
       console.error('Failed to copy prompt:', err)
+      setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: false, success: false } }))
     }
   }
 
@@ -189,8 +197,9 @@ export default function HomePage() {
             <PromptCard 
               key={prompt.id} 
               prompt={prompt} 
-              onCopy={() => handleCopyPrompt(prompt.prompt)}
+              onCopy={handleCopyPrompt}
               onViewDetails={() => handleViewDetails(prompt.id)}
+              copyState={copyStates[prompt.id]}
             />
           ))}
         </div>
@@ -221,7 +230,7 @@ interface PromptCardProps {
   onViewDetails: (promptId: string) => void
 }
 
-function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
+function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProps & { copyState?: { isCopying: boolean; success: boolean } }) {
   const t = useTranslations()
   const getLicenseVariant = (license: string) => {
     switch (license) {
@@ -285,14 +294,21 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
           </div>
         </div>
 
-        <div className="flex gap-2 mt-1 flex-wrap">
+        <div className="flex gap-2 mt-1 flex-wrap relative">
           <Button
             size="sm"
-            className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl flex-1 min-w-0"
-            onClick={() => onCopy(prompt.prompt)}
+            disabled={copyState?.isCopying}
+            className={`transition-all duration-200 rounded-xl flex-1 min-w-0 ${
+              copyState?.success 
+                ? 'bg-green-600 text-white hover:bg-green-700' 
+                : copyState?.isCopying 
+                  ? 'bg-violet-400 text-white cursor-not-allowed' 
+                  : 'bg-violet-600 text-white hover:bg-violet-700'
+            }`}
+            onClick={() => onCopy(prompt.prompt, prompt.id)}
           >
-            <Copy className="w-4 h-4 mr-1" />
-            {t('common.copyPrompt')}
+            <Copy className={`w-4 h-4 mr-1 transition-transform duration-200 ${copyState?.isCopying ? 'animate-pulse' : ''}`} />
+            {copyState?.success ? 'Скопировано!' : copyState?.isCopying ? 'Копирование...' : t('common.copyPrompt')}
           </Button>
           <Button 
             size="sm" 
@@ -302,6 +318,12 @@ function PromptCard({ prompt, onCopy, onViewDetails }: PromptCardProps) {
           >
             {t('common.details')}
           </Button>
+          
+          {copyState?.success && (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-2 py-1 rounded text-xs whitespace-nowrap animate-bounce">
+              ✓ Скопировано!
+            </div>
+          )}
         </div>
       </div>
     </Card>

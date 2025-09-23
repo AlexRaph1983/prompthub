@@ -33,6 +33,8 @@ export default function PromptDetailsPage() {
   const promptViews = typeof rawViews === 'number' ? rawViews : null
   const [myReview, setMyReview] = React.useState<{ rating: number | null; comment: string | null } | null>(null)
   const [similar, setSimilar] = React.useState<Array<{ id: string; cosine: number }>>([])
+  const [copySuccess, setCopySuccess] = React.useState(false)
+  const [isCopying, setIsCopying] = React.useState(false)
 
   const fingerprintRef = React.useRef<string | null>(null)
   const [fingerprintReady, setFingerprintReady] = React.useState(false)
@@ -223,11 +225,16 @@ export default function PromptDetailsPage() {
   }, [isAuthenticated, pendingRating, ratingData?.canRate, ratingData?.myRating, submitRating])
 
   const handleCopyPrompt = async (promptText: string) => {
+    setIsCopying(true)
     try {
       await navigator.clipboard.writeText(promptText)
-      // Можно добавить toast уведомление
+      setCopySuccess(true)
+      // Скрываем уведомление через 2 секунды
+      setTimeout(() => setCopySuccess(false), 2000)
     } catch (err) {
       console.error('Failed to copy prompt:', err)
+    } finally {
+      setIsCopying(false)
     }
   }
 
@@ -317,13 +324,28 @@ export default function PromptDetailsPage() {
                   <div className="bg-gray-50 rounded-lg p-4 font-mono text-sm">
                     {prompt.prompt}
                   </div>
-                  <Button 
-                    onClick={() => handleCopyPrompt(prompt.prompt)}
-                    className="mt-4 bg-violet-600 text-white hover:bg-violet-700"
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    {t('common.copyPrompt')}
-                  </Button>
+                  <div className="mt-4 relative">
+                    <Button 
+                      onClick={() => handleCopyPrompt(prompt.prompt)}
+                      disabled={isCopying}
+                      className={`transition-all duration-200 ${
+                        copySuccess 
+                          ? 'bg-green-600 text-white hover:bg-green-700' 
+                          : isCopying 
+                            ? 'bg-violet-400 text-white cursor-not-allowed' 
+                            : 'bg-violet-600 text-white hover:bg-violet-700'
+                      }`}
+                    >
+                      <Copy className={`w-4 h-4 mr-2 transition-transform duration-200 ${isCopying ? 'animate-pulse' : ''}`} />
+                      {copySuccess ? 'Промпт скопирован!' : isCopying ? 'Копирование...' : t('common.copyPrompt')}
+                    </Button>
+                    
+                    {copySuccess && (
+                      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap animate-bounce">
+                        ✓ Промпт скопирован!
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {prompt.instructions && (
