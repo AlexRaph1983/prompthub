@@ -291,7 +291,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
               className="inline-flex items-center gap-1 text-sm text-gray-500"
             >
               <Eye className="w-3 h-3" />
-              {prompt.viewsCount}
+              {prompt.views}
             </span>
           </div>
         </div>

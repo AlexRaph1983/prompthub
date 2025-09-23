@@ -209,6 +209,7 @@ async function main() {
           tags,
           license: mapLicense(item.license),
           authorId: user.id,
+          views: 0,
         },
       })
     } else {
@@ -240,6 +241,7 @@ async function main() {
           tags,
           license: mapLicense(item.license),
           authorId: user.id,
+          views: 0,
         },
       })
     }
