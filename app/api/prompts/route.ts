@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     console.log('Request body:', body)
-    const { title, description, prompt, model, lang, category, tags, license, instructions, example } = body
+    const { title, description, prompt, model, lang, category, tags, license, example } = body
 
     console.log('Creating prompt with authorId:', user.id)
     const newPrompt = await prisma.prompt.create({

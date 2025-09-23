@@ -15,7 +15,6 @@ export interface Prompt {
   prompt: string
   author: string
   authorId?: string
-  instructions?: string
   example?: string
   createdAt: string
   updatedAt?: string
@@ -32,7 +31,6 @@ export interface PromptFormData {
   tags: string
   license: 'CC-BY' | 'CC0' | 'Custom' | 'Paid'
   prompt: string
-  instructions?: string
   example?: string
 }
 
