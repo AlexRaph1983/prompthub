@@ -11,7 +11,7 @@ export interface Prompt {
   likesCount?: number
   savesCount?: number
   commentsCount?: number
-  license: 'CC-BY' | 'CC0' | 'Custom' | 'Paid'
+  license: 'CC-BY' | 'CC-BY-SA' | 'CC0' | 'Custom' | 'Paid'
   prompt: string
   author: string
   authorId?: string
@@ -30,7 +30,7 @@ export interface PromptFormData {
   category: string
   model: string
   tags: string
-  license: 'CC-BY' | 'CC0' | 'Custom' | 'Paid'
+  license: 'CC-BY' | 'CC-BY-SA' | 'CC0' | 'Custom' | 'Paid'
   prompt: string
   example?: string
 }
