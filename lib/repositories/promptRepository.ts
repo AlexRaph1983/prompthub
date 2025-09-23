@@ -14,7 +14,6 @@ export interface PromptCardDTO {
   likesCount: number
   savesCount: number
   commentsCount: number
-  viewsCount: number
   views: number
   license: 'CC-BY' | 'CC0' | 'Custom' | 'Paid'
   prompt: string
@@ -291,7 +290,6 @@ export class PromptRepository {
         likesCount: (prompt as any)._count?.likes ?? 0,
         savesCount: (prompt as any)._count?.saves ?? 0,
         commentsCount: (prompt as any)._count?.comments ?? 0,
-        viewsCount: viewCounts.get(prompt.id) ?? prompt.views ?? 0,
         views: viewCounts.get(prompt.id) ?? prompt.views ?? 0,
         license: prompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
         prompt: prompt.prompt,
