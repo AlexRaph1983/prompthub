@@ -15,6 +15,7 @@ export interface Prompt {
   prompt: string
   author: string
   authorId?: string
+  instructions?: string
   example?: string
   createdAt: string
   updatedAt?: string
