@@ -31,7 +31,6 @@ export function AddPromptModal() {
     tags: '',
     license: 'CC-BY',
     prompt: '',
-    instructions: '',
     example: '',
   })
 
@@ -76,7 +75,6 @@ export function AddPromptModal() {
           tags: '',
           license: 'CC-BY',
           prompt: '',
-          instructions: '',
           example: '',
         })
         toggleModal()
@@ -137,10 +135,10 @@ export function AddPromptModal() {
               onChange={handleChange} 
             />
             
-            <Input 
+            <Textarea 
               required 
               name="description" 
-              placeholder="Краткое описание" 
+              placeholder="Краткое описание и инструкция по применению" 
               value={formData.description} 
               onChange={handleChange} 
             />
@@ -211,12 +209,6 @@ export function AddPromptModal() {
               onChange={handleChange} 
             />
             
-            <Textarea 
-              name="instructions" 
-              placeholder="Инструкция по применению (опционально)" 
-              value={formData.instructions} 
-              onChange={handleChange} 
-            />
             
             <Button type="submit" className="bg-violet-600 text-white rounded-xl">
               {isAuthenticated ? 'Опубликовать' : 'Войти и опубликовать'}
