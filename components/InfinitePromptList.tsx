@@ -46,6 +46,7 @@ export default function InfinitePromptList({
 }: InfinitePromptListProps) {
   const t = useTranslations()
   const router = useRouter()
+  const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
   
   const {
     data,
@@ -75,8 +76,14 @@ export default function InfinitePromptList({
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
+    setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: true, success: false } }))
     try {
       await navigator.clipboard.writeText(prompt)
+      setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: false, success: true } }))
+      // Скрываем уведомление через 2 секунды
+      setTimeout(() => {
+        setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: false, success: false } }))
+      }, 2000)
       try {
         fetch('/api/interactions', {
           method: 'POST',
@@ -86,6 +93,7 @@ export default function InfinitePromptList({
       } catch {}
     } catch (err) {
       console.error('Failed to copy prompt:', err)
+      setCopyStates(prev => ({ ...prev, [promptId]: { isCopying: false, success: false } }))
     }
   }
 
@@ -187,6 +195,7 @@ export default function InfinitePromptList({
               onCopy={handleCopyPrompt}
               onViewDetails={handleViewDetails}
               locale={locale}
+              copyState={copyStates[prompt.id]}
             />
           ))}
         </div>
@@ -233,9 +242,10 @@ interface PromptCardProps {
   onCopy: (prompt: string, promptId: string) => void
   onViewDetails: (promptId: string) => void
   locale: string
+  copyState?: { isCopying: boolean; success: boolean }
 }
 
-function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) {
+function PromptCard({ prompt, onCopy, onViewDetails, locale, copyState }: PromptCardProps) {
   const t = useTranslations()
   const router = useRouter()
 
@@ -316,14 +326,21 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             </div>
           )}
 
-          <div className="flex gap-2 mt-1">
+          <div className="flex gap-2 mt-1 relative">
             <Button
               size="sm"
-              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl"
+              disabled={copyState?.isCopying}
+              className={`transition-all duration-200 rounded-xl ${
+                copyState?.success 
+                  ? 'bg-green-600 text-white hover:bg-green-700' 
+                  : copyState?.isCopying 
+                    ? 'bg-violet-400 text-white cursor-not-allowed' 
+                    : 'bg-violet-600 text-white hover:bg-violet-700'
+              }`}
               onClick={() => onCopy(prompt.prompt, prompt.id)}
             >
-              <Copy className="w-4 h-4 mr-1" />
-              {t('common.copyPrompt')}
+              <Copy className={`w-4 h-4 mr-1 transition-transform duration-200 ${copyState?.isCopying ? 'animate-pulse' : ''}`} />
+              {copyState?.success ? 'Скопировано!' : copyState?.isCopying ? 'Копирование...' : t('common.copyPrompt')}
             </Button>
             <Button
               size="sm"
@@ -333,6 +350,12 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             >
               {t('common.details')}
             </Button>
+            
+            {copyState?.success && (
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-2 py-1 rounded text-xs whitespace-nowrap animate-bounce">
+                ✓ Скопировано!
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
