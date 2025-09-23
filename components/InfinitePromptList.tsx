@@ -326,11 +326,11 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale, copyState }: Prompt
             </div>
           )}
 
-          <div className="flex gap-2 mt-1 relative">
+          <div className="flex flex-col sm:flex-row gap-2 mt-1 relative">
             <Button
               size="sm"
               disabled={copyState?.isCopying}
-              className={`transition-all duration-200 rounded-xl ${
+              className={`transition-all duration-200 rounded-xl w-full sm:flex-1 ${
                 copyState?.success 
                   ? 'bg-green-600 text-white hover:bg-green-700' 
                   : copyState?.isCopying 
@@ -345,7 +345,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale, copyState }: Prompt
             <Button
               size="sm"
               variant="outline"
-              className="rounded-xl"
+              className="rounded-xl w-full sm:flex-1"
               onClick={() => onViewDetails(prompt.id)}
             >
               {t('common.details')}
