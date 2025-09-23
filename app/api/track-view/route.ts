@@ -180,7 +180,9 @@ export async function POST(req: NextRequest) {
     }
 
     const isAuthor = (session?.user?.id || meta.userId) === prompt.authorId
-    if (isAuthor) {
+    // Исключаем системных пользователей из блокировки SELF_VIEW
+    const isSystemUser = prompt.authorId === 'promptmaster' || prompt.authorId === 'suno-master-001'
+    if (isAuthor && !isSystemUser) {
       await recordPromptViewEvent({
         promptId: cardId,
         userId: session?.user?.id ?? meta.userId,
