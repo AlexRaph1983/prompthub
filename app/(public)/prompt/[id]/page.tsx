@@ -324,7 +324,7 @@ export default function PromptDetailsPage() {
                   <div className="bg-gray-50 rounded-lg p-4 font-mono text-sm">
                     {prompt.prompt}
                   </div>
-                  <div className="mt-4 flex flex-col lg:flex-row gap-6">
+                  <div className="mt-4 flex items-center justify-between">
                     <div className="relative">
                       <Button 
                         onClick={() => handleCopyPrompt(prompt.prompt)}
@@ -347,57 +347,16 @@ export default function PromptDetailsPage() {
                         </div>
                       )}
                     </div>
-
-                    {/* Блок "Подробнее" перенесен сюда */}
-                    <div className="flex-1">
-                      <h3 className="font-semibold mb-4">{t('common.details')}</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <User className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-600 flex items-center gap-2">
-                            {t('prompt.author')} {prompt.author}
-                            {typeof (prompt as any).authorReputationScore === 'number' && (
-                              <UserReputationBadge score={(prompt as any).authorReputationScore} tier={(prompt as any).authorReputationTier || 'bronze'} />
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">{t('prompt.rating')}</span>
-                          <div className="text-sm text-gray-700">
-                            {(ratingData?.average ?? prompt.rating ?? 0).toFixed(1)}
-                            <span className="ml-1 text-gray-500">({ratingData?.count ?? prompt.ratingCount ?? 0})</span>
-                          </div>
-                        </div>
-                        <div className="mt-2">
-                          <ReviewForm
-                            promptId={promptId}
-                            isOwner={isOwner}
-                            existingRating={myReview?.rating ?? ratingData?.myRating ?? null}
-                            existingComment={myReview?.comment ?? null}
-                            locked={Boolean(myReview?.rating ?? ratingData?.myRating)}
-                            onSubmitted={({ average, count, rating, comment }) => {
-                              setMyReview({ rating, comment })
-                              setRatingData(prev => prev ? { ...prev, average, count, myRating: rating, canRate: false } : { average, count, myRating: rating, canRate: false })
-                              dispatch({ type: 'UPDATE_PROMPT_RATING', payload: { promptId, rating: average, ratingCount: count } })
-                            }}
-                          />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">
-                            {t('prompt.created')}: <time suppressHydrationWarning>{new Date(prompt.createdAt).toISOString().slice(0,10)}</time>
-                          </span>
-                        </div>
-                        {promptViews !== null && (
-                          <div className="flex items-center gap-2">
-                            <Eye className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm text-gray-600">
-                              {promptViews} просмотров
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    
+                    {promptViews !== null && (
+                      <span
+                        title="Unique views with anti-fraud protection"
+                        className="inline-flex items-center gap-2 text-sm text-gray-500"
+                      >
+                        <Eye className="w-4 h-4 text-gray-400" />
+                        <span>{promptViews}</span>
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -428,8 +387,50 @@ export default function PromptDetailsPage() {
             </Card>
           </div>
 
-          {/* Боковая панель - только лицензия */}
+          {/* Боковая панель */}
           <div className="space-y-6">
+            <Card className="shadow-md rounded-2xl p-6">
+              <h3 className="font-semibold mb-4">{t('common.details')}</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-600 flex items-center gap-2">
+                    {t('prompt.author')} {prompt.author}
+                    {typeof (prompt as any).authorReputationScore === 'number' && (
+                      <UserReputationBadge score={(prompt as any).authorReputationScore} tier={(prompt as any).authorReputationTier || 'bronze'} />
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">{t('prompt.rating')}</span>
+                  <div className="text-sm text-gray-700">
+                    {(ratingData?.average ?? prompt.rating ?? 0).toFixed(1)}
+                    <span className="ml-1 text-gray-500">({ratingData?.count ?? prompt.ratingCount ?? 0})</span>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <ReviewForm
+                    promptId={promptId}
+                    isOwner={isOwner}
+                    existingRating={myReview?.rating ?? ratingData?.myRating ?? null}
+                    existingComment={myReview?.comment ?? null}
+                    locked={Boolean(myReview?.rating ?? ratingData?.myRating)}
+                    onSubmitted={({ average, count, rating, comment }) => {
+                      setMyReview({ rating, comment })
+                      setRatingData(prev => prev ? { ...prev, average, count, myRating: rating, canRate: false } : { average, count, myRating: rating, canRate: false })
+                      dispatch({ type: 'UPDATE_PROMPT_RATING', payload: { promptId, rating: average, ratingCount: count } })
+                    }}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">
+                    {t('prompt.created')}: <time suppressHydrationWarning>{new Date(prompt.createdAt).toISOString().slice(0,10)}</time>
+                  </span>
+                </div>
+              </div>
+            </Card>
+
             <Card className="shadow-md rounded-2xl p-6">
               <h3 className="font-semibold mb-4">{t('common.license')}</h3>
               <Badge variant={getLicenseVariant(prompt.license)} className="text-sm">
