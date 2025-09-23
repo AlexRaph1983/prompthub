@@ -285,10 +285,10 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             </div>
           )}
 
-          <div className="flex gap-2 mt-1">
+          <div className="flex flex-col sm:flex-row gap-2 mt-1">
             <Button
               size="sm"
-              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl"
+              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl w-full sm:flex-1"
               onClick={() => onCopy(prompt.prompt, prompt.id)}
             >
               <Copy className="w-4 h-4 mr-1" />
@@ -297,7 +297,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             <Button
               size="sm"
               variant="outline"
-              className="rounded-xl"
+              className="rounded-xl w-full sm:flex-1"
               onClick={() => onViewDetails(prompt.id)}
             >
               {t('common.details')}
