@@ -16,14 +16,25 @@ const globalForRedis = globalThis as unknown as {
 const lazyRedis = async () => {
   if (globalForRedis.__promptHubRedis) return globalForRedis.__promptHubRedis
 
-  if (process.env.NODE_ENV === 'test') {
-    const redisMockModule = optionalRequire<any>('ioredis-mock')
-    if (!redisMockModule) {
-      throw new Error('ioredis-mock is required for test environment but not installed')
+  // В development всегда используем mock
+  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+    console.log('Initializing Redis mock for development...')
+    try {
+      const redisMockModule = optionalRequire<any>('ioredis-mock')
+      if (!redisMockModule) {
+        console.error('ioredis-mock not found')
+        throw new Error('ioredis-mock is required for test/development environment but not installed')
+      }
+      console.log('ioredis-mock module found')
+      const mock = new redisMockModule.default()
+      console.log('Redis mock created')
+      globalForRedis.__promptHubRedis = mock as unknown as Redis
+      console.log('Redis mock stored globally')
+      return globalForRedis.__promptHubRedis
+    } catch (error) {
+      console.error('Failed to initialize Redis mock:', error)
+      throw error
     }
-    const mock = new redisMockModule.default()
-    globalForRedis.__promptHubRedis = mock as unknown as Redis
-    return globalForRedis.__promptHubRedis
   }
 
   const url = process.env.REDIS_URL

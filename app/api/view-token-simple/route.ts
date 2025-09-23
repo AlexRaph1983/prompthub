@@ -9,7 +9,7 @@ const requestSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('View-token API called')
+    console.log('Simple view-token API called')
     const json = await req.json().catch(() => null)
     if (!json) {
       return NextResponse.json({ error: 'INVALID_PAYLOAD' }, { status: 400 })
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       expiresIn: 600, // 10 минут
     })
   } catch (error) {
-    console.error('View-token API error:', error)
+    console.error('Simple view-token API error:', error)
     return NextResponse.json({ error: 'INTERNAL_ERROR' }, { status: 500 })
   }
 }
