@@ -226,7 +226,7 @@ interface PromptCardProps {
     views?: number
     isRecommended?: boolean
   }
-  onCopy: (prompt: string) => void
+  onCopy: (prompt: string, promptId: string) => void
   onViewDetails: (promptId: string) => void
 }
 
