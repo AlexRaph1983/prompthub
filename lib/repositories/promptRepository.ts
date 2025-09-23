@@ -245,8 +245,7 @@ export class PromptRepository {
     const promptIds = items.map(p => p.id)
     const viewCounts = await this.getViewCounts(promptIds)
 
-    // Кэш для репутации авторов
-    const authorCache = new Map<string, { score: number; tier: 'bronze' | 'silver' | 'gold' | 'platinum' }>()
+    // Кэш для репутации авторов больше не нужен - используем кэшированные значения из БД
 
     // Преобразуем в DTO
     const formattedPrompts = await Promise.all(items.map(async (prompt: any) => {
@@ -254,28 +253,12 @@ export class PromptRepository {
       const avg = prompt.averageRating || 0
       const ratingCount = prompt.totalRatings || 0
 
-      // Получаем или рассчитываем репутацию автора
-      let authorScore = prompt.author?.reputationScore || 0
-      let authorTier: 'bronze' | 'silver' | 'gold' | 'platinum' = 'bronze'
-      
-      if (authorCache.has(prompt.authorId)) {
-        const cached = authorCache.get(prompt.authorId)!
-        authorScore = cached.score
-        authorTier = cached.tier
-      } else {
-        // Рассчитываем репутацию на лету
-        const breakdown = calculateReputation({
-          avgPromptRating: avg,
-          ratingsCount: ratingCount,
-          promptCount: prompt.author?.reputationPromptCount || 0,
-          likesCount: (prompt as any)._count?.likes ?? 0,
-          savesCount: (prompt as any)._count?.saves ?? 0,
-          commentsCount: (prompt as any)._count?.comments ?? 0,
-        })
-        authorScore = breakdown.score0to100
-        authorTier = breakdown.tier
-        authorCache.set(prompt.authorId, { score: authorScore, tier: authorTier })
-      }
+      // Используем кэшированную репутацию автора из БД
+      const authorScore = prompt.author?.reputationScore || 0
+      const authorTier: 'bronze' | 'silver' | 'gold' | 'platinum' = 
+        authorScore >= 85 ? 'platinum' : 
+        authorScore >= 65 ? 'gold' : 
+        authorScore >= 40 ? 'silver' : 'bronze'
 
       return {
         id: prompt.id,
