@@ -85,9 +85,9 @@ export async function POST(request: NextRequest) {
     Promise.resolve(recomputeAllPromptVectors()).catch(() => {})
 
     // Преобразуем в формат интерфейса
-    const ratings: number[] = (newPrompt.ratings || []).map((r: any) => r.value)
-    const ratingCount = ratings.length
-    const avg = ratingCount ? Number((ratings.reduce((a, b) => a + b, 0) / ratingCount).toFixed(1)) : 0
+    // Используем кэшированные значения рейтинга из БД
+    const avg = newPrompt.averageRating || 0
+    const ratingCount = newPrompt.totalRatings || 0
 
     const formattedPrompt = {
       id: newPrompt.id,

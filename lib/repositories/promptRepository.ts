@@ -250,9 +250,9 @@ export class PromptRepository {
 
     // Преобразуем в DTO
     const formattedPrompts = await Promise.all(items.map(async (prompt: any) => {
-      const ratings: number[] = (prompt.ratings || []).map((r: any) => r.value)
-      const ratingCount = ratings.length
-      const avg = ratingCount ? Number((ratings.reduce((a, b) => a + b, 0) / ratingCount).toFixed(1)) : 0
+      // Используем кэшированные значения рейтинга из БД
+      const avg = prompt.averageRating || 0
+      const ratingCount = prompt.totalRatings || 0
 
       // Получаем или рассчитываем репутацию автора
       let authorScore = prompt.author?.reputationScore || 0

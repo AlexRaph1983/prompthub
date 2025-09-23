@@ -18,13 +18,20 @@ export async function GET(request: NextRequest) {
     })
     console.log('GET /api/ratings - prompt found:', !!prompt, 'authorId:', prompt?.authorId)
 
-    const [count, agg, my] = await Promise.all([
-      prisma.rating.count({ where: { promptId } }),
-      prisma.rating.aggregate({ where: { promptId }, _avg: { value: true } }),
+    // Получаем кэшированные значения рейтинга из БД
+    const promptWithRating = await prisma.prompt.findUnique({ 
+      where: { id: promptId }, 
+      select: { averageRating: true, totalRatings: true } 
+    })
+    
+    const [my] = await Promise.all([
       session?.user?.id
         ? prisma.rating.findUnique({ where: { userId_promptId: { userId: session.user.id, promptId } } })
         : Promise.resolve(null),
     ])
+    
+    const count = promptWithRating?.totalRatings || 0
+    const average = promptWithRating?.averageRating || 0
 
     // Правило: оценка ставится один раз
     // - Неавторизован: canRate = true (UI попросит войти)
@@ -56,7 +63,7 @@ export async function GET(request: NextRequest) {
 
     console.log('GET /api/ratings - result:', { 
       count, 
-      average: agg._avg.value, 
+      average, 
       myRating: my?.value, 
       canRate,
       reason,
@@ -65,7 +72,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       promptId,
-      average: Number((agg._avg.value || 0).toFixed(1)),
+      average: Number(average.toFixed(1)),
       count,
       myRating: my?.value ?? null,
       canRate,
@@ -163,14 +170,15 @@ export async function POST(request: NextRequest) {
 
     if (existingRating) {
       console.log('POST /api/ratings - user already rated this prompt:', existingRating.value)
-      const [count, agg] = await Promise.all([
-        prisma.rating.count({ where: { promptId } }),
-        prisma.rating.aggregate({ where: { promptId }, _avg: { value: true } }),
-      ])
+      // Получаем кэшированные значения рейтинга из БД
+      const promptWithRating = await prisma.prompt.findUnique({ 
+        where: { id: promptId }, 
+        select: { averageRating: true, totalRatings: true } 
+      })
       return NextResponse.json({
         promptId,
-        average: Number((agg._avg.value || 0).toFixed(1)),
-        count,
+        average: Number((promptWithRating?.averageRating || 0).toFixed(1)),
+        count: promptWithRating?.totalRatings || 0,
         myRating: existingRating.value,
         canRate: false,
       }, { status: 409 })
@@ -196,6 +204,13 @@ export async function POST(request: NextRequest) {
 
     console.log('POST /api/ratings - rating created successfully:', { count, average: agg._avg.value, myRating: my?.value })
 
+    // Обновляем кэшированные значения рейтинга в БД
+    const average = Number((agg._avg.value || 0).toFixed(1))
+    await prisma.prompt.update({
+      where: { id: promptId },
+      data: { averageRating: average, totalRatings: count }
+    })
+
     // Запускаем асинхронный пересчет репутации автора (не блокируя ответ)
     if (typeof updateUserReputation === 'function') {
       Promise.resolve(updateUserReputation(prompt.authorId)).catch(() => {})
@@ -203,8 +218,8 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         promptId,
-        average: Number((agg._avg.value || 0).toFixed(1)),
-        count,
+        average: average,
+        count: count,
         myRating: my?.value ?? null,
         // После выставления оценку менять нельзя
         canRate: false,
