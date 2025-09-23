@@ -10,11 +10,16 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  // Позволяет работать без жёстко заданного NEXTAUTH_URL за прокси/на кастомном домене
+  trustHost: true,
+  // Безопасные куки на проде
+  useSecureCookies: process.env.NODE_ENV === 'production',
   session: {
     strategy: "jwt",
   },
   pages: {
     signIn: "/ru/auth/signin",
+    error: "/ru/auth/error",
   },
   callbacks: {
     async session({ session, token }) {

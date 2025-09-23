@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
       const pop = computePromptPopularity({ _count: p._count as any, totalRatings: p.totalRatings, averageRating: p.averageRating } as any)
       const popNorm = normalizePopularity(popularityValues, pop)
       const score = finalRankingScore({ cosine, popularityNorm: popNorm, bayesian: bayes })
-      return { id: p.id, score, prompt: { ...p, views: viewTotals.get(p.id) ?? (p as any).views ?? 0, viewsCount: viewTotals.get(p.id) ?? (p as any).views ?? 0 } }
+      return { id: p.id, score, prompt: { ...p, views: viewTotals.get(p.id) ?? (p as any).views ?? 0 } }
     })
 
     scored.sort((a, b) => b.score - a.score)

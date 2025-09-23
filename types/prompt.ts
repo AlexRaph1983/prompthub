@@ -21,7 +21,6 @@ export interface Prompt {
   updatedAt?: string
   myRating?: number
   views?: number
-  viewsCount?: number
 }
 
 export interface PromptFormData {

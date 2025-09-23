@@ -108,9 +108,7 @@ export default function HomePage() {
          if (!ignore) {
            // Извлекаем данные промптов из ответа API
            const prompts = (data || []).slice(0, 6).map((item: any) => {
-            const viewsRaw = typeof item.prompt?.views === 'number'
-              ? item.prompt.views
-              : ((item.prompt as any)?.viewsCount ?? 0)
+            const viewsRaw = typeof item.prompt?.views === 'number' ? item.prompt.views : 0
             const likesCount = (item.prompt as any)?._count?.likes ?? 0
 
             return ({
@@ -129,7 +127,6 @@ export default function HomePage() {
               score: item.score,
               likesCount,
               views: viewsRaw,
-              viewsCount: viewsRaw,
             })
            })
           console.log('Processed recommended prompts:', prompts)
@@ -218,7 +215,6 @@ interface PromptCardProps {
     authorId?: string
     likesCount?: number
     views?: number
-    viewsCount?: number
     isRecommended?: boolean
   }
   onCopy: (prompt: string) => void

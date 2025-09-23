@@ -60,7 +60,7 @@ function promptReducer(state: PromptState, action: PromptAction): PromptState {
       const { promptId, views } = action.payload
       return {
         ...state,
-        prompts: state.prompts.map(p => p.id === promptId ? { ...p, views, viewsCount: views } : p),
+        prompts: state.prompts.map(p => p.id === promptId ? { ...p, views } : p),
       }
     }
     case 'TOGGLE_MODAL':
@@ -112,12 +112,8 @@ export function PromptProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
 
   const normalizePromptViews = (prompt: any) => {
-    const value = typeof prompt?.views === 'number'
-      ? prompt.views
-      : typeof prompt?.viewsCount === 'number'
-        ? prompt.viewsCount
-        : 0
-    return { ...prompt, views: value, viewsCount: value }
+    const value = typeof prompt?.views === 'number' ? prompt.views : 0
+    return { ...prompt, views: value }
   }
 
   const loadPrompts = async () => {

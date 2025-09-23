@@ -211,7 +211,7 @@ interface PromptCardProps {
 function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) {
   const t = useTranslations()
   const router = useRouter()
-  const rawViews = (prompt as any).views ?? (prompt as any).viewsCount
+  const rawViews = (prompt as any).views
   const views = typeof rawViews === 'number' ? rawViews : null
 
   return (
