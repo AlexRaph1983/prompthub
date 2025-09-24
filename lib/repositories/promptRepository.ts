@@ -273,7 +273,7 @@ export class PromptRepository {
         likesCount: (prompt as any)._count?.likes ?? 0,
         savesCount: (prompt as any)._count?.saves ?? 0,
         commentsCount: (prompt as any)._count?.comments ?? 0,
-        views: viewCounts.get(prompt.id) ?? prompt.views ?? 0,
+        views: Math.max(viewCounts.get(prompt.id) ?? 0, prompt.views ?? 0),
         license: prompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
         prompt: prompt.prompt,
         author: prompt.author?.name || 'Anonymous',

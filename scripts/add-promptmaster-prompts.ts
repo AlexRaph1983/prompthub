@@ -229,6 +229,7 @@ async function main() {
           tags,
           license: mapLicense(item.license),
           updatedAt: new Date(),
+          // НЕ обновляем views - сохраняем существующие просмотры!
         },
         create: {
           // Let DB generate unique id (cuid)
