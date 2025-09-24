@@ -67,40 +67,73 @@ export class PromptRepository {
     
     if (promptIds.length === 0) return viewTotals
 
-    // Сначала пытаемся получить из viewAnalytics
-    const aggregates = await prisma.viewAnalytics.groupBy({
-      by: ['promptId'],
-      where: { promptId: { in: promptIds } },
-      _sum: { countedViews: true },
+    // ПРИОРИТЕТ 1: Читаем основное поле prompt.views (обновляется track-view API)
+    const promptViews = await prisma.prompt.findMany({
+      where: { id: { in: promptIds } },
+      select: { id: true, views: true }
     })
     
-    for (const row of aggregates) {
-      viewTotals.set(row.promptId, row._sum.countedViews ?? 0)
-    }
-
-    // Fallback к promptViewEvent для недостающих
-    const missingViewIds = promptIds.filter((id) => !viewTotals.has(id))
-    if (missingViewIds.length) {
-      const fallback = await prisma.promptViewEvent.groupBy({
-        by: ['promptId'],
-        where: { promptId: { in: missingViewIds }, isCounted: true },
-        _count: { _all: true },
-      })
-      for (const row of fallback) {
-        viewTotals.set(row.promptId, row._count._all ?? 0)
+    for (const prompt of promptViews) {
+      if (prompt.views > 0) {
+        viewTotals.set(prompt.id, prompt.views)
       }
     }
 
-    // Final fallback к promptInteraction
-    const interactionIds = promptIds.filter((id) => !viewTotals.has(id))
-    if (interactionIds.length) {
-      const interactionFallback = await prisma.promptInteraction.groupBy({
+    // ПРИОРИТЕТ 2: Fallback к viewAnalytics для промптов с 0 views
+    const missingIds = promptIds.filter((id) => !viewTotals.has(id))
+    if (missingIds.length > 0) {
+      const aggregates = await prisma.viewAnalytics.groupBy({
         by: ['promptId'],
-        where: { promptId: { in: interactionIds }, type: { in: ['view', 'open'] } },
+        where: { promptId: { in: missingIds } },
+        _sum: { countedViews: true },
+      })
+      
+      for (const row of aggregates) {
+        const count = row._sum.countedViews ?? 0
+        if (count > 0) {
+          viewTotals.set(row.promptId, count)
+        }
+      }
+    }
+
+    // ПРИОРИТЕТ 3: Fallback к promptViewEvent 
+    const stillMissingIds = promptIds.filter((id) => !viewTotals.has(id))
+    if (stillMissingIds.length > 0) {
+      const fallback = await prisma.promptViewEvent.groupBy({
+        by: ['promptId'],
+        where: { promptId: { in: stillMissingIds }, isCounted: true },
         _count: { _all: true },
       })
+      
+      for (const row of fallback) {
+        const count = row._count._all ?? 0
+        if (count > 0) {
+          viewTotals.set(row.promptId, count)
+        }
+      }
+    }
+
+    // ПРИОРИТЕТ 4: Final fallback к promptInteraction
+    const finalMissingIds = promptIds.filter((id) => !viewTotals.has(id))
+    if (finalMissingIds.length > 0) {
+      const interactionFallback = await prisma.promptInteraction.groupBy({
+        by: ['promptId'],
+        where: { promptId: { in: finalMissingIds }, type: { in: ['view', 'open'] } },
+        _count: { _all: true },
+      })
+      
       for (const row of interactionFallback) {
-        viewTotals.set(row.promptId, row._count._all ?? 0)
+        const count = row._count._all ?? 0
+        if (count > 0) {
+          viewTotals.set(row.promptId, count)
+        }
+      }
+    }
+
+    // Для промптов без просмотров устанавливаем 0
+    for (const promptId of promptIds) {
+      if (!viewTotals.has(promptId)) {
+        viewTotals.set(promptId, 0)
       }
     }
 
@@ -273,7 +306,7 @@ export class PromptRepository {
         likesCount: (prompt as any)._count?.likes ?? 0,
         savesCount: (prompt as any)._count?.saves ?? 0,
         commentsCount: (prompt as any)._count?.comments ?? 0,
-        views: Math.max(viewCounts.get(prompt.id) ?? 0, prompt.views ?? 0),
+        views: viewCounts.get(prompt.id) ?? 0,
         license: prompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
         prompt: prompt.prompt,
         author: prompt.author?.name || 'Anonymous',

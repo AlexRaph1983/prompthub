@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { onViewsUpdated } from '@/lib/viewsIntegration'
 
 const requestSchema = z.object({
   cardId: z.string().min(1),
@@ -44,6 +45,11 @@ export async function POST(req: NextRequest) {
     })
 
     console.log('Views incremented to:', updated.views)
+
+    // Интеграция с системой рейтингов и рекомендаций
+    Promise.resolve(onViewsUpdated(cardId, updated.views)).catch(error => {
+      console.error('Views integration failed:', error)
+    })
 
     return NextResponse.json({
       counted: true,
