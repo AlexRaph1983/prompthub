@@ -1,33 +1,18 @@
-Param(
-  [string]$Server = "83.166.244.71",
-  [string]$User = "root",
-  [int]$Port = 22
-)
+# Скрипт деплоя на сервер
+Write-Host "🚀 Начинаем деплой на сервер..." -ForegroundColor Green
 
-$ErrorActionPreference = "Stop"
+# Команда для выполнения на сервере согласно правилам workspace
+$deployCommand = "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
 
-function Invoke-RemoteCommand {
-  param([string]$Cmd)
-  $target = "$User@$Server"
-  & ssh -o StrictHostKeyChecking=no -p $Port $target bash -lc $Cmd
-}
+Write-Host "📋 Команда для выполнения на сервере:" -ForegroundColor Yellow
+Write-Host $deployCommand -ForegroundColor Cyan
 
-$snapshotCmd = 'SNAP=/root/backup_prompthub_$(date +%Y%m%d-%H%M%S); mkdir -p "$SNAP"; cd /root; tar -czf "$SNAP/prompthub.tgz" prompthub || true; if [ -f /root/prompthub/prisma/dev.db ]; then cp /root/prompthub/prisma/dev.db "$SNAP/dev.db"; fi; echo Snapshot: $SNAP'
-Write-Host "Creating remote snapshot..." -ForegroundColor Cyan
-Invoke-RemoteCommand $snapshotCmd
+Write-Host "`n🔧 Выполните эту команду на сервере:" -ForegroundColor Green
+Write-Host "1. Подключитесь к серверу по SSH" -ForegroundColor White
+Write-Host "2. Выполните команду:" -ForegroundColor White
+Write-Host "   $deployCommand" -ForegroundColor Cyan
 
-$deployCmd = 'cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh'
-Write-Host "Deploying per workspace rules..." -ForegroundColor Green
-Invoke-RemoteCommand $deployCmd
+Write-Host "`n📝 Альтернативно, если у вас есть SSH доступ из PowerShell:" -ForegroundColor Yellow
+Write-Host "ssh user@server '$deployCommand'" -ForegroundColor Cyan
 
-Write-Host "Health check" -ForegroundColor Green
-try {
-  $resp = Invoke-WebRequest -Uri ("http://" + $Server + "/api/health") -UseBasicParsing -TimeoutSec 15
-  Write-Host ("Health: " + $resp.StatusCode + " " + $resp.Content)
-} catch {
-  Write-Host ("Health check failed: " + $_.Exception.Message) -ForegroundColor Yellow
-}
-
-Write-Host "PM2 last logs" -ForegroundColor Green
-$logsCmd = 'pm2 logs prompthub --lines 50 --nostream || true'
-Invoke-RemoteCommand $logsCmd
+Write-Host "`n✅ После выполнения команды новые промпты будут доступны на продакшн сайте!" -ForegroundColor Green
