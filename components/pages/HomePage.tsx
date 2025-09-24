@@ -24,6 +24,20 @@ export default function HomePage() {
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
   const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
 
+  // Восстанавливаем позицию скролла при возврате на страницу
+  React.useEffect(() => {
+    if (!mounted) return
+    
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition')
+    if (savedScrollPosition) {
+      // Небольшая задержка для завершения рендеринга
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScrollPosition, 10))
+        sessionStorage.removeItem('scrollPosition')
+      }, 100)
+    }
+  }, [mounted])
+
   // синхронизация строки поиска со стором
   React.useEffect(() => {
     dispatch({ type: 'SET_SEARCH_QUERY', payload: debouncedValue })
@@ -58,8 +72,9 @@ export default function HomePage() {
         body: JSON.stringify({ type: 'open', promptId }) 
       }) 
     } catch {}
-    // Сбрасываем позицию скролла при переходе
-    window.scrollTo(0, 0)
+    // Сохраняем текущую позицию скролла для возврата
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
+    sessionStorage.setItem('scrollPosition', scrollPosition.toString())
     router.push(`/prompt/${promptId}`)
   }
 

@@ -238,6 +238,19 @@ export default function PromptDetailsPage() {
     }
   }
 
+  const handleGoBack = () => {
+    router.back()
+    // Восстанавливаем позицию скролла после перехода
+    setTimeout(() => {
+      const savedScrollPosition = sessionStorage.getItem('scrollPosition')
+      if (savedScrollPosition) {
+        window.scrollTo(0, parseInt(savedScrollPosition, 10))
+        // Очищаем сохраненную позицию
+        sessionStorage.removeItem('scrollPosition')
+      }
+    }, 100) // Небольшая задержка для завершения навигации
+  }
+
   const handleViewDetails = (promptId: string) => {
     router.push(`/prompt/${promptId}`)
   }
@@ -274,7 +287,7 @@ export default function PromptDetailsPage() {
         <div className="mx-auto max-w-4xl px-4 py-8">
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">{t('common.notFound')}</p>
-            <Button onClick={() => router.back()} className="mt-4">
+            <Button onClick={handleGoBack} className="mt-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               {t('common.back')}
             </Button>
@@ -288,7 +301,7 @@ export default function PromptDetailsPage() {
     <main className="bg-gray-50 min-h-screen pb-12">
       <div className="mx-auto max-w-4xl px-4 py-8">
         <Button 
-          onClick={() => router.back()} 
+          onClick={handleGoBack} 
           variant="ghost" 
           className="mb-6"
         >
@@ -324,12 +337,15 @@ export default function PromptDetailsPage() {
                   <div className="bg-gray-50 rounded-lg p-4 font-mono text-sm">
                     {prompt.prompt}
                   </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="relative">
+                  
+                  {/* Адаптивные кнопки действий */}
+                  <div className="mt-4">
+                    <div className="flex flex-col sm:flex-row gap-2 mb-4">
                       <Button 
                         onClick={() => handleCopyPrompt(prompt.prompt)}
                         disabled={isCopying}
-                        className={`transition-all duration-200 ${
+                        size="sm"
+                        className={`transition-all duration-200 rounded-xl w-full sm:flex-1 ${
                           copySuccess 
                             ? 'bg-green-600 text-white hover:bg-green-700' 
                             : isCopying 
@@ -337,25 +353,31 @@ export default function PromptDetailsPage() {
                               : 'bg-violet-600 text-white hover:bg-violet-700'
                         }`}
                       >
-                        <Copy className={`w-4 h-4 mr-2 transition-transform duration-200 ${isCopying ? 'animate-pulse' : ''}`} />
-                        {copySuccess ? 'Промпт скопирован!' : isCopying ? 'Копирование...' : t('common.copyPrompt')}
+                        <Copy className={`w-4 h-4 mr-1 transition-transform duration-200 ${isCopying ? 'animate-pulse' : ''}`} />
+                        {copySuccess ? 'Скопировано!' : isCopying ? 'Копирование...' : t('common.copyPrompt')}
                       </Button>
                       
-                      {copySuccess && (
-                        <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap animate-bounce">
-                          ✓ Промпт скопирован!
-                        </div>
-                      )}
+                      <Button 
+                        onClick={handleGoBack}
+                        size="sm" 
+                        variant="outline" 
+                        className="rounded-xl w-full sm:flex-1"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-1" />
+                        {t('common.back')}
+                      </Button>
                     </div>
                     
                     {promptViews !== null && (
-                      <span
-                        title="Unique views with anti-fraud protection"
-                        className="inline-flex items-center gap-2 text-sm text-gray-500"
-                      >
-                        <Eye className="w-4 h-4 text-gray-400" />
-                        <span>{promptViews}</span>
-                      </span>
+                      <div className="flex justify-end">
+                        <span
+                          title="Unique views with anti-fraud protection"
+                          className="inline-flex items-center gap-2 text-sm text-gray-500"
+                        >
+                          <Eye className="w-4 h-4 text-gray-400" />
+                          <span>{promptViews}</span>
+                        </span>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -509,10 +531,10 @@ export default function PromptDetailsPage() {
                             >{p.author}</button></span>
                           </div>
 
-                          <div className="flex gap-2 mt-4">
+                          <div className="flex flex-col sm:flex-row gap-2 mt-4">
                             <Button
                               size="sm"
-                              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl"
+                              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl w-full sm:flex-1"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleCopyPrompt(p.prompt)
@@ -524,7 +546,7 @@ export default function PromptDetailsPage() {
                             <Button 
                               size="sm" 
                               variant="outline" 
-                              className="rounded-xl"
+                              className="rounded-xl w-full sm:flex-1"
                               onClick={(e) => {
                                 e.stopPropagation()
                                 handleViewDetails(p.id)
