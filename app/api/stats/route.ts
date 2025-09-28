@@ -9,11 +9,6 @@ let statsCache: {
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 минут
 
-// Функция для принудительного обновления кэша
-export function clearStatsCache() {
-  statsCache = null;
-}
-
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
