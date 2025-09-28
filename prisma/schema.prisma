@@ -27,6 +27,7 @@ model User {
   saves     Save[]
   comments  Comment[]
   preferences UserPreference?
+  adminUser AdminUser?
 
   // Profile fields
   bio       String?  // Описание профиля
@@ -221,5 +222,37 @@ model ViewAnalytics {
   @@unique([promptId, date])
   @@index([date])
   @@index([promptId, date])
+}
+
+/// Отслеживание поисковых запросов пользователей для аналитики
+model SearchQuery {
+  id          String   @id @default(cuid())
+  query       String   // Поисковый запрос
+  userId      String?  // ID пользователя (если авторизован)
+  ipHash      String?  // Хэш IP для анонимных пользователей
+  userAgent   String?  // User Agent для анализа
+  resultsCount Int     @default(0) // Количество найденных результатов
+  clickedResult String? // ID промпта, на который кликнули (если есть)
+  sessionId   String?  // ID сессии для группировки запросов
+  createdAt   DateTime @default(now())
+
+  @@index([query, createdAt])
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
+/// Расширение модели User для админских функций
+model AdminUser {
+  id          String   @id @default(cuid())
+  userId      String   @unique // Связь с основной моделью User
+  role        String   @default("admin") // admin, moderator, super_admin
+  permissions Json     // JSON с разрешениями
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?  // Кто создал этого админа
+  
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@index([role])
 }
 

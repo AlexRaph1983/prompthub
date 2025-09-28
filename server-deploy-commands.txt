@@ -1,0 +1,90 @@
+#!/bin/bash
+# Команды для деплоя админ-панели на сервере
+# Выполните эти команды по порядку на сервере
+
+cd /root/prompthub
+
+# Создаем бэкап
+echo "💾 Creating backup..."
+cp -r /root/prompthub /root/prompthub_backup_$(date +%Y%m%d_%H%M%S)
+
+# Останавливаем приложение
+echo "⏹️ Stopping application..."
+pm2 stop all
+
+# Обновляем код
+echo "📥 Updating code..."
+git fetch origin
+git reset --hard origin/main
+
+# Исправляем зависимости
+echo "🔧 Installing dependencies..."
+rm -rf node_modules package-lock.json
+npm install
+
+# Обновляем базу данных
+echo "🗄️ Updating database..."
+npx prisma db push
+npx prisma generate
+
+# Настраиваем админский доступ
+echo "🔐 Setting up admin access..."
+cat > .env.local << 'EOF'
+ADMIN_EMAIL=your-email@gmail.com
+ADMIN_API_KEY=admin-secret-key-123
+EOF
+
+# Собираем приложение
+echo "🏗️ Building application..."
+npm run build
+
+# Проверяем сборку и запускаем
+if [ -f ".next/BUILD_ID" ]; then
+    echo "✅ Build successful!"
+    
+    echo "🚀 Starting application..."
+    pm2 start all
+    pm2 save
+    
+    sleep 10
+    
+    echo "📊 Application status:"
+    pm2 status
+    
+    echo "🌐 Testing site:"
+    curl -s -o /dev/null -w "HTTP %{http_code}" http://localhost:3000
+    echo ""
+    
+    echo "🎉 DEPLOYMENT SUCCESSFUL!"
+    echo "✅ Site: http://83.166.244.71:3000"
+    echo "✅ Admin Panel: http://83.166.244.71:3000/admin"
+    echo ""
+    echo "📋 NEXT STEPS:"
+    echo "1. Edit .env.local file:"
+    echo "   nano .env.local"
+    echo "   Replace 'your-email@gmail.com' with your real Gmail"
+    echo "2. Restart application: pm2 restart all"
+    echo "3. Login to site with Google OAuth"
+    echo "4. Go to /admin to use admin panel!"
+    
+else
+    echo "❌ Build failed! Rolling back..."
+    LATEST_BACKUP=$(ls -td /root/prompthub_backup_* | head -1)
+    if [ -n "$LATEST_BACKUP" ]; then
+        echo "📦 Restoring from: $LATEST_BACKUP"
+        rm -rf /root/prompthub
+        mv "$LATEST_BACKUP" /root/prompthub
+        cd /root/prompthub
+        pm2 start all
+        echo "✅ Rollback completed"
+    fi
+fi
+
+echo ""
+echo "🔍 FINAL CHECK:"
+echo "PM2 Status:"
+pm2 status
+echo ""
+echo "External access test:"
+curl -s -o /dev/null -w "HTTP %{http_code} - " http://83.166.244.71:3000 && echo "Site working"
+curl -s -o /dev/null -w "HTTP %{http_code} - " http://83.166.244.71:3000/admin && echo "Admin panel accessible"

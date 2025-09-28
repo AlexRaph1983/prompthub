@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Copy, Star, Eye } from 'lucide-react'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
+import { useSearchTracking } from '@/hooks/useSearchTracking'
 
 interface Prompt {
   id: string
@@ -76,6 +77,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
   const t = useTranslations()
   const router = useRouter()
   const [searchValue, setSearchValue] = React.useState('')
+  const { trackSearch, trackClick } = useSearchTracking()
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -104,6 +106,12 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
         body: JSON.stringify({ type: 'open', promptId })
       })
     } catch {}
+    
+    // Отслеживаем клик, если есть поисковый запрос
+    if (searchValue.trim()) {
+      trackClick(searchValue, filteredPrompts.length, promptId)
+    }
+    
     // Сбрасываем позицию скролла при переходе
     window.scrollTo(0, 0)
     router.push(`/prompt/${promptId}`)
@@ -113,12 +121,19 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
   const filteredPrompts = React.useMemo(() => {
     if (!searchValue) return prompts
     const searchLower = searchValue.toLowerCase()
-    return prompts.filter(prompt =>
+    const filtered = prompts.filter(prompt =>
       prompt.title.toLowerCase().includes(searchLower) ||
       prompt.description.toLowerCase().includes(searchLower) ||
       prompt.tags.some((tag: string) => tag.toLowerCase().includes(searchLower))
     )
-  }, [prompts, searchValue])
+    
+    // Отслеживаем поисковый запрос
+    if (searchValue.trim()) {
+      trackSearch(searchValue, filtered.length)
+    }
+    
+    return filtered
+  }, [prompts, searchValue, trackSearch])
 
   return (
     <main className="bg-gray-50 min-h-screen pb-12">

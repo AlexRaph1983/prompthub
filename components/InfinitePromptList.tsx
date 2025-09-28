@@ -187,7 +187,7 @@ export default function InfinitePromptList({
         )}
 
         {/* Список промптов */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {allPrompts.map((prompt) => (
             <PromptCard
               key={prompt.id}
