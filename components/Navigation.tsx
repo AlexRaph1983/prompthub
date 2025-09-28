@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown, LogOut, User, FileText, Plus, Trophy } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
+import { ActivityCounterDropdown } from '@/components/ActivityCounterDropdown'
 
 export function Navigation() {
   const { session, isAuthenticated, isLoading, signIn, signOut } = useAuth()
@@ -67,6 +68,7 @@ export function Navigation() {
           
           <div className="flex items-center space-x-3">
             <LocaleSwitcher currentLocale={currentLocale} />
+            <ActivityCounterDropdown />
             <Button 
               onClick={toggleModal} 
               size="sm"
