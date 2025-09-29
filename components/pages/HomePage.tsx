@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -16,6 +16,7 @@ export default function HomePage() {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
   const t = useTranslations()
+  const locale = useLocale()
   const { state, dispatch, getFilteredPrompts } = usePromptStore()
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
   const { session } = useAuth()
