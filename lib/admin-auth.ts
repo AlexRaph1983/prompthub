@@ -98,8 +98,53 @@ export async function requireAdmin(request?: NextRequest): Promise<AdminSession 
       }
     }
 
-    const session = await getServerSession(authOptions)
+    // Для API routes с request, используем cookies для авторизации
+    let session
+    if (request) {
+      const cookies = request.headers.get('cookie')
+      console.log('🔍 API request cookies:', cookies)
+      
+      if (cookies) {
+        // Парсим cookies напрямую
+        const cookieObj: Record<string, string> = {}
+        cookies.split(';').forEach(cookie => {
+          const [name, value] = cookie.trim().split('=')
+          if (name && value) {
+            cookieObj[name] = value
+          }
+        })
+        
+        console.log('🍪 Parsed cookies:', cookieObj)
+        
+        // Проверяем наличие NextAuth session cookie
+        const sessionToken = cookieObj['next-auth.session-token'] || cookieObj['__Secure-next-auth.session-token']
+        console.log('🔑 Session token found:', !!sessionToken)
+        
+        if (sessionToken) {
+          // Создаем фиктивный request для getServerSession
+          const fakeRequest = {
+            headers: {
+              get: (name: string) => {
+                if (name.toLowerCase() === 'cookie') return cookies
+                return request.headers.get(name)
+              }
+            }
+          } as any
+          
+          try {
+            session = await getServerSession({ ...authOptions, req: fakeRequest })
+            console.log('✅ Session from cookies:', session?.user?.email)
+          } catch (error) {
+            console.error('❌ Error getting session:', error)
+          }
+        }
+      }
+    } else {
+      session = await getServerSession(authOptions)
+    }
+    
     if (!session?.user?.id) {
+      console.log('❌ No session found')
       return null
     }
 

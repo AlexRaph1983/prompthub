@@ -75,7 +75,7 @@ export default function HomePage() {
     // Сохраняем текущую позицию скролла для возврата
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
     sessionStorage.setItem('scrollPosition', scrollPosition.toString())
-    router.push(`/prompt/${promptId}`)
+    router.push(`/${locale}/prompt/${promptId}`)
   }
 
   // Хелперы фильтрации как в сторе

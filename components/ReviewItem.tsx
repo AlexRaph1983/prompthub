@@ -22,6 +22,32 @@ export function ReviewItem({ reviewerName, reviewerImage, rating, comment, creat
 
   const dateStr = new Date(createdAt).toISOString().slice(0, 10)
 
+  // Функция для преобразования текста с ссылками в активные ссылки
+  const renderTextWithLinks = (text: string) => {
+    // Регулярное выражение для поиска URL (http/https и www)
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g
+    const parts = text.split(urlRegex)
+    
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        // Добавляем https:// если ссылка начинается с www
+        const href = part.startsWith('www.') ? `https://${part}` : part
+        return (
+          <a
+            key={index}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline break-all"
+          >
+            {part}
+          </a>
+        )
+      }
+      return part
+    })
+  }
+
   return (
     <div className="flex gap-3 py-3">
       <Avatar className="w-9 h-9">
@@ -39,7 +65,9 @@ export function ReviewItem({ reviewerName, reviewerImage, rating, comment, creat
           <RatingStars value={rating} size="sm" readOnly />
         </div>
         {comment ? (
-          <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">{comment}</p>
+          <p className="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
+            {renderTextWithLinks(comment)}
+          </p>
         ) : null}
       </div>
     </div>
