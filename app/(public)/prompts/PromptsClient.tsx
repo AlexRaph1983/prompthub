@@ -127,13 +127,33 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
       prompt.tags.some((tag: string) => tag.toLowerCase().includes(searchLower))
     )
     
-    // Отслеживаем поисковый запрос
-    if (searchValue.trim()) {
-      trackSearch(searchValue, filtered.length)
-    }
-    
     return filtered
-  }, [prompts, searchValue, trackSearch])
+  }, [prompts, searchValue])
+
+  // Отслеживаем поисковый запрос отдельно от фильтрации
+  React.useEffect(() => {
+    console.log('🔍 useEffect triggered:', { 
+      searchValue, 
+      hasValue: !!searchValue.trim(), 
+      resultsCount: filteredPrompts.length,
+      trackSearchType: typeof trackSearch 
+    })
+    
+    if (searchValue.trim()) {
+      console.log('🔍 Effect: Tracking search for:', searchValue, 'Results:', filteredPrompts.length)
+      console.log('🔍 trackSearch function:', typeof trackSearch)
+      
+      try {
+        console.log('🚀 Calling trackSearch with:', { query: searchValue, resultsCount: filteredPrompts.length })
+        trackSearch(searchValue, filteredPrompts.length)
+        console.log('✅ trackSearch called successfully')
+      } catch (error) {
+        console.error('❌ Error calling trackSearch:', error)
+      }
+    } else {
+      console.log('⚠️ No search value, skipping tracking')
+    }
+  }, [searchValue, filteredPrompts.length, trackSearch])
 
   return (
     <main className="bg-gray-50 min-h-screen pb-12">

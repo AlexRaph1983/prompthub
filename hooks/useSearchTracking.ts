@@ -16,10 +16,16 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
     resultsCount: number,
     clickedResult?: string
   ) => {
-    if (!query.trim()) return
+    if (!query.trim()) {
+      console.log('⚠️ Empty query, skipping tracking')
+      return
+    }
 
     try {
-      await fetch('/api/search-tracking', {
+      console.log('🔍 Tracking search:', { query, resultsCount, clickedResult, sessionId })
+      console.log('🌐 Making request to /api/search-tracking')
+      
+      const response = await fetch('/api/search-tracking', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,9 +37,19 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
           sessionId,
         }),
       })
+      
+      console.log('📡 Response status:', response.status)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('❌ API Error:', errorText)
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      const result = await response.json()
+      console.log('✅ Search tracked successfully:', result)
     } catch (error) {
-      // Тихо игнорируем ошибки трекинга, чтобы не мешать основному функционалу
-      console.debug('Search tracking error:', error)
+      console.error('❌ Search tracking error:', error)
     }
   }, [sessionId])
 
@@ -49,7 +65,8 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
   }, [trackSearch])
 
   return {
-    trackSearch: trackSearchWithDebounce,
+    trackSearch: trackSearch, // Возвращаем оригинальный trackSearch без debounce
+    trackSearchWithDebounce,
     trackClick,
   }
 }

@@ -107,7 +107,7 @@ export default function InfinitePromptList({
     } catch {}
     // Сбрасываем позицию скролла при переходе
     window.scrollTo(0, 0)
-    router.push(`/prompt/${promptId}`)
+    router.push(`/${locale}/prompt/${promptId}`)
   }
 
   // Объединяем все страницы в один массив

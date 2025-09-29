@@ -8,20 +8,23 @@ import LocaleSwitcher from '@/components/shared/LocaleSwitcher'
 import { isLocale } from '@/i18n/index'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
+import { useAdmin } from '@/hooks/useAdmin'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator 
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, LogOut, User, FileText, Plus, Trophy } from 'lucide-react'
+import { ChevronDown, LogOut, User, FileText, Plus, Trophy, Settings, BarChart3, Shield } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { ActivityCounterDropdown } from '@/components/ActivityCounterDropdown'
 
 export function Navigation() {
   const { session, isAuthenticated, isLoading, signIn, signOut } = useAuth()
+  const { isAdmin, role, permissions } = useAdmin()
   const { toggleModal } = usePromptStore()
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname() || '/'
@@ -93,7 +96,7 @@ export function Navigation() {
                     <ChevronDown className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem asChild>
                     <Link href={`/${currentLocale}/dashboard/profile`} className="flex items-center">
                       <User className="w-4 h-4 mr-2" />
@@ -106,6 +109,43 @@ export function Navigation() {
                       {t('myPrompts')}
                     </Link>
                   </DropdownMenuItem>
+                  
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Администрирование
+                      </div>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${currentLocale}/admin`} className="flex items-center">
+                          <Shield className="w-4 h-4 mr-2" />
+                          Админ-панель
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${currentLocale}/admin/prompts`} className="flex items-center">
+                          <FileText className="w-4 h-4 mr-2" />
+                          Управление промптами
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/${currentLocale}/admin/search-analytics`} className="flex items-center">
+                          <BarChart3 className="w-4 h-4 mr-2" />
+                          Аналитика поиска
+                        </Link>
+                      </DropdownMenuItem>
+                      {permissions.system_settings && (
+                        <DropdownMenuItem asChild>
+                          <Link href={`/${currentLocale}/admin/settings`} className="flex items-center">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Настройки системы
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )}
+                  
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()} className="text-red-600">
                     <LogOut className="w-4 h-4 mr-2" />
                     {t('signOut')}
