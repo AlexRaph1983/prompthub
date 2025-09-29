@@ -24,19 +24,16 @@ export async function GET(request: Request) {
       });
     }
 
-    // Получаем статистику с оптимизированными запросами
+
+    // Получаем статистику с единым источником просмотров
     const [
       totalUsers,
       totalActiveUsers,
       totalPrompts,
-      totalViews,
       totalRatings,
       totalReviews
     ] = await Promise.all([
-      // Все пользователи
       prisma.user.count(),
-      
-      // Активные пользователи (исключаем тестовых)
       prisma.user.count({
         where: {
           AND: [
@@ -47,28 +44,23 @@ export async function GET(request: Request) {
           ]
         }
       }),
-      
-      // Промпты
       prisma.prompt.count(),
-      
-      // Просмотры - используем поле views из таблицы prompts (более быстрое)
-      prisma.prompt.aggregate({
-        _sum: {
-          views: true
-        }
-      }),
-      
-      // Оценки
       prisma.rating.count(),
-      
-      // Отзывы
       prisma.review.count()
     ]);
+
+    // Получаем все id промптов
+    const allPromptIds = await prisma.prompt.findMany({ select: { id: true } });
+    const promptIds = allPromptIds.map(p => p.id);
+    // Получаем просмотры через ViewsService
+    const { ViewsService } = await import('@/lib/services/viewsService');
+    const viewsMap = await ViewsService.getPromptsViews(promptIds);
+    const totalViews = Array.from(viewsMap.values()).reduce((sum, v) => sum + v, 0);
 
     const stats = {
       users: totalActiveUsers,
       prompts: totalPrompts,
-      views: totalViews._sum.views || 0,
+      views: totalViews,
       ratings: totalRatings,
       reviews: totalReviews,
       timestamp: new Date().toISOString()

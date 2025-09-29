@@ -13,11 +13,16 @@ interface PromptState {
   selectedCategory: string
   selectedLang: string
   isLoading: boolean
+  hasMore: boolean
+  nextCursor: string | null
+  isInitialLoad: boolean
 }
 
 type PromptAction =
   | { type: 'SET_PROMPTS'; payload: Prompt[] }
   | { type: 'ADD_PROMPT'; payload: Prompt }
+  | { type: 'APPEND_PROMPTS'; payload: { prompts: Prompt[]; hasMore: boolean; nextCursor: string | null } }
+  | { type: 'UPDATE_PAGINATION'; payload: { hasMore: boolean; nextCursor: string | null } }
   | { type: 'UPDATE_PROMPT_RATING'; payload: { promptId: string; rating: number; ratingCount: number } }
   | { type: 'UPDATE_PROMPT_VIEWS'; payload: { promptId: string; views: number } }
   | { type: 'TOGGLE_MODAL' }
@@ -25,6 +30,7 @@ type PromptAction =
   | { type: 'SET_FILTER'; payload: { key: string; value: string } }
   | { type: 'RESET_FILTERS' }
   | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'RESET_PAGINATION' }
 
 const initialState: PromptState = {
   prompts: [],
@@ -34,6 +40,9 @@ const initialState: PromptState = {
   selectedCategory: '',
   selectedLang: '',
   isLoading: true,
+  hasMore: true,
+  nextCursor: null,
+  isInitialLoad: true,
 }
 
 function promptReducer(state: PromptState, action: PromptAction): PromptState {
@@ -43,6 +52,22 @@ function promptReducer(state: PromptState, action: PromptAction): PromptState {
         ...state,
         prompts: action.payload,
         isLoading: false,
+        isInitialLoad: false,
+      }
+    case 'APPEND_PROMPTS':
+      return {
+        ...state,
+        prompts: [...state.prompts, ...action.payload.prompts],
+        hasMore: action.payload.hasMore,
+        nextCursor: action.payload.nextCursor,
+        isLoading: false,
+        isInitialLoad: false,
+      }
+    case 'UPDATE_PAGINATION':
+      return {
+        ...state,
+        hasMore: action.payload.hasMore,
+        nextCursor: action.payload.nextCursor,
       }
     case 'ADD_PROMPT':
       return {
@@ -91,6 +116,15 @@ function promptReducer(state: PromptState, action: PromptAction): PromptState {
         ...state,
         isLoading: action.payload,
       }
+    case 'RESET_PAGINATION':
+      return {
+        ...state,
+        prompts: [],
+        hasMore: true,
+        nextCursor: null,
+        isInitialLoad: true,
+        isLoading: true,
+      }
     default:
       return state
   }
@@ -103,6 +137,7 @@ interface PromptContextType {
   toggleModal: () => void
   getFilteredPrompts: () => Prompt[]
   loadPrompts: () => Promise<void>
+  loadMorePrompts: () => Promise<void>
 }
 
 const PromptContext = createContext<PromptContextType | undefined>(undefined)
@@ -119,7 +154,8 @@ export function PromptProvider({ children }: { children: ReactNode }) {
   const loadPrompts = async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true })
-      console.log('Loading prompts from API...')
+      dispatch({ type: 'RESET_PAGINATION' })
+      console.log('Loading initial prompts from API...')
       const response = await fetch('/api/prompts?limit=50')
       console.log('API response status:', response.status)
       if (response.ok) {
@@ -128,7 +164,18 @@ export function PromptProvider({ children }: { children: ReactNode }) {
         // Новый API возвращает объект с items, а не массив
         const prompts = data.items || data || []
         const normalized = Array.isArray(prompts) ? prompts.map(normalizePromptViews) : []
-        dispatch({ type: 'SET_PROMPTS', payload: normalized })
+        dispatch({ 
+          type: 'SET_PROMPTS', 
+          payload: normalized 
+        })
+        // Обновляем состояние пагинации
+        dispatch({ 
+          type: 'UPDATE_PAGINATION', 
+          payload: { 
+            hasMore: data.hasMore || false, 
+            nextCursor: data.nextCursor || null 
+          } 
+        })
       } else {
         console.log('API failed, using demo prompts')
         // Fallback to demo prompts if API fails
@@ -138,6 +185,56 @@ export function PromptProvider({ children }: { children: ReactNode }) {
       console.error('Error loading prompts:', error)
       // Fallback to demo prompts
       dispatch({ type: 'SET_PROMPTS', payload: DEMO_PROMPTS.map(normalizePromptViews) })
+    }
+  }
+
+  const loadMorePrompts = async () => {
+    if (state.isLoading || !state.hasMore || !state.nextCursor) return
+    
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true })
+      console.log('Loading more prompts from API...')
+      
+      // Строим URL с фильтрами и cursor
+      const url = new URL('/api/prompts', window.location.origin)
+      url.searchParams.set('limit', '20')
+      url.searchParams.set('cursor', state.nextCursor)
+      
+      if (state.searchQuery.trim()) {
+        url.searchParams.set('q', state.searchQuery.trim())
+      }
+      if (state.selectedModel) {
+        url.searchParams.set('model', state.selectedModel)
+      }
+      if (state.selectedCategory) {
+        url.searchParams.set('category', state.selectedCategory)
+      }
+      if (state.selectedLang) {
+        url.searchParams.set('lang', state.selectedLang)
+      }
+      
+      const response = await fetch(url.toString())
+      console.log('API response status:', response.status)
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Loaded more prompts data:', data)
+        const prompts = data.items || []
+        const normalized = Array.isArray(prompts) ? prompts.map(normalizePromptViews) : []
+        dispatch({ 
+          type: 'APPEND_PROMPTS', 
+          payload: { 
+            prompts: normalized, 
+            hasMore: data.hasMore || false, 
+            nextCursor: data.nextCursor || null 
+          } 
+        })
+      } else {
+        console.log('API failed for load more')
+        dispatch({ type: 'SET_LOADING', payload: false })
+      }
+    } catch (error) {
+      console.error('Error loading more prompts:', error)
+      dispatch({ type: 'SET_LOADING', payload: false })
     }
   }
 
@@ -214,6 +311,7 @@ export function PromptProvider({ children }: { children: ReactNode }) {
       toggleModal,
       getFilteredPrompts,
       loadPrompts,
+      loadMorePrompts,
     }}>
       {children}
     </PromptContext.Provider>

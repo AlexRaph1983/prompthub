@@ -1,0 +1,45 @@
+КОМАНДЫ ДЛЯ РУЧНОГО ДЕПЛОЯ НА ПРОДАКШЕНЕ
+=========================================
+
+СЕРВЕР: REDACTED_IP
+ЛОГИН: root
+ПАРОЛЬ: REDACTED_PASSWORD
+
+1. ПОДКЛЮЧЕНИЕ К СЕРВЕРУ:
+   ssh root@REDACTED_IP
+   (введите пароль: REDACTED_PASSWORD)
+
+2. ПЕРЕХОД В ДИРЕКТОРИЮ ПРОЕКТА:
+   cd /root/prompthub
+
+3. ПОЛУЧЕНИЕ ПОСЛЕДНИХ ИЗМЕНЕНИЙ:
+   git fetch origin
+   git reset --hard origin/main
+
+4. ОСТАНОВКА СЕРВЕРА (БЕЗ УДАЛЕНИЯ):
+   pm2 stop all
+
+5. ОЧИСТКА КЭШЕЙ:
+   rm -rf node_modules
+   rm -rf .next
+
+6. УСТАНОВКА ЗАВИСИМОСТЕЙ:
+   npm install
+
+7. ПЕРЕСБОРКА ПРОЕКТА:
+   npm run build
+
+8. ЗАПУСК СЕРВЕРА:
+   pm2 start ecosystem.config.js
+
+9. ПРОВЕРКА СТАТУСА:
+   pm2 status
+
+10. ПРОВЕРКА API:
+    curl https://prompt-hub.site/api/health
+    curl https://prompt-hub.site/api/stats
+
+11. ПРОВЕРКА ЛОГОВ:
+    pm2 logs
+
+ВАЖНО: Выполняйте команды по порядку и проверяйте каждый шаг!
