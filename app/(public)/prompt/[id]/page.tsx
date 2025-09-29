@@ -27,7 +27,10 @@ export default function PromptDetailsPage() {
   const [submitting, setSubmitting] = React.useState(false)
   const [pendingRating, setPendingRating] = React.useState<number | null>(null)
   
-  const prompt = state.prompts.find(p => p.id === promptId)
+  const [loadedPrompt, setLoadedPrompt] = React.useState<any>(null)
+  const [isLoadingPrompt, setIsLoadingPrompt] = React.useState(false)
+  
+  const prompt = state.prompts.find(p => p.id === promptId) || loadedPrompt
   const isOwner = !!(prompt?.authorId && session?.user?.id && prompt.authorId === session.user.id)
   const rawViews = prompt ? (prompt as any).views : null
   const promptViews = typeof rawViews === 'number' ? rawViews : null
@@ -37,6 +40,30 @@ export default function PromptDetailsPage() {
   const [isCopying, setIsCopying] = React.useState(false)
 
   const fingerprintRef = React.useRef<string | null>(null)
+
+  // Загружаем промпт через API, если его нет в сторе
+  React.useEffect(() => {
+    if (!promptId || prompt) return
+    
+    const loadPrompt = async () => {
+      setIsLoadingPrompt(true)
+      try {
+        const response = await fetch(`/api/prompts/${promptId}`)
+        if (response.ok) {
+          const promptData = await response.json()
+          setLoadedPrompt(promptData)
+          // Добавляем промпт в стор для кэширования
+          dispatch({ type: 'ADD_PROMPT', payload: promptData })
+        }
+      } catch (error) {
+        console.error('Failed to load prompt:', error)
+      } finally {
+        setIsLoadingPrompt(false)
+      }
+    }
+
+    loadPrompt()
+  }, [promptId, prompt, dispatch])
   const [fingerprintReady, setFingerprintReady] = React.useState(false)
 
   React.useEffect(() => {
@@ -281,6 +308,20 @@ export default function PromptDetailsPage() {
   }
 
   if (!mounted) return null
+  
+  if (isLoadingPrompt) {
+    return (
+      <main className="bg-gray-50 min-h-screen pb-12">
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600 mx-auto mb-4"></div>
+            <p className="text-gray-500 text-lg">Загружаем промпт...</p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+  
   if (!prompt) {
     return (
       <main className="bg-gray-50 min-h-screen pb-12">
