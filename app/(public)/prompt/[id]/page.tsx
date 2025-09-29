@@ -32,8 +32,7 @@ export default function PromptDetailsPage() {
   
   const prompt = state.prompts.find(p => p.id === promptId) || loadedPrompt
   const isOwner = !!(prompt?.authorId && session?.user?.id && prompt.authorId === session.user.id)
-  const rawViews = prompt ? (prompt as any).views : null
-  const promptViews = typeof rawViews === 'number' ? rawViews : null
+  const promptViews = typeof prompt?.views === 'number' ? prompt.views : null
   const [myReview, setMyReview] = React.useState<{ rating: number | null; comment: string | null } | null>(null)
   const [similar, setSimilar] = React.useState<Array<{ id: string; cosine: number }>>([])
   const [copySuccess, setCopySuccess] = React.useState(false)
