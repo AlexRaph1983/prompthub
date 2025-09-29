@@ -1,0 +1,49 @@
+КОМАНДЫ ДЛЯ РУЧНОГО ПЕРЕЗАПУСКА СЕРВЕРА НА ПРОДАКШЕНЕ
+
+1. Подключитесь к серверу:
+   ssh root@prompt-hub.site
+
+2. Перейдите в директорию проекта:
+   cd /root/prompthub
+
+3. Получите последние изменения:
+   git fetch origin
+   git reset --hard origin/main
+
+4. Остановите текущий сервер:
+   pm2 stop all
+   pm2 delete all
+
+5. Очистите кэши и зависимости:
+   rm -rf node_modules
+   rm -rf .next
+
+6. Установите зависимости:
+   npm install
+
+7. Пересоберите проект:
+   npm run build
+
+8. Запустите сервер:
+   pm2 start ecosystem.config.js
+
+9. Проверьте статус:
+   pm2 status
+
+10. Проверьте логи:
+    pm2 logs
+
+11. Проверьте API endpoints:
+    curl https://prompt-hub.site/api/health
+    curl https://prompt-hub.site/api/stats
+    curl https://prompt-hub.site/api/prompts/cmftyuu1v00539l6hapwra6su
+    curl https://prompt-hub.site/api/recommendations
+
+12. Если ничего не помогает - полный перезапуск сервера:
+    sudo reboot
+
+После перезапуска подождите 2-3 минуты и проверьте:
+- https://prompt-hub.site/api/health
+- https://prompt-hub.site/api/stats
+- https://prompt-hub.site/api/prompts/cmftyuu1v00539l6hapwra6su
+- https://prompt-hub.site/api/recommendations

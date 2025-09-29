@@ -17,7 +17,23 @@ export default function HomePage() {
   React.useEffect(() => setMounted(true), [])
   const t = useTranslations()
   const locale = useLocale()
-  const { state, dispatch, getFilteredPrompts } = usePromptStore()
+  const { state, dispatch, getFilteredPrompts, loadMorePrompts } = usePromptStore()
+  
+  // Ленивый скролл: подгрузка при достижении низа
+  React.useEffect(() => {
+    if (!mounted) return;
+    const handleScroll = () => {
+      if (state.isLoading || !state.hasMore) return;
+      const scrollY = window.scrollY || window.pageYOffset;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      if (scrollY + windowHeight >= docHeight - 200) {
+        loadMorePrompts();
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mounted, state.isLoading, state.hasMore, loadMorePrompts]);
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
   const { session } = useAuth()
   const router = useRouter()
@@ -43,6 +59,55 @@ export default function HomePage() {
   React.useEffect(() => {
     dispatch({ type: 'SET_SEARCH_QUERY', payload: debouncedValue })
   }, [debouncedValue, dispatch])
+
+  // Сброс пагинации при изменении фильтров
+  React.useEffect(() => {
+    if (!state.isInitialLoad) {
+      dispatch({ type: 'RESET_PAGINATION' })
+      // Перезагружаем промпты с новыми фильтрами
+      const loadFilteredPrompts = async () => {
+        try {
+          dispatch({ type: 'SET_LOADING', payload: true })
+          
+          // Строим URL с фильтрами
+          const url = new URL('/api/prompts', window.location.origin)
+          url.searchParams.set('limit', '50')
+          
+          if (state.searchQuery.trim()) {
+            url.searchParams.set('q', state.searchQuery.trim())
+          }
+          if (state.selectedModel) {
+            url.searchParams.set('model', state.selectedModel)
+          }
+          if (state.selectedCategory) {
+            url.searchParams.set('category', state.selectedCategory)
+          }
+          if (state.selectedLang) {
+            url.searchParams.set('lang', state.selectedLang)
+          }
+          
+          const response = await fetch(url.toString())
+          if (response.ok) {
+            const data = await response.json()
+            const prompts = data.items || []
+            const normalized = Array.isArray(prompts) ? prompts.map((p: any) => ({ ...p, views: p.views || 0 })) : []
+            dispatch({ type: 'SET_PROMPTS', payload: normalized })
+            dispatch({ 
+              type: 'UPDATE_PAGINATION', 
+              payload: { 
+                hasMore: data.hasMore || false, 
+                nextCursor: data.nextCursor || null 
+              } 
+            })
+          }
+        } catch (error) {
+          console.error('Error loading filtered prompts:', error)
+          dispatch({ type: 'SET_LOADING', payload: false })
+        }
+      }
+      loadFilteredPrompts()
+    }
+  }, [state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang, dispatch])
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -218,6 +283,25 @@ export default function HomePage() {
               copyState={copyStates[prompt.id]}
             />
           ))}
+          
+          {/* Индикатор загрузки */}
+          {state.isLoading && state.prompts.length > 0 && (
+            <div className="flex justify-center items-center py-8">
+              <div className="flex items-center gap-2 text-gray-500">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-violet-600"></div>
+                <span>Загружаем больше промптов...</span>
+              </div>
+            </div>
+          )}
+          
+          {/* Сообщение о том, что больше нет промптов */}
+          {!state.hasMore && state.prompts.length > 0 && (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-gray-500 text-sm">
+                Вы просмотрели все доступные промпты
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </main>

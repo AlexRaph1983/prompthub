@@ -9,17 +9,19 @@ export async function GET() {
     // Получаем статистику
     const totalUsers = await prisma.user.count()
     const totalPrompts = await prisma.prompt.count()
-    const totalViews = await prisma.prompt.aggregate({
-      _sum: {
-        views: true
-      }
-    })
+    // Получаем все id промптов
+    const allPromptIds = await prisma.prompt.findMany({ select: { id: true } })
+    const promptIds = allPromptIds.map(p => p.id)
+    // Получаем просмотры через ViewsService
+    const { ViewsService } = await import('@/lib/services/viewsService')
+    const viewsMap = await ViewsService.getPromptsViews(promptIds)
+    const totalViews = Array.from(viewsMap.values()).reduce((sum, v) => sum + v, 0)
     const totalSearches = await prisma.searchQuery.count()
 
     const stats = {
       users: totalUsers,
       prompts: totalPrompts,
-      views: totalViews._sum.views || 0,
+      views: totalViews,
       searches: totalSearches
     }
 
