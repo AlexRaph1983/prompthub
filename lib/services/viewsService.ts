@@ -63,31 +63,36 @@ export class ViewsService {
     }
 
     try {
+      // Используем ту же логику, что и getPromptViews, но для множества промптов
       // ПРИОРИТЕТ 1: viewAnalytics для всех промптов
-      const analytics = await prisma.viewAnalytics.groupBy({
-        by: ['promptId'],
+      const analytics = await prisma.viewAnalytics.findMany({
         where: { promptId: { in: promptIds } },
-        _sum: { countedViews: true },
+        select: { promptId: true, countedViews: true }
       })
       
       for (const row of analytics) {
-        if (row._sum.countedViews && row._sum.countedViews > 0) {
-          viewTotals.set(row.promptId, row._sum.countedViews)
+        if (row.countedViews && row.countedViews > 0) {
+          viewTotals.set(row.promptId, row.countedViews)
         }
       }
 
       // ПРИОРИТЕТ 2: promptViewEvent для оставшихся
       const missingIds = promptIds.filter(id => !viewTotals.has(id))
       if (missingIds.length > 0) {
-        const viewEvents = await prisma.promptViewEvent.groupBy({
-          by: ['promptId'],
+        const viewEvents = await prisma.promptViewEvent.findMany({
           where: { promptId: { in: missingIds }, isCounted: true },
-          _count: { _all: true },
+          select: { promptId: true }
         })
         
-        for (const row of viewEvents) {
-          if (row._count._all && row._count._all > 0) {
-            viewTotals.set(row.promptId, row._count._all)
+        // Группируем вручную
+        const eventCounts = new Map<string, number>()
+        for (const event of viewEvents) {
+          eventCounts.set(event.promptId, (eventCounts.get(event.promptId) || 0) + 1)
+        }
+        
+        for (const [promptId, count] of eventCounts) {
+          if (count > 0) {
+            viewTotals.set(promptId, count)
           }
         }
       }
@@ -95,15 +100,20 @@ export class ViewsService {
       // ПРИОРИТЕТ 3: promptInteraction для оставшихся
       const stillMissingIds = promptIds.filter(id => !viewTotals.has(id))
       if (stillMissingIds.length > 0) {
-        const interactions = await prisma.promptInteraction.groupBy({
-          by: ['promptId'],
+        const interactions = await prisma.promptInteraction.findMany({
           where: { promptId: { in: stillMissingIds }, type: { in: ['view', 'open'] } },
-          _count: { _all: true },
+          select: { promptId: true }
         })
         
-        for (const row of interactions) {
-          if (row._count._all && row._count._all > 0) {
-            viewTotals.set(row.promptId, row._count._all)
+        // Группируем вручную
+        const interactionCounts = new Map<string, number>()
+        for (const interaction of interactions) {
+          interactionCounts.set(interaction.promptId, (interactionCounts.get(interaction.promptId) || 0) + 1)
+        }
+        
+        for (const [promptId, count] of interactionCounts) {
+          if (count > 0) {
+            viewTotals.set(promptId, count)
           }
         }
       }
