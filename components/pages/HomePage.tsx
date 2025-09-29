@@ -132,7 +132,7 @@ export default function HomePage() {
          if (!ignore) {
            // Извлекаем данные промптов из ответа API
            const prompts = (data || []).slice(0, 6).map((item: any) => {
-            const viewsRaw = typeof item.prompt?.views === 'number' ? item.prompt.views : 0
+            const views = typeof item.prompt?.views === 'number' ? item.prompt.views : 0
             const likesCount = (item.prompt as any)?._count?.likes ?? 0
 
             return ({
@@ -150,7 +150,7 @@ export default function HomePage() {
               authorId: item.prompt.authorId,
               score: item.score,
               likesCount,
-              views: viewsRaw,
+              views,
             })
            })
           console.log('Processed recommended prompts:', prompts)
@@ -258,8 +258,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
     }
   }
   const router = useRouter()
-  const rawViews = (prompt as any).views ?? (prompt as any).viewsCount
-  const views = typeof rawViews === 'number' ? rawViews : null
+  const views = typeof prompt.views === 'number' ? prompt.views : null
 
   return (
     <Card className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 overflow-hidden ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}>
