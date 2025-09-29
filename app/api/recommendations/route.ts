@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { computeIdfForTags, buildSparseVectorTfidf, parseTags, cosineSimilarity, computePromptBayesian, computePromptPopularity, normalizePopularity, finalRankingScore } from '@/lib/recommend'
+import { ViewsService } from '@/lib/services/viewsService'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,42 +22,9 @@ export async function GET(req: NextRequest) {
       take: 200
     })
 
+    // Используем единый сервис для подсчета просмотров
     const promptIds = prompts.map((p) => p.id)
-    const viewTotals = new Map<string, number>()
-    if (promptIds.length) {
-      const aggregates = await prisma.viewAnalytics.groupBy({
-        by: ['promptId'],
-        where: { promptId: { in: promptIds } },
-        _sum: { countedViews: true },
-      })
-      for (const row of aggregates) {
-        viewTotals.set(row.promptId, row._sum.countedViews ?? 0)
-      }
-
-      const missingViewIds = promptIds.filter((id) => !viewTotals.has(id))
-      if (missingViewIds.length) {
-        const fallback = await prisma.promptViewEvent.groupBy({
-          by: ['promptId'],
-          where: { promptId: { in: missingViewIds }, isCounted: true },
-          _count: { _all: true },
-        })
-        for (const row of fallback) {
-          viewTotals.set(row.promptId, row._count._all ?? 0)
-        }
-      }
-
-      const interactionIds = promptIds.filter((id) => !viewTotals.has(id))
-      if (interactionIds.length) {
-        const interactionFallback = await prisma.promptInteraction.groupBy({
-          by: ['promptId'],
-          where: { promptId: { in: interactionIds }, type: { in: ['view', 'open'] } },
-          _count: { _all: true },
-        })
-        for (const row of interactionFallback) {
-          viewTotals.set(row.promptId, row._count._all ?? 0)
-        }
-      }
-    }
+    const viewTotals = await ViewsService.getPromptsViews(promptIds)
 
     const idf = computeIdfForTags(prompts as any)
     const popularityValues = prompts.map((p) => computePromptPopularity({
