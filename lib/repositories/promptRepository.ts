@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { calculateReputation } from '@/lib/reputation'
+import { ViewsService } from '@/lib/services/viewsService'
 
 export interface PromptCardDTO {
   id: string
@@ -62,83 +63,6 @@ export interface PromptListResult {
 }
 
 export class PromptRepository {
-  private async getViewCounts(promptIds: string[]): Promise<Map<string, number>> {
-    const viewTotals = new Map<string, number>()
-    
-    if (promptIds.length === 0) return viewTotals
-
-    // ПРИОРИТЕТ 1: Читаем основное поле prompt.views (обновляется track-view API)
-    const promptViews = await prisma.prompt.findMany({
-      where: { id: { in: promptIds } },
-      select: { id: true, views: true }
-    })
-    
-    for (const prompt of promptViews) {
-      if (prompt.views > 0) {
-        viewTotals.set(prompt.id, prompt.views)
-      }
-    }
-
-    // ПРИОРИТЕТ 2: Fallback к viewAnalytics для промптов с 0 views
-    const missingIds = promptIds.filter((id) => !viewTotals.has(id))
-    if (missingIds.length > 0) {
-      const aggregates = await prisma.viewAnalytics.groupBy({
-        by: ['promptId'],
-        where: { promptId: { in: missingIds } },
-        _sum: { countedViews: true },
-      })
-      
-      for (const row of aggregates) {
-        const count = row._sum.countedViews ?? 0
-        if (count > 0) {
-          viewTotals.set(row.promptId, count)
-        }
-      }
-    }
-
-    // ПРИОРИТЕТ 3: Fallback к promptViewEvent 
-    const stillMissingIds = promptIds.filter((id) => !viewTotals.has(id))
-    if (stillMissingIds.length > 0) {
-      const fallback = await prisma.promptViewEvent.groupBy({
-        by: ['promptId'],
-        where: { promptId: { in: stillMissingIds }, isCounted: true },
-        _count: { _all: true },
-      })
-      
-      for (const row of fallback) {
-        const count = row._count._all ?? 0
-        if (count > 0) {
-          viewTotals.set(row.promptId, count)
-        }
-      }
-    }
-
-    // ПРИОРИТЕТ 4: Final fallback к promptInteraction
-    const finalMissingIds = promptIds.filter((id) => !viewTotals.has(id))
-    if (finalMissingIds.length > 0) {
-      const interactionFallback = await prisma.promptInteraction.groupBy({
-        by: ['promptId'],
-        where: { promptId: { in: finalMissingIds }, type: { in: ['view', 'open'] } },
-        _count: { _all: true },
-      })
-      
-      for (const row of interactionFallback) {
-        const count = row._count._all ?? 0
-        if (count > 0) {
-          viewTotals.set(row.promptId, count)
-        }
-      }
-    }
-
-    // Для промптов без просмотров устанавливаем 0
-    for (const promptId of promptIds) {
-      if (!viewTotals.has(promptId)) {
-        viewTotals.set(promptId, 0)
-      }
-    }
-
-    return viewTotals
-  }
 
   private buildWhereClause(params: PromptListParams) {
     const where: any = {}
@@ -276,7 +200,7 @@ export class PromptRepository {
 
     // Получаем view counts для всех промптов
     const promptIds = items.map(p => p.id)
-    const viewCounts = await this.getViewCounts(promptIds)
+    const viewCounts = await ViewsService.getPromptsViews(promptIds)
 
     // Кэш для репутации авторов больше не нужен - используем кэшированные значения из БД
 

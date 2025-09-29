@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authFromRequest } from '@/lib/auth'
+import { ViewsService } from '@/lib/services/viewsService'
 
 export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -38,36 +39,8 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
     })
     if (!prompt) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     
-    // Используем ту же логику подсчета просмотров, что и в promptRepository
-    let views = 0
-    
-    // ПРИОРИТЕТ 1: viewAnalytics
-    const analytics = await prisma.viewAnalytics.findFirst({
-      where: { promptId: params.id },
-      select: { countedViews: true }
-    })
-    if (analytics?.countedViews) {
-      views = analytics.countedViews
-    } else {
-      // ПРИОРИТЕТ 2: promptViewEvent
-      const viewEvents = await prisma.promptViewEvent.count({
-        where: { promptId: params.id, isCounted: true }
-      })
-      if (viewEvents > 0) {
-        views = viewEvents
-      } else {
-        // ПРИОРИТЕТ 3: promptInteraction
-        const interactions = await prisma.promptInteraction.count({
-          where: { promptId: params.id, type: { in: ['view', 'open'] } }
-        })
-        if (interactions > 0) {
-          views = interactions
-        } else {
-          // ПРИОРИТЕТ 4: fallback к полю views в таблице prompt
-          views = prompt.views || 0
-        }
-      }
-    }
+    // Используем единый сервис для подсчета просмотров
+    const views = await ViewsService.getPromptViews(params.id)
     
     // Преобразуем данные в нужный формат
     const formattedPrompt = {
