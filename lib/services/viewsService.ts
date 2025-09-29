@@ -63,81 +63,10 @@ export class ViewsService {
     }
 
     try {
-      // Используем ту же логику, что и getPromptViews, но для множества промптов
-      // ПРИОРИТЕТ 1: viewAnalytics для всех промптов
-      const analytics = await prisma.viewAnalytics.findMany({
-        where: { promptId: { in: promptIds } },
-        select: { promptId: true, countedViews: true }
-      })
-      
-      for (const row of analytics) {
-        if (row.countedViews && row.countedViews > 0) {
-          viewTotals.set(row.promptId, row.countedViews)
-        }
-      }
-
-      // ПРИОРИТЕТ 2: promptViewEvent для оставшихся
-      const missingIds = promptIds.filter(id => !viewTotals.has(id))
-      if (missingIds.length > 0) {
-        const viewEvents = await prisma.promptViewEvent.findMany({
-          where: { promptId: { in: missingIds }, isCounted: true },
-          select: { promptId: true }
-        })
-        
-        // Группируем вручную
-        const eventCounts = new Map<string, number>()
-        for (const event of viewEvents) {
-          eventCounts.set(event.promptId, (eventCounts.get(event.promptId) || 0) + 1)
-        }
-        
-        for (const [promptId, count] of eventCounts) {
-          if (count > 0) {
-            viewTotals.set(promptId, count)
-          }
-        }
-      }
-
-      // ПРИОРИТЕТ 3: promptInteraction для оставшихся
-      const stillMissingIds = promptIds.filter(id => !viewTotals.has(id))
-      if (stillMissingIds.length > 0) {
-        const interactions = await prisma.promptInteraction.findMany({
-          where: { promptId: { in: stillMissingIds }, type: { in: ['view', 'open'] } },
-          select: { promptId: true }
-        })
-        
-        // Группируем вручную
-        const interactionCounts = new Map<string, number>()
-        for (const interaction of interactions) {
-          interactionCounts.set(interaction.promptId, (interactionCounts.get(interaction.promptId) || 0) + 1)
-        }
-        
-        for (const [promptId, count] of interactionCounts) {
-          if (count > 0) {
-            viewTotals.set(promptId, count)
-          }
-        }
-      }
-
-      // ПРИОРИТЕТ 4: fallback к полю views в таблице prompt
-      const finalMissingIds = promptIds.filter(id => !viewTotals.has(id))
-      if (finalMissingIds.length > 0) {
-        const prompts = await prisma.prompt.findMany({
-          where: { id: { in: finalMissingIds } },
-          select: { id: true, views: true }
-        })
-        
-        for (const prompt of prompts) {
-          if (prompt.views && prompt.views > 0) {
-            viewTotals.set(prompt.id, prompt.views)
-          }
-        }
-      }
-
-      // Для промптов без просмотров устанавливаем 0
+      // Используем ТОЧНО ТУ ЖЕ ЛОГИКУ, что и getPromptViews
       for (const promptId of promptIds) {
-        if (!viewTotals.has(promptId)) {
-          viewTotals.set(promptId, 0)
-        }
+        const views = await this.getPromptViews(promptId)
+        viewTotals.set(promptId, views)
       }
 
       return viewTotals
