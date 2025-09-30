@@ -13,6 +13,7 @@ import { ReviewList } from '@/components/ReviewList'
 import { useAuth } from '@/hooks/useAuth'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useParams, useRouter } from 'next/navigation'
+import { ViewsService } from '@/lib/services/viewsService'
 
 export default function PromptDetailsPage() {
   const t = useTranslations()
@@ -29,10 +30,10 @@ export default function PromptDetailsPage() {
   
   const [loadedPrompt, setLoadedPrompt] = React.useState<any>(null)
   const [isLoadingPrompt, setIsLoadingPrompt] = React.useState(false)
+  const [promptViews, setPromptViews] = React.useState<number | null>(null)
   
   const prompt = state.prompts.find(p => p.id === promptId) || loadedPrompt
   const isOwner = !!(prompt?.authorId && session?.user?.id && prompt.authorId === session.user.id)
-  const promptViews = typeof prompt?.views === 'number' ? prompt.views : null
   const [myReview, setMyReview] = React.useState<{ rating: number | null; comment: string | null } | null>(null)
   const [similar, setSimilar] = React.useState<Array<{ id: string; cosine: number }>>([])
   const [copySuccess, setCopySuccess] = React.useState(false)
@@ -63,6 +64,25 @@ export default function PromptDetailsPage() {
 
     loadPrompt()
   }, [promptId, prompt, dispatch])
+
+  // Загружаем просмотры промпта
+  React.useEffect(() => {
+    if (!promptId) return
+    
+    const loadViews = async () => {
+      try {
+        const response = await fetch(`/api/prompts/${promptId}/views`)
+        if (response.ok) {
+          const data = await response.json()
+          setPromptViews(data.views)
+        }
+      } catch (error) {
+        console.error('Failed to load prompt views:', error)
+      }
+    }
+
+    loadViews()
+  }, [promptId])
   const [fingerprintReady, setFingerprintReady] = React.useState(false)
 
   React.useEffect(() => {
@@ -408,17 +428,6 @@ export default function PromptDetailsPage() {
                       </Button>
                     </div>
                     
-                    {promptViews !== null && (
-                      <div className="flex justify-end">
-                        <span
-                          title="Unique views with anti-fraud protection"
-                          className="inline-flex items-center gap-2 text-sm text-gray-500"
-                        >
-                          <Eye className="w-4 h-4 text-gray-400" />
-                          <span>{promptViews}</span>
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -605,6 +614,19 @@ export default function PromptDetailsPage() {
           </div>
         </div>
       </div>
+      
+      {/* Отображение просмотров в нижнем правом углу */}
+      {promptViews !== null && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 shadow-lg">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Eye className="w-4 h-4 text-gray-400" />
+              <span className="font-medium">{promptViews}</span>
+              <span className="text-xs text-gray-500">просмотров</span>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 } 
