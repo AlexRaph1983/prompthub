@@ -38,16 +38,8 @@ export default function PromptDetailsPage() {
   const [similar, setSimilar] = React.useState<Array<{ id: string; cosine: number }>>([])
   const [copySuccess, setCopySuccess] = React.useState(false)
   const [isCopying, setIsCopying] = React.useState(false)
-  const [shareUrl, setShareUrl] = React.useState('')
 
   const fingerprintRef = React.useRef<string | null>(null)
-
-  // Устанавливаем URL для шаринга
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setShareUrl(window.location.href)
-    }
-  }, [])
 
   // Загружаем промпт через API, если его нет в сторе
   React.useEffect(() => {
@@ -439,6 +431,15 @@ export default function PromptDetailsPage() {
                   </div>
                 </div>
 
+                {/* Блок "Поделиться промптом" */}
+                <div className="mb-6">
+                  <h3 className="font-semibold mb-3">Поделиться промптом</h3>
+                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                    <script src="https://yastatic.net/share2/share.js"></script>
+                    <div className="ya-share2" data-curtain data-shape="round" data-limit="3" data-services="vkontakte,odnoklassniki,telegram,whatsapp"></div>
+                  </div>
+                </div>
+
                 {prompt.instructions && (
                   <div className="mb-6">
                     <h3 className="font-semibold mb-2">{t('prompt.instructions')}</h3>
@@ -455,29 +456,12 @@ export default function PromptDetailsPage() {
                   </div>
                 )}
 
-                <div className="flex gap-2 mb-6">
+                <div className="flex gap-2">
                   {prompt.tags.map((tag, i) => (
                     <span key={i} className="bg-gray-100 rounded px-2 py-1 text-xs">
                       {tag}
                     </span>
                   ))}
-                </div>
-
-                {/* Блок "Поделиться ролмптом" */}
-                <div className="border-t pt-6">
-                  <h3 className="font-semibold mb-4 text-gray-800">Поделиться ролмптом</h3>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div 
-                      className="ya-share2" 
-                      data-curtain 
-                      data-shape="round" 
-                      data-limit="3" 
-                      data-services="vkontakte,odnoklassniki,telegram,whatsapp"
-                      data-url={shareUrl}
-                      data-title={prompt.title}
-                      data-description={prompt.description}
-                    ></div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
