@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Copy, Star, Sparkles, Eye } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useSearch } from '@/hooks/useSearch'
+import { useSearchTracking } from '@/hooks/useSearchTracking'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -35,6 +36,7 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [mounted, state.isLoading, state.hasMore, loadMorePrompts]);
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
+  const { trackSearch, trackClick } = useSearchTracking()
   const { session } = useAuth()
   const router = useRouter()
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
@@ -59,6 +61,14 @@ export default function HomePage() {
   React.useEffect(() => {
     dispatch({ type: 'SET_SEARCH_QUERY', payload: debouncedValue })
   }, [debouncedValue, dispatch])
+
+  // Отслеживаем поисковые запросы для аналитики
+  React.useEffect(() => {
+    if (debouncedValue.trim()) {
+      console.log('🔍 HomePage: Tracking search for:', debouncedValue, 'Results:', allPrompts.length)
+      trackSearch(debouncedValue, allPrompts.length)
+    }
+  }, [debouncedValue, allPrompts.length, trackSearch])
 
   // Сброс пагинации при изменении фильтров
   React.useEffect(() => {
@@ -138,6 +148,12 @@ export default function HomePage() {
         body: JSON.stringify({ type: 'open', promptId }) 
       }) 
     } catch {}
+    
+    // Отслеживаем клик по результату поиска
+    if (debouncedValue.trim()) {
+      trackClick(debouncedValue, allPrompts.length, promptId)
+    }
+    
     // Сохраняем текущую позицию скролла для возврата
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
     sessionStorage.setItem('scrollPosition', scrollPosition.toString())
