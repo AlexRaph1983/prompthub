@@ -75,9 +75,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         `}</Script>
         <noscript><div><img src="https://mc.yandex.ru/watch/104142063" style={{position:'absolute', left:'-9999px'}} alt="" /></div></noscript>
 
-        {/* Яндекс.Шары */}
-        <Script src="https://yastatic.net/share2/share.js" strategy="afterInteractive" />
-
         <ClientProviders>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <AuthProvider>
