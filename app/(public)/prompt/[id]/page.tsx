@@ -135,7 +135,15 @@ export default function PromptDetailsPage() {
       script.src = 'https://yastatic.net/share2/share.js'
       script.async = true
       script.onload = () => {
-        setShareScriptLoaded(true)
+        // Ждем инициализации Яндекс.Шаринга
+        const checkYaShare = () => {
+          if (window.Ya && window.Ya.share2) {
+            setShareScriptLoaded(true)
+          } else {
+            setTimeout(checkYaShare, 100)
+          }
+        }
+        checkYaShare()
       }
       script.onerror = () => {
         console.error('Failed to load Yandex Share script')
@@ -145,6 +153,31 @@ export default function PromptDetailsPage() {
 
     loadShareScript()
   }, [])
+
+  // Инициализируем кнопки Яндекс.Шаринга после загрузки скрипта
+  React.useEffect(() => {
+    if (!shareScriptLoaded || typeof window === 'undefined') return
+
+    const initShareButtons = () => {
+      if (window.Ya && window.Ya.share2) {
+        // Инициализируем кнопки
+        const shareContainer = document.getElementById('ya-share-container')
+        if (shareContainer) {
+          window.Ya.share2(shareContainer, {
+            content: {
+              url: window.location.href,
+              title: prompt?.title || 'PromptHub',
+              description: prompt?.description || ''
+            }
+          })
+        }
+      }
+    }
+
+    // Небольшая задержка для полной инициализации
+    const timer = setTimeout(initShareButtons, 200)
+    return () => clearTimeout(timer)
+  }, [shareScriptLoaded, prompt?.title, prompt?.description])
 
   React.useEffect(() => {
     if (!promptId || !fingerprintReady) return
@@ -463,10 +496,12 @@ export default function PromptDetailsPage() {
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
                     {shareScriptLoaded ? (
                       <div 
+                        id="ya-share-container"
                         className="ya-share2" 
                         data-curtain 
                         data-shape="round" 
-                        data-services="messenger,vkontakte,odnoklassniki"
+                        data-limit="3"
+                        data-services="vkontakte,odnoklassniki,telegram,whatsapp"
                       ></div>
                     ) : (
                       <div className="flex items-center justify-center py-4">
