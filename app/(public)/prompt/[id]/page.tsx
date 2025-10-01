@@ -38,6 +38,7 @@ export default function PromptDetailsPage() {
   const [similar, setSimilar] = React.useState<Array<{ id: string; cosine: number }>>([])
   const [copySuccess, setCopySuccess] = React.useState(false)
   const [isCopying, setIsCopying] = React.useState(false)
+  const [shareScriptLoaded, setShareScriptLoaded] = React.useState(false)
 
   const fingerprintRef = React.useRef<string | null>(null)
 
@@ -119,6 +120,31 @@ export default function PromptDetailsPage() {
       })
       .catch(() => setRatingData(null))
   }, [promptId, isAuthenticated])
+
+  // Загружаем скрипт Яндекс.Шаринга
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const loadShareScript = () => {
+      if (window.Ya && window.Ya.share2) {
+        setShareScriptLoaded(true)
+        return
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://yastatic.net/share2/share.js'
+      script.async = true
+      script.onload = () => {
+        setShareScriptLoaded(true)
+      }
+      script.onerror = () => {
+        console.error('Failed to load Yandex Share script')
+      }
+      document.head.appendChild(script)
+    }
+
+    loadShareScript()
+  }, [])
 
   React.useEffect(() => {
     if (!promptId || !fingerprintReady) return
@@ -435,8 +461,19 @@ export default function PromptDetailsPage() {
                 <div className="mb-6">
                   <h3 className="font-semibold mb-3">Поделиться промптом</h3>
                   <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <script src="https://yastatic.net/share2/share.js"></script>
-                    <div className="ya-share2" data-curtain data-shape="round" data-limit="3" data-services="vkontakte,odnoklassniki,telegram,whatsapp"></div>
+                    {shareScriptLoaded ? (
+                      <div 
+                        className="ya-share2" 
+                        data-curtain 
+                        data-shape="round" 
+                        data-services="messenger,vkontakte,odnoklassniki"
+                      ></div>
+                    ) : (
+                      <div className="flex items-center justify-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-violet-600"></div>
+                        <span className="ml-2 text-gray-500">Загружаем кнопки...</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
