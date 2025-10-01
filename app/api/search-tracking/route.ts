@@ -7,8 +7,12 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔍 Search tracking API called')
     
-    const body = await request.json()
-    console.log('📝 Request body:', body)
+    // Читаем raw body для отладки
+    const rawBody = await request.text()
+    console.log('📝 Raw request body:', rawBody)
+    
+    const body = JSON.parse(rawBody)
+    console.log('📝 Parsed request body:', body)
     
     const { query, resultsCount, clickedResult, sessionId } = body
 
