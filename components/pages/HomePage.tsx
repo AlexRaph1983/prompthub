@@ -66,10 +66,16 @@ export default function HomePage() {
   React.useEffect(() => {
     if (debouncedValue.trim()) {
       console.log('🔍 HomePage: Tracking search for:', debouncedValue)
-      const filteredPrompts = getFilteredPrompts()
-      trackSearch(debouncedValue, filteredPrompts.length)
+      // Используем allPrompts для подсчета результатов поиска
+      const searchResults = allPrompts.filter(prompt => {
+        const search = debouncedValue.toLowerCase()
+        return prompt.title?.toLowerCase().includes(search) ||
+               prompt.description?.toLowerCase().includes(search) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+      })
+      trackSearch(debouncedValue, searchResults.length)
     }
-  }, [debouncedValue, trackSearch, getFilteredPrompts])
+  }, [debouncedValue, allPrompts])
 
   // Сброс пагинации при изменении фильтров
   React.useEffect(() => {
@@ -152,8 +158,13 @@ export default function HomePage() {
     
     // Отслеживаем клик по результату поиска, если есть поисковый запрос
     if (debouncedValue.trim()) {
-      const filteredPrompts = getFilteredPrompts()
-      trackClick(debouncedValue, filteredPrompts.length, promptId)
+      const searchResults = allPrompts.filter(prompt => {
+        const search = debouncedValue.toLowerCase()
+        return prompt.title?.toLowerCase().includes(search) ||
+               prompt.description?.toLowerCase().includes(search) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+      })
+      trackClick(debouncedValue, searchResults.length, promptId)
     }
     
     // Сохраняем текущую позицию скролла для возврата
