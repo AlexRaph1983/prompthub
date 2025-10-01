@@ -86,3 +86,4 @@ Write-Host "📊 API: https://prompt-hub.site/api/prompts?limit=50" -ForegroundC
 Write-Host "✅ Безопасный деплой пагинации завершен!" -ForegroundColor Green
 
 
+
