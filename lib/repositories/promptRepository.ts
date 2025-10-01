@@ -73,9 +73,9 @@ export class PromptRepository {
 
     if (params.search) {
       where.OR = [
-        { title: { contains: params.search, mode: 'insensitive' } },
-        { description: { contains: params.search, mode: 'insensitive' } },
-        { tags: { contains: params.search, mode: 'insensitive' } },
+        { title: { contains: params.search } },
+        { description: { contains: params.search } },
+        { tags: { contains: params.search } },
       ]
     }
 
@@ -93,8 +93,7 @@ export class PromptRepository {
 
     if (params.tags && params.tags.length > 0) {
       where.tags = {
-        contains: params.tags.join(','),
-        mode: 'insensitive'
+        contains: params.tags.join(',')
       }
     }
 

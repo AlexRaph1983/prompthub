@@ -64,7 +64,7 @@ export default function HomePage() {
 
   // Отслеживаем поисковые запросы для аналитики
   React.useEffect(() => {
-    if (debouncedValue.trim()) {
+    if (debouncedValue.trim() && allPrompts.length > 0) {
       console.log('🔍 HomePage: Tracking search for:', debouncedValue)
       // Используем allPrompts для подсчета результатов поиска
       const searchResults = allPrompts.filter(prompt => {
@@ -157,7 +157,7 @@ export default function HomePage() {
     } catch {}
     
     // Отслеживаем клик по результату поиска, если есть поисковый запрос
-    if (debouncedValue.trim()) {
+    if (debouncedValue.trim() && allPrompts.length > 0) {
       const searchResults = allPrompts.filter(prompt => {
         const search = debouncedValue.toLowerCase()
         return prompt.title?.toLowerCase().includes(search) ||
