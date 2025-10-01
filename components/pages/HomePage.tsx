@@ -65,10 +65,11 @@ export default function HomePage() {
   // Отслеживаем поисковые запросы для аналитики
   React.useEffect(() => {
     if (debouncedValue.trim()) {
-      console.log('🔍 HomePage: Tracking search for:', debouncedValue, 'Results:', allPrompts.length)
-      trackSearch(debouncedValue, allPrompts.length)
+      console.log('🔍 HomePage: Tracking search for:', debouncedValue)
+      const filteredPrompts = getFilteredPrompts()
+      trackSearch(debouncedValue, filteredPrompts.length)
     }
-  }, [debouncedValue, allPrompts.length, trackSearch])
+  }, [debouncedValue, trackSearch, getFilteredPrompts])
 
   // Сброс пагинации при изменении фильтров
   React.useEffect(() => {
@@ -149,9 +150,10 @@ export default function HomePage() {
       }) 
     } catch {}
     
-    // Отслеживаем клик по результату поиска
+    // Отслеживаем клик по результату поиска, если есть поисковый запрос
     if (debouncedValue.trim()) {
-      trackClick(debouncedValue, allPrompts.length, promptId)
+      const filteredPrompts = getFilteredPrompts()
+      trackClick(debouncedValue, filteredPrompts.length, promptId)
     }
     
     // Сохраняем текущую позицию скролла для возврата
