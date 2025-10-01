@@ -62,20 +62,6 @@ export default function HomePage() {
     dispatch({ type: 'SET_SEARCH_QUERY', payload: debouncedValue })
   }, [debouncedValue, dispatch])
 
-  // Отслеживаем поисковые запросы для аналитики
-  React.useEffect(() => {
-    if (debouncedValue.trim() && allPrompts.length > 0) {
-      console.log('🔍 HomePage: Tracking search for:', debouncedValue)
-      // Используем allPrompts для подсчета результатов поиска
-      const searchResults = allPrompts.filter(prompt => {
-        const search = debouncedValue.toLowerCase()
-        return prompt.title?.toLowerCase().includes(search) ||
-               prompt.description?.toLowerCase().includes(search) ||
-               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
-      })
-      trackSearch(debouncedValue, searchResults.length)
-    }
-  }, [debouncedValue, allPrompts])
 
   // Сброс пагинации при изменении фильтров
   React.useEffect(() => {
@@ -277,6 +263,21 @@ export default function HomePage() {
       ...regularPrompts.map(p => ({ ...p, isRecommended: false })),
     ]
   }, [recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
+
+  // Отслеживаем поисковые запросы для аналитики
+  React.useEffect(() => {
+    if (debouncedValue.trim() && allPrompts.length > 0) {
+      console.log('🔍 HomePage: Tracking search for:', debouncedValue)
+      // Используем allPrompts для подсчета результатов поиска
+      const searchResults = allPrompts.filter(prompt => {
+        const search = debouncedValue.toLowerCase()
+        return prompt.title?.toLowerCase().includes(search) ||
+               prompt.description?.toLowerCase().includes(search) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+      })
+      trackSearch(debouncedValue, searchResults.length)
+    }
+  }, [debouncedValue, allPrompts])
 
   if (!mounted) return null
   return (
