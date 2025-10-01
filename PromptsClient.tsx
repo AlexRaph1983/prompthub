@@ -153,7 +153,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
     } else {
       console.log('⚠️ No search value, skipping tracking')
     }
-  }, [searchValue, filteredPrompts.length, trackSearch])
+  }, [searchValue, filteredPrompts.length])
 
   return (
     <main className="bg-gray-50 min-h-screen pb-12">
