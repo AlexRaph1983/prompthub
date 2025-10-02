@@ -14,7 +14,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:e2e": "npx playwright test __tests__/i18n-redirect-root.test.tsx",
+    "test:e2e": "npx playwright test __tests__/e2e/search.e2e.test.ts",
+    "test:search": "vitest run __tests__/components/SearchBar.test.tsx __tests__/hooks/useSearchSuggestions.test.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "postinstall": "prisma generate"
   },
   "dependencies": {

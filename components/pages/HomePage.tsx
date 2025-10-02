@@ -12,6 +12,8 @@ import { useSearch } from '@/hooks/useSearch'
 import { useSearchTracking } from '@/hooks/useSearchTracking'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { SearchBar } from '@/components/SearchBar'
+import { getABTestFeatures } from '@/analytics/abTestConfig'
 
 export default function HomePage() {
   const [mounted, setMounted] = React.useState(false)
@@ -39,6 +41,9 @@ export default function HomePage() {
   const { trackSearch, trackCompletedSearch, trackOnBlur, trackClick } = useSearchTracking()
   const { session } = useAuth()
   const router = useRouter()
+  
+  // A/B тест функции
+  const abFeatures = getABTestFeatures()
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
   const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
@@ -140,6 +145,19 @@ export default function HomePage() {
       })
       trackOnBlur(searchValue, searchResults.length)
     }
+  }
+
+  // Обработчик для нового SearchBar
+  const handleSearchBarSearch = (query: string) => {
+    setSearchValue(query)
+    // Отслеживаем поиск
+    const searchResults = allPrompts.filter(prompt => {
+      const search = query.toLowerCase()
+      return prompt.title?.toLowerCase().includes(search) ||
+             prompt.description?.toLowerCase().includes(search) ||
+             (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+    })
+    trackCompletedSearch(query, searchResults.length)
   }
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
@@ -300,13 +318,16 @@ export default function HomePage() {
         <h1 className="text-3xl font-semibold mb-2">{t('home.title')}</h1>
         <p className="text-gray-500 mb-6">{t('home.subtitle')}</p>
         <div className="mb-8">
-          <Input 
-            placeholder={t('home.searchPlaceholder')} 
-            className="w-full" 
-            value={searchValue}
-            onChange={handleSearch}
-            onKeyDown={handleKeyDown}
-            onBlur={handleBlur}
+          <SearchBar
+            variant={abFeatures.enhancedPlaceholder ? 'enhanced' : 'default'}
+            placeholder={abFeatures.enhancedPlaceholder 
+              ? 'Что ищете? Введите жанр, цель или тег — пример: meditation, upbeat, chill'
+              : t('home.searchPlaceholder')
+            }
+            showChips={abFeatures.showChips}
+            showEmptyState={abFeatures.showEmptyState}
+            onSearch={handleSearchBarSearch}
+            className="w-full"
           />
         </div>
         
