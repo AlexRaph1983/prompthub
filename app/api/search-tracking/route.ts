@@ -2,19 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import crypto from 'crypto'
-import { processSearchQuery } from '@/lib/search-utils'
+import { validateSearchQuery, createQueryHash } from '@/lib/search-validation'
+import { incrementSavedCount, incrementRejectedCount } from '@/lib/search-metrics'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { query, queryHash, resultsCount, clickedResult, sessionId } = body
-
-    if (!query || typeof query !== 'string') {
-      return NextResponse.json({ 
-        error: 'Query is required',
-        reason: 'MISSING_QUERY'
-      }, { status: 400 })
-    }
+    const { query, resultsCount, clickedResult, sessionId, finished } = body
 
     // Получаем информацию о пользователе
     const session = await auth()
@@ -26,21 +20,35 @@ export async function POST(request: NextRequest) {
     const clientIp = forwardedFor?.split(',')[0] || realIp || 'unknown'
     const ipHash = crypto.createHash('sha256').update(clientIp + process.env.NEXTAUTH_SECRET).digest('hex').substring(0, 16)
 
-    // Обрабатываем запрос с валидацией
-    const processed = processSearchQuery(query, userId, ipHash)
+    // Валидация с новыми правилами
+    const validation = validateSearchQuery(query, finished)
     
-    if (!processed.valid) {
-      console.log(`❌ Invalid search query rejected: ${processed.reason}`, { query, userId, ipHash })
+    if (!validation.valid) {
+      console.log(`❌ Search query rejected: ${validation.reason}`, { 
+        query, 
+        userId, 
+        ipHash, 
+        finished,
+        metrics: validation.metrics 
+      })
+      
+      // Обновляем метрики отклонения
+      await incrementRejectedCount(validation.reason!)
+      
       return NextResponse.json({ 
-        error: processed.reason,
-        reason: 'INVALID_QUERY'
+        error: validation.reason,
+        reason: validation.reason,
+        metrics: validation.metrics
       }, { status: 400 })
     }
+
+    // Создаем хэш для дедупликации
+    const queryHash = createQueryHash(validation.normalizedQuery!, userId, ipHash)
 
     // Проверяем дедупликацию по хэшу
     const existingQuery = await prisma.searchQuery.findFirst({
       where: {
-        queryHash: processed.hash,
+        queryHash,
         userId: userId || null,
         ipHash: userId ? null : ipHash,
         createdAt: {
@@ -50,7 +58,9 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingQuery) {
-      console.log(`⚠️ Duplicate search query detected: ${processed.processed}`)
+      console.log(`⚠️ Duplicate search query detected: ${validation.normalizedQuery}`)
+      await incrementRejectedCount('DUPLICATE_QUERY')
+      
       return NextResponse.json({ 
         error: 'Duplicate query',
         reason: 'DUPLICATE_QUERY'
@@ -62,8 +72,8 @@ export async function POST(request: NextRequest) {
     // Сохраняем поисковый запрос
     await prisma.searchQuery.create({
       data: {
-        query: processed.processed,
-        queryHash: processed.hash,
+        query: validation.normalizedQuery!,
+        queryHash,
         userId,
         ipHash: userId ? null : ipHash,
         userAgent,
@@ -73,11 +83,15 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    console.log(`✅ Search query tracked: ${processed.processed}`)
+    // Обновляем метрики сохранения
+    await incrementSavedCount()
+
+    console.log(`✅ Search query tracked: ${validation.normalizedQuery}`)
     return NextResponse.json({ 
       success: true,
-      processed: processed.processed,
-      hash: processed.hash
+      processed: validation.normalizedQuery,
+      hash: queryHash,
+      metrics: validation.metrics
     })
   } catch (error) {
     console.error('Error tracking search query:', error)

@@ -16,33 +16,20 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
   const trackSearch = useCallback(async (
     query: string,
     resultsCount: number,
-    clickedResult?: string
+    clickedResult?: string,
+    finished: boolean = false
   ) => {
     if (!query.trim()) {
       console.log('⚠️ Empty query, skipping tracking')
       return
     }
 
-    // Обрабатываем запрос с нормализацией и валидацией
-    const processed = processSearchQuery(query)
-    
-    if (!processed.valid) {
-      console.log('⚠️ Invalid query, skipping tracking:', processed.reason)
-      return
-    }
-
-    // Проверяем на дубликаты
-    if (lastTrackedQuery.current === processed.processed) {
-      console.log('⚠️ Duplicate query, skipping tracking:', processed.processed)
-      return
-    }
-
     try {
       console.log('🔍 Tracking search:', { 
-        original: query, 
-        processed: processed.processed, 
+        query, 
         resultsCount, 
         clickedResult, 
+        finished,
         sessionId 
       })
       
@@ -52,19 +39,25 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: processed.processed,
-          queryHash: processed.hash,
+          query: query.trim(),
           resultsCount,
           clickedResult,
           sessionId,
+          finished
         }),
       })
       
       console.log('📡 Response status:', response.status)
       
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('❌ API Error:', errorText)
+        const errorData = await response.json()
+        console.error('❌ API Error:', errorData)
+        
+        // Логируем причину отклонения
+        if (errorData.reason) {
+          console.log(`❌ Query rejected: ${errorData.reason}`, errorData.metrics)
+        }
+        
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
       
@@ -72,7 +65,7 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
       console.log('✅ Search tracked successfully:', result)
       
       // Сохраняем последний отслеженный запрос
-      lastTrackedQuery.current = processed.processed
+      lastTrackedQuery.current = query.trim()
     } catch (error) {
       console.error('❌ Search tracking error:', error)
     }
@@ -93,16 +86,16 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
   const trackCompletedSearch = useCallback((query: string, resultsCount: number) => {
     if (!query.trim()) return
     
-    // Сбрасываем debounce и сразу отправляем
-    trackSearch(query, resultsCount)
+    // Отправляем с флагом finished=true
+    trackSearch(query, resultsCount, undefined, true)
   }, [trackSearch])
 
   // Отслеживание только при потере фокуса (без debounce)
   const trackOnBlur = useCallback((query: string, resultsCount: number) => {
     if (!query.trim()) return
     
-    // Немедленно отправляем без debounce
-    trackSearch(query, resultsCount)
+    // Отправляем с флагом finished=true
+    trackSearch(query, resultsCount, undefined, true)
   }, [trackSearch])
 
   return {
