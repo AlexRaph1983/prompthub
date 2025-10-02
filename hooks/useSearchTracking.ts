@@ -9,7 +9,7 @@ interface SearchTrackingOptions {
 }
 
 export function useSearchTracking(options: SearchTrackingOptions = {}) {
-  const { sessionId = uuidv4(), debounceMs = 1000 } = options
+  const { sessionId = uuidv4(), debounceMs = 2000 } = options
 
   const trackSearch = useCallback(async (
     query: string,
@@ -18,6 +18,12 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
   ) => {
     if (!query.trim()) {
       console.log('⚠️ Empty query, skipping tracking')
+      return
+    }
+
+    // Фильтруем слишком короткие запросы (меньше 3 символов)
+    if (query.trim().length < 3) {
+      console.log('⚠️ Query too short, skipping tracking:', query)
       return
     }
 
@@ -65,7 +71,7 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
   }, [trackSearch])
 
   return {
-    trackSearch: trackSearch, // Возвращаем оригинальный trackSearch без debounce
+    trackSearch: trackSearchWithDebounce, // Используем debounced версию по умолчанию
     trackSearchWithDebounce,
     trackClick,
   }

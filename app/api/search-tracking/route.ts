@@ -12,6 +12,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Query is required' }, { status: 400 })
     }
 
+    // Фильтруем слишком короткие запросы (меньше 3 символов)
+    if (query.trim().length < 3) {
+      return NextResponse.json({ error: 'Query too short' }, { status: 400 })
+    }
+
     // Получаем информацию о пользователе
     const session = await auth()
     const userId = session?.user?.id || null
