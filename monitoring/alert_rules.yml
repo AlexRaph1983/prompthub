@@ -1,0 +1,73 @@
+# Правила алертов для системы поиска
+groups:
+  - name: search_system_alerts
+    rules:
+      # Высокий процент отклоненных запросов
+      - alert: HighRejectionRate
+        expr: (search_metrics_count_rejected / (search_metrics_count_saved + search_metrics_count_rejected)) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокий процент отклоненных поисковых запросов"
+          description: "Процент отклоненных запросов {{ $value | humanizePercentage }} превышает 5%"
+
+      # Медленные ответы API
+      - alert: SlowAPIResponse
+        expr: http_request_duration_seconds{quantile="0.95"} > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Медленные ответы API"
+          description: "95-й перцентиль времени ответа {{ $value }}s превышает 500ms"
+
+      # Высокий процент ошибок
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.01
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Высокий процент ошибок API"
+          description: "Процент 5xx ошибок {{ $value | humanizePercentage }} превышает 1%"
+
+      # Высокая нагрузка CPU
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая нагрузка CPU"
+          description: "Использование CPU {{ $value }}% превышает 80%"
+
+      # Высокая нагрузка памяти
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая нагрузка памяти"
+          description: "Использование памяти {{ $value }}% превышает 80%"
+
+      # Недоступность сервиса
+      - alert: ServiceDown
+        expr: up{job="prompthub-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сервис недоступен"
+          description: "Сервис Prompthub недоступен более 1 минуты"
+
+      # Аномальное количество запросов
+      - alert: AnomalousRequestVolume
+        expr: rate(http_requests_total[5m]) > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Аномально высокий объем запросов"
+          description: "Количество запросов {{ $value }} RPS превышает нормальный уровень"
