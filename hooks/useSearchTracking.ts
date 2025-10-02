@@ -1,7 +1,8 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import { processSearchQuery } from '@/lib/search-utils'
 
 interface SearchTrackingOptions {
   sessionId?: string
@@ -9,7 +10,8 @@ interface SearchTrackingOptions {
 }
 
 export function useSearchTracking(options: SearchTrackingOptions = {}) {
-  const { sessionId = uuidv4(), debounceMs = 2000 } = options
+  const { sessionId = uuidv4(), debounceMs = 600 } = options
+  const lastTrackedQuery = useRef<string>('')
 
   const trackSearch = useCallback(async (
     query: string,
@@ -21,15 +23,28 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
       return
     }
 
-    // Фильтруем слишком короткие запросы (меньше 3 символов)
-    if (query.trim().length < 3) {
-      console.log('⚠️ Query too short, skipping tracking:', query)
+    // Обрабатываем запрос с нормализацией и валидацией
+    const processed = processSearchQuery(query)
+    
+    if (!processed.valid) {
+      console.log('⚠️ Invalid query, skipping tracking:', processed.reason)
+      return
+    }
+
+    // Проверяем на дубликаты
+    if (lastTrackedQuery.current === processed.processed) {
+      console.log('⚠️ Duplicate query, skipping tracking:', processed.processed)
       return
     }
 
     try {
-      console.log('🔍 Tracking search:', { query, resultsCount, clickedResult, sessionId })
-      console.log('🌐 Making request to /api/search-tracking')
+      console.log('🔍 Tracking search:', { 
+        original: query, 
+        processed: processed.processed, 
+        resultsCount, 
+        clickedResult, 
+        sessionId 
+      })
       
       const response = await fetch('/api/search-tracking', {
         method: 'POST',
@@ -37,7 +52,8 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: query.trim(),
+          query: processed.processed,
+          queryHash: processed.hash,
           resultsCount,
           clickedResult,
           sessionId,
@@ -54,6 +70,9 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
       
       const result = await response.json()
       console.log('✅ Search tracked successfully:', result)
+      
+      // Сохраняем последний отслеженный запрос
+      lastTrackedQuery.current = processed.processed
     } catch (error) {
       console.error('❌ Search tracking error:', error)
     }
@@ -70,9 +89,27 @@ export function useSearchTracking(options: SearchTrackingOptions = {}) {
     trackSearch(query, resultsCount, clickedPromptId)
   }, [trackSearch])
 
+  // Отслеживание завершенного поиска (Enter или потеря фокуса)
+  const trackCompletedSearch = useCallback((query: string, resultsCount: number) => {
+    if (!query.trim()) return
+    
+    // Сбрасываем debounce и сразу отправляем
+    trackSearch(query, resultsCount)
+  }, [trackSearch])
+
+  // Отслеживание только при потере фокуса (без debounce)
+  const trackOnBlur = useCallback((query: string, resultsCount: number) => {
+    if (!query.trim()) return
+    
+    // Немедленно отправляем без debounce
+    trackSearch(query, resultsCount)
+  }, [trackSearch])
+
   return {
-    trackSearch: trackSearchWithDebounce, // Используем debounced версию по умолчанию
+    trackSearch: trackSearchWithDebounce, // Debounced для ввода
     trackSearchWithDebounce,
+    trackCompletedSearch, // Для Enter
+    trackOnBlur, // Для потери фокуса
     trackClick,
   }
 }

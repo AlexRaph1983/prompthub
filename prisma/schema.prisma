@@ -227,7 +227,8 @@ model ViewAnalytics {
 /// Отслеживание поисковых запросов пользователей для аналитики
 model SearchQuery {
   id          String   @id @default(cuid())
-  query       String   // Поисковый запрос
+  query       String   // Поисковый запрос (нормализованный)
+  queryHash   String?  // Хэш запроса для дедупликации
   userId      String?  // ID пользователя (если авторизован)
   ipHash      String?  // Хэш IP для анонимных пользователей
   userAgent   String?  // User Agent для анализа
@@ -237,6 +238,8 @@ model SearchQuery {
   createdAt   DateTime @default(now())
 
   @@index([query, createdAt])
+  @@index([queryHash])
+  @@index([queryHash, userId, ipHash, createdAt])
   @@index([userId, createdAt])
   @@index([createdAt])
 }

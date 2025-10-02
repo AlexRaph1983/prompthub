@@ -77,10 +77,24 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
   const t = useTranslations()
   const router = useRouter()
   const [searchValue, setSearchValue] = React.useState('')
-  const { trackSearch, trackClick } = useSearchTracking()
+  const { trackSearch, trackCompletedSearch, trackOnBlur, trackClick } = useSearchTracking()
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchValue.trim()) {
+      // Отслеживаем завершенный поиск при нажатии Enter
+      trackCompletedSearch(searchValue, filteredPrompts.length)
+    }
+  }
+
+  const handleBlur = () => {
+    if (searchValue.trim()) {
+      // Отслеживаем при потере фокуса
+      trackOnBlur(searchValue, filteredPrompts.length)
+    }
   }
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
@@ -194,6 +208,8 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
               placeholder={t('common.searchPrompts')}
               value={searchValue}
               onChange={handleSearch}
+              onKeyDown={handleKeyDown}
+              onBlur={handleBlur}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
             />
             <svg className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
