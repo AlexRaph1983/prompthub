@@ -7,7 +7,17 @@ import { incrementSavedCount, incrementRejectedCount } from '@/lib/search-metric
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    let body
+    try {
+      body = await request.json()
+    } catch (jsonError) {
+      console.error('❌ JSON parsing error:', jsonError)
+      return NextResponse.json({ 
+        error: 'Invalid JSON',
+        reason: 'INVALID_JSON'
+      }, { status: 400 })
+    }
+    
     const { query, resultsCount, clickedResult, sessionId, finished } = body
 
     // Получаем информацию о пользователе
