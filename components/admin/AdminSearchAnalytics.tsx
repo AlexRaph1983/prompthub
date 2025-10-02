@@ -14,6 +14,7 @@ import {
   CheckSquare,
   Square
 } from 'lucide-react'
+import { exportSearchQueries, exportDetailedSearchQueries } from '@/lib/csv-export'
 
 interface SearchAnalyticsData {
   summary: {
@@ -85,24 +86,23 @@ export function AdminSearchAnalytics() {
     if (!data) return
     
     try {
-      const csvContent = [
-        // Заголовки
-        'Query,Count,Average Results',
-        // Данные
-        ...data.topQueries.map(q => `"${q.query}",${q.count},${q.averageResults}`)
-      ].join('\n')
-      
-      const blob = new Blob([csvContent], { type: 'text/csv' })
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `search-analytics-${selectedPeriod}days.csv`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
+      // Экспортируем топ запросы
+      exportSearchQueries(data.topQueries, selectedPeriod)
     } catch (err) {
+      console.error('Export error:', err)
       alert('Ошибка при экспорте данных')
+    }
+  }
+
+  const exportDetailedData = async () => {
+    if (!data) return
+    
+    try {
+      // Экспортируем детальные данные
+      exportDetailedSearchQueries(data.recentQueries, selectedPeriod)
+    } catch (err) {
+      console.error('Detailed export error:', err)
+      alert('Ошибка при экспорте детальных данных')
     }
   }
 
@@ -213,13 +213,22 @@ export function AdminSearchAnalytics() {
             <option value={30}>Последние 30 дней</option>
             <option value={90}>Последние 90 дней</option>
           </select>
-          <button
-            onClick={exportData}
-            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Экспорт
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={exportData}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Экспорт топ
+            </button>
+            <button
+              onClick={exportDetailedData}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Детальный экспорт
+            </button>
+          </div>
           {selectedQueries.size > 0 && (
             <button
               onClick={() => setShowDeleteModal(true)}
