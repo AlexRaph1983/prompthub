@@ -264,7 +264,7 @@ model SearchMetrics {
   id               String   @id @default("main")
   countSaved       Int      @default(0) @map("count_saved")
   countRejected    Int      @default(0) @map("count_rejected")
-  rejectionReasons Json     @default("{}") @map("rejection_reasons")
+  rejectionReasons String  @default("{}") @map("rejection_reasons")
   lastUpdated      DateTime @default(now()) @map("last_updated")
 
   @@index([id])
