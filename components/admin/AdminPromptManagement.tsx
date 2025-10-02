@@ -11,11 +11,13 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  MoreVertical
+  MoreVertical,
+  X
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import Link from 'next/link'
+import { useAdminSearch } from '@/hooks/useAdminSearch'
 
 interface Prompt {
   id: string
@@ -74,11 +76,42 @@ export function AdminPromptManagement() {
   const [promptToDelete, setPromptToDelete] = useState<Prompt | null>(null)
   
   // Фильтры и поиск
-  const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('desc')
   const [currentPage, setCurrentPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
+
+  // Используем улучшенный хук поиска
+  const {
+    searchValue,
+    setSearchValue,
+    isSearching,
+    handleKeyDown,
+    handleBlur,
+    clearSearch
+  } = useAdminSearch({
+    onSearch: (query, finished) => {
+      if (finished) {
+        setSearchQuery(query)
+        setCurrentPage(1) // Сбрасываем на первую страницу при новом поиске
+      }
+    },
+    onSuggestions: (query) => {
+      // Здесь можно добавить логику для подсказок
+      if (query.trim()) {
+        // Простые подсказки на основе текущих данных
+        const suggestions = data?.prompts
+          ?.map(p => p.title)
+          .filter(title => title.toLowerCase().includes(query.toLowerCase()))
+          .slice(0, 5) || []
+        setSearchSuggestions(suggestions)
+      } else {
+        setSearchSuggestions([])
+      }
+    }
+  })
 
   useEffect(() => {
     fetchPrompts()
@@ -247,11 +280,45 @@ export function AdminPromptManagement() {
               <input
                 type="text"
                 placeholder="Поиск по названию, описанию, автору..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={handleBlur}
+                className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
+              {searchValue && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+                </div>
+              )}
             </div>
+            
+            {/* Подсказки */}
+            {searchSuggestions.length > 0 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                {searchSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSearchValue(suggestion)
+                      setSearchQuery(suggestion)
+                      setCurrentPage(1)
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           
           <div>
