@@ -9,7 +9,10 @@ import {
   BarChart3,
   Download,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  Trash2,
+  CheckSquare,
+  Square
 } from 'lucide-react'
 
 interface SearchAnalyticsData {
@@ -52,6 +55,9 @@ export function AdminSearchAnalytics() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState(30)
+  const [selectedQueries, setSelectedQueries] = useState<Set<string>>(new Set())
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
 
   useEffect(() => {
     fetchAnalytics()
@@ -97,6 +103,59 @@ export function AdminSearchAnalytics() {
       window.URL.revokeObjectURL(url)
     } catch (err) {
       alert('Ошибка при экспорте данных')
+    }
+  }
+
+  const handleSelectQuery = (queryId: string) => {
+    const newSelected = new Set(selectedQueries)
+    if (newSelected.has(queryId)) {
+      newSelected.delete(queryId)
+    } else {
+      newSelected.add(queryId)
+    }
+    setSelectedQueries(newSelected)
+  }
+
+  const handleSelectAll = () => {
+    if (!data) return
+    
+    if (selectedQueries.size === data.recentQueries.length) {
+      setSelectedQueries(new Set())
+    } else {
+      setSelectedQueries(new Set(data.recentQueries.map(q => q.id)))
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedQueries.size === 0) return
+    
+    setIsDeleting(true)
+    try {
+      const response = await fetch('/api/admin/search-analytics/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          queryIds: Array.from(selectedQueries)
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete queries')
+      }
+
+      const result = await response.json()
+      alert(`Успешно удалено ${result.deletedCount} записей`)
+      
+      // Обновляем данные
+      await fetchAnalytics()
+      setSelectedQueries(new Set())
+      setShowDeleteModal(false)
+    } catch (err) {
+      alert('Ошибка при удалении записей')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -161,6 +220,15 @@ export function AdminSearchAnalytics() {
             <Download className="w-4 h-4 mr-2" />
             Экспорт
           </button>
+          {selectedQueries.size > 0 && (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Удалить ({selectedQueries.size})
+            </button>
+          )}
           <button
             onClick={fetchAnalytics}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -321,6 +389,19 @@ export function AdminSearchAnalytics() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <button
+                    onClick={handleSelectAll}
+                    className="flex items-center space-x-2 hover:text-gray-700"
+                  >
+                    {selectedQueries.size === data.recentQueries.length ? (
+                      <CheckSquare className="w-4 h-4" />
+                    ) : (
+                      <Square className="w-4 h-4" />
+                    )}
+                    <span>Выбрать все</span>
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Запрос
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -340,6 +421,18 @@ export function AdminSearchAnalytics() {
             <tbody className="bg-white divide-y divide-gray-200">
               {data.recentQueries.slice(0, 20).map((query) => (
                 <tr key={query.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleSelectQuery(query.id)}
+                      className="flex items-center space-x-2 hover:text-gray-700"
+                    >
+                      {selectedQueries.has(query.id) ? (
+                        <CheckSquare className="w-4 h-4 text-blue-600" />
+                      ) : (
+                        <Square className="w-4 h-4 text-gray-400" />
+                      )}
+                    </button>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
                       "{query.query}"
@@ -375,6 +468,37 @@ export function AdminSearchAnalytics() {
           </table>
         </div>
       </div>
+
+      {/* Модальное окно подтверждения удаления */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">
+              Подтверждение удаления
+            </h3>
+            <p className="text-sm text-gray-600 mb-6">
+              Вы уверены, что хотите удалить {selectedQueries.size} поисковых записей? 
+              Это действие нельзя отменить.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={handleBulkDelete}
+                disabled={isDeleting}
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isDeleting ? 'Удаление...' : 'Удалить'}
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isDeleting}
+                className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50"
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
