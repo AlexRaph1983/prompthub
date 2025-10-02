@@ -36,7 +36,7 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [mounted, state.isLoading, state.hasMore, loadMorePrompts]);
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
-  const { trackSearch, trackClick } = useSearchTracking()
+  const { trackSearch, trackCompletedSearch, trackOnBlur, trackClick } = useSearchTracking()
   const { session } = useAuth()
   const router = useRouter()
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
@@ -114,6 +114,32 @@ export default function HomePage() {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchValue.trim()) {
+      // Отслеживаем завершенный поиск при нажатии Enter
+      const searchResults = allPrompts.filter(prompt => {
+        const search = searchValue.toLowerCase()
+        return prompt.title?.toLowerCase().includes(search) ||
+               prompt.description?.toLowerCase().includes(search) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+      })
+      trackCompletedSearch(searchValue, searchResults.length)
+    }
+  }
+
+  const handleBlur = () => {
+    if (searchValue.trim()) {
+      // Отслеживаем при потере фокуса
+      const searchResults = allPrompts.filter(prompt => {
+        const search = searchValue.toLowerCase()
+        return prompt.title?.toLowerCase().includes(search) ||
+               prompt.description?.toLowerCase().includes(search) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+      })
+      trackOnBlur(searchValue, searchResults.length)
+    }
   }
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
@@ -264,20 +290,8 @@ export default function HomePage() {
     ]
   }, [recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
 
-  // Отслеживаем поисковые запросы для аналитики
-  React.useEffect(() => {
-    if (debouncedValue.trim() && allPrompts.length > 0) {
-      console.log('🔍 HomePage: Tracking search for:', debouncedValue)
-      // Используем allPrompts для подсчета результатов поиска
-      const searchResults = allPrompts.filter(prompt => {
-        const search = debouncedValue.toLowerCase()
-        return prompt.title?.toLowerCase().includes(search) ||
-               prompt.description?.toLowerCase().includes(search) ||
-               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
-      })
-      trackSearch(debouncedValue, searchResults.length)
-    }
-  }, [debouncedValue, allPrompts])
+  // Убираем автоматическое отслеживание при каждом изменении
+  // Теперь отслеживаем только завершенные поиски (Enter/blur)
 
   if (!mounted) return null
   return (
@@ -291,6 +305,8 @@ export default function HomePage() {
             className="w-full" 
             value={searchValue}
             onChange={handleSearch}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
           />
         </div>
         
