@@ -43,6 +43,44 @@ export function useSearchAnalytics() {
       }).catch(console.error)
     }
   }, [])
+
+  // Специальный метод для отслеживания поиска с результатами
+  const trackSearchWithResults = useCallback(async (
+    query: string,
+    resultsCount: number,
+    clickedResult?: string,
+    finished: boolean = false
+  ) => {
+    if (!query.trim()) return
+
+    try {
+      const response = await fetch('/api/search-tracking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: query.trim(),
+          resultsCount,
+          clickedResult,
+          sessionId: typeof window !== 'undefined' ? sessionStorage.getItem('sessionId') : null,
+          finished
+        }),
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('❌ Search tracking API Error:', errorData)
+      } else {
+        console.log('✅ Search tracked successfully')
+      }
+    } catch (error) {
+      console.error('❌ Search tracking error:', error)
+    }
+  }, [])
   
-  return { trackSearchEvent }
+  return { 
+    trackSearchEvent,
+    trackSearchWithResults
+  }
 }
