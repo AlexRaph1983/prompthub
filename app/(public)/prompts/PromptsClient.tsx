@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Copy, Star, Eye } from 'lucide-react'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
 import { useSearchTracking } from '@/hooks/useSearchTracking'
+import { useRealTimeSearchTracking } from '@/hooks/useRealTimeSearchTracking'
 
 interface Prompt {
   id: string
@@ -78,6 +79,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
   const router = useRouter()
   const [searchValue, setSearchValue] = React.useState('')
   const { trackSearch, trackClick } = useSearchTracking()
+  const { trackRealTimeSearch } = useRealTimeSearchTracking()
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
@@ -85,14 +87,10 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
 
   // Real-time поиск с debounce для аналитики
   React.useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchValue.trim()) {
-        trackSearch(searchValue, filteredPrompts.length)
-      }
-    }, 500) // 500ms debounce для аналитики
-
-    return () => clearTimeout(timeoutId)
-  }, [searchValue, filteredPrompts.length, trackSearch])
+    if (searchValue.trim()) {
+      trackRealTimeSearch(searchValue, filteredPrompts.length, 1000)
+    }
+  }, [searchValue, filteredPrompts.length, trackRealTimeSearch])
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
     try {
