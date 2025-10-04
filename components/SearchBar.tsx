@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Search, X, Loader2 } from 'lucide-react'
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions'
-import { useSearchAnalytics } from '@/hooks/useSearchAnalytics'
+import { useSearchTracking } from '@/hooks/useSearchTracking'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 import { SearchSuggestionsList } from './SearchSuggestionsList'
 import { SearchChips } from './SearchChips'
@@ -42,12 +42,11 @@ export function SearchBar({
     error: suggestionsError
   } = useSearchSuggestions(query, { debounceMs: 300, maxResults: 6 })
   
-  const { trackSearchEvent } = useSearchAnalytics()
+  const { trackCompletedSearch } = useSearchTracking()
   
   // Горячая клавиша "/"
   useKeyboardShortcut('/', () => {
     inputRef.current?.focus()
-    trackSearchEvent('search_focused', { method: 'hotkey' })
   })
   
   // Real-time поиск с debounce
@@ -55,31 +54,14 @@ export function SearchBar({
     if (debounceRef.current) {
       clearTimeout(debounceRef.current)
     }
-    
+
     if (query.trim()) {
       debounceRef.current = setTimeout(() => {
-        // Отслеживаем поиск только если запрос изменился
-        if (query.trim() !== lastTrackedQuery) {
-          const timeToSearch = startTime > 0 ? Date.now() - startTime : 0
-          
-          trackSearchEvent('search_performed', { 
-            query: query.trim(),
-            source: 'realtime',
-            timeToSearchMs: timeToSearch
-          })
-          
-          setLastTrackedQuery(query.trim())
-        }
-        
         // Вызываем real-time поиск
         onRealTimeSearch?.(query.trim())
       }, 300) // 300ms debounce
     } else {
       // Очистка поиска
-      if (lastTrackedQuery) {
-        trackSearchEvent('search_cleared')
-        setLastTrackedQuery('')
-      }
       onRealTimeSearch?.('')
     }
     
@@ -88,7 +70,7 @@ export function SearchBar({
         clearTimeout(debounceRef.current)
       }
     }
-  }, [query, onRealTimeSearch, trackSearchEvent, startTime, lastTrackedQuery])
+  }, [query, onRealTimeSearch])
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -96,7 +78,6 @@ export function SearchBar({
     
     if (value.length === 1 && startTime === 0) {
       setStartTime(Date.now())
-      trackSearchEvent('search_started', { query: value })
     }
   }
   
@@ -104,14 +85,6 @@ export function SearchBar({
     e.preventDefault()
     if (query.trim()) {
       setIsLoading(true)
-      const timeToSubmit = startTime > 0 ? Date.now() - startTime : 0
-      
-      trackSearchEvent('search_submitted', { 
-        query: query.trim(),
-        source: 'form_submit',
-        timeToSubmitMs: timeToSubmit
-      })
-      
       onSearch?.(query.trim())
       
       // Сброс состояния
@@ -124,11 +97,6 @@ export function SearchBar({
   
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion)
-    trackSearchEvent('suggestion_clicked', { 
-      query: suggestion,
-      suggestionId: suggestion,
-      position: suggestions.indexOf(suggestion)
-    })
     onSearch?.(suggestion)
   }
   
@@ -137,13 +105,11 @@ export function SearchBar({
     setStartTime(0)
     setLastTrackedQuery('')
     inputRef.current?.focus()
-    trackSearchEvent('search_cleared')
     onRealTimeSearch?.('')
   }
   
   const handleFocus = () => {
     setIsFocused(true)
-    trackSearchEvent('search_focused', { method: 'click' })
   }
   
   const handleBlur = () => {
