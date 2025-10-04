@@ -153,10 +153,10 @@ export default function HomePage() {
     }
   }
 
-  // Обработчик для нового SearchBar
+  // Обработчик для нового SearchBar (Enter/Submit)
   const handleSearchBarSearch = (query: string) => {
     setSearchValue(query)
-    // Отслеживаем поиск
+    // Отслеживаем завершенный поиск при нажатии Enter
     const searchResults = allPrompts.filter(prompt => {
       const search = query.toLowerCase().trim()
       const normalizedSearch = search.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
@@ -167,6 +167,13 @@ export default function HomePage() {
              (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch)))
     })
     trackCompletedSearch(query, searchResults.length)
+  }
+
+  // Обработчик для real-time поиска
+  const handleRealTimeSearch = (query: string) => {
+    setSearchValue(query)
+    // Real-time поиск не отслеживается в аналитике отдельно - 
+    // это делается внутри SearchBar компонента
   }
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
@@ -336,6 +343,7 @@ export default function HomePage() {
             showChips={abFeatures.showChips}
             showEmptyState={abFeatures.showEmptyState}
             onSearch={handleSearchBarSearch}
+            onRealTimeSearch={handleRealTimeSearch}
             className="w-full"
           />
         </div>
