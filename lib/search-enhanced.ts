@@ -71,33 +71,33 @@ export function buildSearchConditions(query: string, searchTerms: string[]) {
   return {
     OR: [
       // Точное совпадение в заголовке (высший приоритет)
-      { title: { contains: normalizedQuery, mode: 'insensitive' as const } },
+      { title: { contains: normalizedQuery } },
       // Точное совпадение в описании
-      { description: { contains: normalizedQuery, mode: 'insensitive' as const } },
+      { description: { contains: normalizedQuery } },
       // Точное совпадение в тегах
-      { tags: { contains: normalizedQuery, mode: 'insensitive' as const } },
+      { tags: { contains: normalizedQuery } },
       // Поиск по отдельным терминам в заголовке
       ...searchTerms.map(term => ({
-        title: { contains: term, mode: 'insensitive' as const }
+        title: { contains: term }
       })),
       // Поиск по отдельным терминам в описании
       ...searchTerms.map(term => ({
-        description: { contains: term, mode: 'insensitive' as const }
+        description: { contains: term }
       })),
       // Поиск по отдельным терминам в тегах
       ...searchTerms.map(term => ({
-        tags: { contains: term, mode: 'insensitive' as const }
+        tags: { contains: term }
       })),
       // Поиск по имени автора
       {
         author: {
-          name: { contains: normalizedQuery, mode: 'insensitive' as const }
+          name: { contains: normalizedQuery }
         }
       },
       // Поиск по отдельным терминам в имени автора
       ...searchTerms.map(term => ({
         author: {
-          name: { contains: term, mode: 'insensitive' as const }
+          name: { contains: term }
         }
       }))
     ]

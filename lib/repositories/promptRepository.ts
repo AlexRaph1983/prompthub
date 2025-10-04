@@ -73,14 +73,14 @@ export class PromptRepository {
     }
 
     if (params.search) {
-      // Используем улучшенный поиск с нормализацией
+      // Используем улучшенный поиск с нормализацией (без mode для SQLite)
       where.OR = [
-        { title: { contains: params.search, mode: 'insensitive' } },
-        { description: { contains: params.search, mode: 'insensitive' } },
-        { tags: { contains: params.search, mode: 'insensitive' } },
+        { title: { contains: params.search } },
+        { description: { contains: params.search } },
+        { tags: { contains: params.search } },
         {
           author: {
-            name: { contains: params.search, mode: 'insensitive' }
+            name: { contains: params.search }
           }
         }
       ]
