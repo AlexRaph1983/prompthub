@@ -131,15 +131,21 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
     router.push(`/${locale}/prompt/${promptId}`)
   }
 
-  // Filter prompts by search
+  // Filter prompts by search with enhanced normalization
   const filteredPrompts = React.useMemo(() => {
     if (!searchValue) return prompts
-    const searchLower = searchValue.toLowerCase()
-    const filtered = prompts.filter(prompt =>
-      prompt.title.toLowerCase().includes(searchLower) ||
-      prompt.description.toLowerCase().includes(searchLower) ||
-      prompt.tags.some((tag: string) => tag.toLowerCase().includes(searchLower))
-    )
+    
+    const searchLower = searchValue.toLowerCase().trim()
+    const normalizedSearch = searchLower.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
+    
+    const filtered = prompts.filter(prompt => {
+      const titleMatch = prompt.title.toLowerCase().includes(normalizedSearch)
+      const descriptionMatch = prompt.description.toLowerCase().includes(normalizedSearch)
+      const authorMatch = prompt.author.toLowerCase().includes(normalizedSearch)
+      const tagsMatch = prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch))
+      
+      return titleMatch || descriptionMatch || authorMatch || tagsMatch
+    })
     
     return filtered
   }, [prompts, searchValue])

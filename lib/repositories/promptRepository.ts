@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { calculateReputation } from '@/lib/reputation'
 import { ViewsService } from '@/lib/services/viewsService'
+import { enhancedSearch, EnhancedSearchParams, EnhancedSearchResult } from '@/lib/search-enhanced'
 
 export interface PromptCardDTO {
   id: string
@@ -72,10 +73,16 @@ export class PromptRepository {
     }
 
     if (params.search) {
+      // Используем улучшенный поиск с нормализацией
       where.OR = [
-        { title: { contains: params.search } },
-        { description: { contains: params.search } },
-        { tags: { contains: params.search } },
+        { title: { contains: params.search, mode: 'insensitive' } },
+        { description: { contains: params.search, mode: 'insensitive' } },
+        { tags: { contains: params.search, mode: 'insensitive' } },
+        {
+          author: {
+            name: { contains: params.search, mode: 'insensitive' }
+          }
+        }
       ]
     }
 
@@ -268,6 +275,95 @@ export class PromptRepository {
     const where = this.buildWhereClause(params)
     
     return prisma.prompt.count({ where })
+  }
+
+  /**
+   * Улучшенный поиск с нормализацией текста и поиском по авторам
+   */
+  async searchPrompts(params: PromptListParams = {}): Promise<PromptListResult> {
+    if (!params.search) {
+      // Если нет поискового запроса, используем обычный метод
+      return this.listPrompts(params)
+    }
+
+    const enhancedParams: EnhancedSearchParams = {
+      query: params.search,
+      limit: params.limit,
+      cursor: params.cursor,
+      sort: params.sort === 'createdAt' ? 'createdAt' : 
+             params.sort === 'rating' ? 'rating' : 
+             params.sort === 'views' ? 'views' : 'relevance',
+      order: params.order,
+      authorId: params.authorId,
+      category: params.category,
+      model: params.model,
+      lang: params.lang,
+      tags: params.tags
+    }
+
+    const result = await enhancedSearch(enhancedParams)
+    
+    // Получаем view counts для всех промптов
+    const promptIds = result.items.map(p => p.id)
+    const viewCounts = await ViewsService.getPromptsViews(promptIds)
+
+    // Преобразуем в DTO формат
+    const formattedPrompts = await Promise.all(result.items.map(async (prompt: any) => {
+      const avg = prompt.averageRating || 0
+      const ratingCount = prompt.totalRatings || 0
+      const authorScore = prompt.author?.reputationScore || 0
+      const authorTier: 'bronze' | 'silver' | 'gold' | 'platinum' = 
+        authorScore >= 85 ? 'platinum' : 
+        authorScore >= 65 ? 'gold' : 
+        authorScore >= 40 ? 'silver' : 'bronze'
+
+      return {
+        id: prompt.id,
+        title: prompt.title,
+        description: prompt.description,
+        model: prompt.model,
+        lang: prompt.lang,
+        category: prompt.category,
+        tags: prompt.tags.split(',').map((tag: string) => tag.trim()),
+        rating: avg,
+        ratingCount,
+        likesCount: prompt._count?.likes ?? 0,
+        savesCount: prompt._count?.saves ?? 0,
+        commentsCount: prompt._count?.comments ?? 0,
+        views: viewCounts.get(prompt.id) ?? 0,
+        license: prompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
+        prompt: prompt.prompt,
+        author: prompt.author?.name || 'Anonymous',
+        authorId: prompt.authorId,
+        authorReputationScore: authorScore,
+        authorReputationTier: authorTier,
+        authorProfile: {
+          id: prompt.authorId,
+          name: prompt.author?.name || 'Anonymous',
+          image: prompt.author?.image,
+          bio: prompt.author?.bio,
+          website: prompt.author?.website,
+          telegram: prompt.author?.telegram,
+          github: prompt.author?.github,
+          twitter: prompt.author?.twitter,
+          linkedin: prompt.author?.linkedin,
+          reputationScore: authorScore,
+          reputationPromptCount: prompt.author?.reputationPromptCount || 0,
+          reputationLikesCnt: prompt.author?.reputationLikesCnt || 0,
+          reputationSavesCnt: prompt.author?.reputationSavesCnt || 0,
+          reputationRatingsCnt: prompt.author?.reputationRatingsCnt || 0,
+          reputationCommentsCnt: prompt.author?.reputationCommentsCnt || 0,
+        },
+        createdAt: prompt.createdAt.toISOString(),
+      } as PromptCardDTO
+    }))
+
+    return {
+      items: formattedPrompts,
+      nextCursor: result.nextCursor,
+      hasMore: result.hasMore,
+      totalCount: result.totalCount
+    }
   }
 }
 

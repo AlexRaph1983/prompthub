@@ -135,18 +135,32 @@ export async function GET(request: Request) {
     // Импортируем репозиторий
     const { promptRepository } = await import('@/lib/repositories/promptRepository')
 
-    const result = await promptRepository.listPrompts({
-      limit,
-      cursor: cursor || null,
-      sort,
-      order,
-      authorId: authorId || undefined,
-      search: search || undefined,
-      category: category || undefined,
-      model: model || undefined,
-      lang: lang || undefined,
-      tags: tags || undefined,
-    })
+    // Используем улучшенный поиск если есть поисковый запрос
+    const result = search 
+      ? await promptRepository.searchPrompts({
+          limit,
+          cursor: cursor || null,
+          sort,
+          order,
+          authorId: authorId || undefined,
+          search: search || undefined,
+          category: category || undefined,
+          model: model || undefined,
+          lang: lang || undefined,
+          tags: tags || undefined,
+        })
+      : await promptRepository.listPrompts({
+          limit,
+          cursor: cursor || null,
+          sort,
+          order,
+          authorId: authorId || undefined,
+          search: search || undefined,
+          category: category || undefined,
+          model: model || undefined,
+          lang: lang || undefined,
+          tags: tags || undefined,
+        })
 
     return NextResponse.json(result)
   } catch (error) {
