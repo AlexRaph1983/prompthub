@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Search, X, Loader2 } from 'lucide-react'
 import { useSearchSuggestions } from '@/hooks/useSearchSuggestions'
-import { useSearchTracking } from '@/hooks/useSearchTracking'
+import { useSearchAnalytics } from '@/hooks/useSearchAnalytics'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 import { SearchSuggestionsList } from './SearchSuggestionsList'
 import { SearchChips } from './SearchChips'
@@ -42,11 +42,12 @@ export function SearchBar({
     error: suggestionsError
   } = useSearchSuggestions(query, { debounceMs: 300, maxResults: 6 })
   
-  const { trackSearch, trackCompletedSearch } = useSearchTracking()
+  const { trackSearchEvent } = useSearchAnalytics()
   
   // Горячая клавиша "/"
   useKeyboardShortcut('/', () => {
     inputRef.current?.focus()
+    trackSearchEvent('search_focused', { method: 'hotkey' })
   })
   
   // Real-time поиск с debounce
@@ -59,8 +60,14 @@ export function SearchBar({
       debounceRef.current = setTimeout(() => {
         // Отслеживаем поиск только если запрос изменился
         if (query.trim() !== lastTrackedQuery) {
-          // Получаем количество результатов для аналитики
-          // Это будет передано через onRealTimeSearch
+          const timeToSearch = startTime > 0 ? Date.now() - startTime : 0
+          
+          trackSearchEvent('search_performed', { 
+            query: query.trim(),
+            source: 'realtime',
+            timeToSearchMs: timeToSearch
+          })
+          
           setLastTrackedQuery(query.trim())
         }
         
@@ -70,6 +77,7 @@ export function SearchBar({
     } else {
       // Очистка поиска
       if (lastTrackedQuery) {
+        trackSearchEvent('search_cleared')
         setLastTrackedQuery('')
       }
       onRealTimeSearch?.('')
@@ -88,6 +96,7 @@ export function SearchBar({
     
     if (value.length === 1 && startTime === 0) {
       setStartTime(Date.now())
+      trackSearchEvent('search_started', { query: value })
     }
   }
   
@@ -97,8 +106,11 @@ export function SearchBar({
       setIsLoading(true)
       const timeToSubmit = startTime > 0 ? Date.now() - startTime : 0
       
-      // Отслеживаем завершенный поиск (Enter)
-      trackCompletedSearch(query.trim(), 0) // resultsCount будет обновлен в HomePage
+      trackSearchEvent('search_submitted', { 
+        query: query.trim(),
+        source: 'form_submit',
+        timeToSubmitMs: timeToSubmit
+      })
       
       onSearch?.(query.trim())
       
@@ -112,8 +124,11 @@ export function SearchBar({
   
   const handleSuggestionClick = (suggestion: string) => {
     setQuery(suggestion)
-    // Отслеживаем завершенный поиск при клике на подсказку
-    trackCompletedSearch(suggestion, 0) // resultsCount будет обновлен в HomePage
+    trackSearchEvent('suggestion_clicked', { 
+      query: suggestion,
+      suggestionId: suggestion,
+      position: suggestions.indexOf(suggestion)
+    })
     onSearch?.(suggestion)
   }
   
@@ -122,11 +137,13 @@ export function SearchBar({
     setStartTime(0)
     setLastTrackedQuery('')
     inputRef.current?.focus()
+    trackSearchEvent('search_cleared')
     onRealTimeSearch?.('')
   }
   
   const handleFocus = () => {
     setIsFocused(true)
+    trackSearchEvent('search_focused', { method: 'click' })
   }
   
   const handleBlur = () => {
