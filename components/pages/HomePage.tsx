@@ -125,10 +125,13 @@ export default function HomePage() {
     if (e.key === 'Enter' && searchValue.trim()) {
       // Отслеживаем завершенный поиск при нажатии Enter
       const searchResults = allPrompts.filter(prompt => {
-        const search = searchValue.toLowerCase()
-        return prompt.title?.toLowerCase().includes(search) ||
-               prompt.description?.toLowerCase().includes(search) ||
-               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+        const search = searchValue.toLowerCase().trim()
+        const normalizedSearch = search.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
+        
+        return prompt.title?.toLowerCase().includes(normalizedSearch) ||
+               prompt.description?.toLowerCase().includes(normalizedSearch) ||
+               prompt.author?.toLowerCase().includes(normalizedSearch) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch)))
       })
       trackCompletedSearch(searchValue, searchResults.length)
     }
@@ -138,10 +141,13 @@ export default function HomePage() {
     if (searchValue.trim()) {
       // Отслеживаем при потере фокуса
       const searchResults = allPrompts.filter(prompt => {
-        const search = searchValue.toLowerCase()
-        return prompt.title?.toLowerCase().includes(search) ||
-               prompt.description?.toLowerCase().includes(search) ||
-               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+        const search = searchValue.toLowerCase().trim()
+        const normalizedSearch = search.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
+        
+        return prompt.title?.toLowerCase().includes(normalizedSearch) ||
+               prompt.description?.toLowerCase().includes(normalizedSearch) ||
+               prompt.author?.toLowerCase().includes(normalizedSearch) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch)))
       })
       trackOnBlur(searchValue, searchResults.length)
     }
@@ -152,10 +158,13 @@ export default function HomePage() {
     setSearchValue(query)
     // Отслеживаем поиск
     const searchResults = allPrompts.filter(prompt => {
-      const search = query.toLowerCase()
-      return prompt.title?.toLowerCase().includes(search) ||
-             prompt.description?.toLowerCase().includes(search) ||
-             (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(search)))
+      const search = query.toLowerCase().trim()
+      const normalizedSearch = search.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
+      
+      return prompt.title?.toLowerCase().includes(normalizedSearch) ||
+             prompt.description?.toLowerCase().includes(normalizedSearch) ||
+             prompt.author?.toLowerCase().includes(normalizedSearch) ||
+             (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch)))
     })
     trackCompletedSearch(query, searchResults.length)
   }
