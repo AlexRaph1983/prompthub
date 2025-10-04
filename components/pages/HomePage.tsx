@@ -10,6 +10,7 @@ import { Copy, Star, Sparkles, Eye } from 'lucide-react'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useSearch } from '@/hooks/useSearch'
 import { useSearchTracking } from '@/hooks/useSearchTracking'
+import { useRealTimeSearchTracking } from '@/hooks/useRealTimeSearchTracking'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { SearchBar } from '@/components/SearchBar'
@@ -39,6 +40,7 @@ export default function HomePage() {
   }, [mounted, state.isLoading, state.hasMore, loadMorePrompts]);
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
   const { trackSearch, trackCompletedSearch, trackOnBlur, trackClick } = useSearchTracking()
+  const { trackRealTimeSearch } = useRealTimeSearchTracking()
   const { session } = useAuth()
   const router = useRouter()
   
@@ -185,8 +187,8 @@ export default function HomePage() {
                (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch)))
       })
       
-      // Отслеживаем поиск с реальным количеством результатов
-      trackSearch(query, searchResults.length)
+      // Отслеживаем real-time поиск с debounce (1 секунда)
+      trackRealTimeSearch(query, searchResults.length, 1000)
     }
   }
 
