@@ -172,8 +172,22 @@ export default function HomePage() {
   // Обработчик для real-time поиска
   const handleRealTimeSearch = (query: string) => {
     setSearchValue(query)
-    // Real-time поиск не отслеживается в аналитике отдельно - 
-    // это делается внутри SearchBar компонента
+    
+    // Отслеживаем real-time поиск с количеством результатов
+    if (query.trim()) {
+      const searchResults = allPrompts.filter(prompt => {
+        const search = query.toLowerCase().trim()
+        const normalizedSearch = search.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
+        
+        return prompt.title?.toLowerCase().includes(normalizedSearch) ||
+               prompt.description?.toLowerCase().includes(normalizedSearch) ||
+               prompt.author?.toLowerCase().includes(normalizedSearch) ||
+               (Array.isArray(prompt.tags) && prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch)))
+      })
+      
+      // Отслеживаем поиск с реальным количеством результатов
+      trackSearch(query, searchResults.length)
+    }
   }
 
   const handleCopyPrompt = async (prompt: string, promptId: string) => {
