@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -10,19 +11,27 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   const { id } = params
   
   try {
-    // Загружаем данные промпта для мета-тегов
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000'}/api/prompts/${id}`, {
-      cache: 'no-store'
+    // Загружаем данные промпта напрямую из базы данных
+    const prompt = await prisma.prompt.findUnique({
+      where: { id },
+      select: {
+        title: true,
+        description: true,
+        tags: true,
+        author: {
+          select: {
+            name: true
+          }
+        }
+      }
     })
     
-    if (!response.ok) {
+    if (!prompt) {
       return {
         title: 'Промпт не найден | PromptHub',
         description: 'Запрашиваемый промпт не найден'
       }
     }
-    
-    const prompt = await response.json()
     
     // Ограничиваем длину заголовка для SEO (50-60 символов)
     const title = prompt.title.length > 50 
@@ -33,15 +42,17 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       ? `${prompt.description.substring(0, 152)}...`
       : prompt.description
     
+    const tags = prompt.tags ? prompt.tags.split(',').map(tag => tag.trim()) : []
+    
     return {
       title,
       description,
-      keywords: prompt.tags?.join(', ') || '',
+      keywords: tags.join(', '),
       openGraph: {
         title,
         description,
         type: 'article',
-        url: `${process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000'}/prompt/${id}`,
+        url: `${process.env.NEXT_PUBLIC_APP_HOST || 'https://prompthub.ru'}/prompt/${id}`,
         siteName: 'PromptHub',
         images: [
           {
