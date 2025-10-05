@@ -10,8 +10,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = params
   
   try {
-    console.log('Generating metadata for prompt ID:', id)
-    
     // Загружаем данные промпта напрямую из базы данных
     const prompt = await prisma.prompt.findUnique({
       where: { id },
@@ -27,10 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     })
     
-    console.log('Found prompt:', prompt)
-    
     if (!prompt) {
-      console.log('Prompt not found for ID:', id)
       return {
         title: 'Промпт не найден | PromptHub',
         description: 'Запрашиваемый промпт не найден'
@@ -47,9 +42,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       : prompt.description
     
     const tags = prompt.tags ? prompt.tags.split(',').map(tag => tag.trim()) : []
-    
-    console.log('Generated title:', title)
-    console.log('Generated description:', description)
     
     return {
       title,
