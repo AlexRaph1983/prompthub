@@ -33,9 +33,23 @@ export function AddPromptModal() {
     prompt: '',
     example: '',
   })
+  
+  // Константы для ограничений
+  const MAX_TITLE_LENGTH = 60 // Оптимальная длина для SEO
+  const MAX_DESCRIPTION_LENGTH = 300
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    
+    // Ограничиваем длину для заголовка и описания
+    if (name === 'title' && value.length > MAX_TITLE_LENGTH) {
+      return
+    }
+    if (name === 'description' && value.length > MAX_DESCRIPTION_LENGTH) {
+      return
+    }
+    
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -127,21 +141,45 @@ export function AddPromptModal() {
           )}
           
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <Input 
-              required 
-              name="title" 
-              placeholder="Название промпта" 
-              value={formData.title} 
-              onChange={handleChange} 
-            />
+            <div>
+              <Input 
+                required 
+                name="title" 
+                placeholder="Название промпта" 
+                value={formData.title} 
+                onChange={handleChange}
+                maxLength={MAX_TITLE_LENGTH}
+                className={formData.title.length > MAX_TITLE_LENGTH * 0.9 ? 'border-orange-300' : ''}
+              />
+              <div className="flex justify-between items-center mt-1">
+                <span className="text-xs text-gray-500">
+                  Оптимальная длина для SEO: 50-60 символов
+                </span>
+                <span className={`text-xs ${formData.title.length > MAX_TITLE_LENGTH * 0.9 ? 'text-orange-600' : 'text-gray-500'}`}>
+                  {formData.title.length}/{MAX_TITLE_LENGTH}
+                </span>
+              </div>
+            </div>
             
-            <Textarea 
-              required 
-              name="description" 
-              placeholder="Краткое описание и инструкция по применению" 
-              value={formData.description} 
-              onChange={handleChange} 
-            />
+            <div>
+              <Textarea 
+                required 
+                name="description" 
+                placeholder="Краткое описание и инструкция по применению" 
+                value={formData.description} 
+                onChange={handleChange}
+                maxLength={MAX_DESCRIPTION_LENGTH}
+                className={formData.description.length > MAX_DESCRIPTION_LENGTH * 0.9 ? 'border-orange-300' : ''}
+              />
+              <div className="flex justify-between items-center mt-1">
+                <span className="text-xs text-gray-500">
+                  Краткое описание для лучшего понимания
+                </span>
+                <span className={`text-xs ${formData.description.length > MAX_DESCRIPTION_LENGTH * 0.9 ? 'text-orange-600' : 'text-gray-500'}`}>
+                  {formData.description.length}/{MAX_DESCRIPTION_LENGTH}
+                </span>
+              </div>
+            </div>
             
             <div className="flex gap-2">
               <select 
