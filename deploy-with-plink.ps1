@@ -1,57 +1,52 @@
-# Deploy script using PuTTY plink
-param(
-    [string]$Server = "REDACTED_IP",
-    [string]$User = "root", 
-    [string]$Password = "REDACTED_PASSWORD"
-)
+# Деплой системы категорий с использованием Plink
+Write-Host "🚀 ДЕПЛОЙ СИСТЕМЫ КАТЕГОРИЙ С PLINK" -ForegroundColor Green
+Write-Host "===================================" -ForegroundColor Green
 
-Write-Host "🚀 Deploying via PuTTY plink..." -ForegroundColor Green
-Write-Host "Server: $Server" -ForegroundColor Yellow
-Write-Host "User: $User" -ForegroundColor Yellow
+# Параметры подключения
+$server = "REDACTED_IP"
+$user = "root"
+$password = "REDACTED_PASSWORD"
 
-# Deploy commands
-$deployCommands = "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
+Write-Host "`n1️⃣ Получение изменений с GitHub..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && git fetch origin && git reset --hard origin/main"
 
+Write-Host "`n2️⃣ Установка зависимостей..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && npm ci"
+
+Write-Host "`n3️⃣ Генерация Prisma клиента..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && npx prisma generate"
+
+Write-Host "`n4️⃣ Применение миграций..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && npx prisma migrate deploy"
+
+Write-Host "`n5️⃣ Заполнение категорий..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && node scripts/seed-categories.js"
+
+Write-Host "`n6️⃣ Обновление счётчиков..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && node scripts/update-category-counts.js update"
+
+Write-Host "`n7️⃣ Сборка проекта..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && npm run build"
+
+Write-Host "`n8️⃣ Перезапуск приложения..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && pm2 restart prompthub"
+
+Write-Host "`n9️⃣ Проверка статуса..." -ForegroundColor Yellow
+& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && pm2 status"
+
+Write-Host "`n🔟 Проверка работы сайта..." -ForegroundColor Yellow
 try {
-    # Check if plink exists
-    $plinkPath = Get-Command plink -ErrorAction SilentlyContinue
-    
-    if ($plinkPath) {
-        Write-Host "✅ Found plink at: $($plinkPath.Source)" -ForegroundColor Green
-        Write-Host "🔐 Connecting to server..." -ForegroundColor Yellow
-        
-        # Execute commands via plink
-        $result = & plink -ssh -batch -pw $Password $User@$Server $deployCommands
-        
-        Write-Host "📤 Deployment output:" -ForegroundColor Cyan
-        Write-Host $result -ForegroundColor White
-        
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host "✅ Deployment successful!" -ForegroundColor Green
-        } else {
-            Write-Host "⚠️ Deployment completed with warnings (exit code: $LASTEXITCODE)" -ForegroundColor Yellow
-        }
-        
-    } else {
-        Write-Host "❌ plink not found. Please install PuTTY or use manual method." -ForegroundColor Red
-        Write-Host "Download PuTTY from: https://www.putty.org/" -ForegroundColor Yellow
-        
-        Write-Host "`n🔧 Manual alternative:" -ForegroundColor Cyan
-        Write-Host "ssh $User@$Server" -ForegroundColor White
-        Write-Host "Password: $Password" -ForegroundColor Gray
-        Write-Host "`nThen run:" -ForegroundColor Yellow
-        Write-Host $deployCommands -ForegroundColor White
-    }
-    
+    $response = Invoke-WebRequest -Uri "http://$server/ru/prompts" -UseBasicParsing -TimeoutSec 10
+    Write-Host "✅ Сайт работает! Статус: $($response.StatusCode)" -ForegroundColor Green
 } catch {
-    Write-Host "❌ Error during deployment: $($_.Exception.Message)" -ForegroundColor Red
-    
-    Write-Host "`n🔧 Manual deployment:" -ForegroundColor Cyan
-    Write-Host "ssh $User@$Server" -ForegroundColor White
-    Write-Host "Password: $Password" -ForegroundColor Gray
-    Write-Host "`nCommands to run:" -ForegroundColor Yellow
-    Write-Host $deployCommands -ForegroundColor White
+    Write-Host "⚠️ Предупреждение: не удалось проверить сайт" -ForegroundColor Red
 }
 
-Write-Host "`n🌐 After deployment, check: http://$Server" -ForegroundColor Green
-Write-Host "🎯 Expected result: Dynamic page titles working" -ForegroundColor Cyan
+Write-Host "`n🎉 ДЕПЛОЙ ЗАВЕРШЁН УСПЕШНО!" -ForegroundColor Green
+Write-Host "`n📋 Проверьте следующие URL:" -ForegroundColor Cyan
+Write-Host "   🏠 Главная: http://$server/ru/prompts" -ForegroundColor White
+Write-Host "   ⚖️ Юристы: http://$server/ru/category/legal" -ForegroundColor White
+Write-Host "   🏥 Врачи: http://$server/ru/category/health" -ForegroundColor White
+Write-Host "   📚 Обучение: http://$server/ru/category/education" -ForegroundColor White
+Write-Host "   📸 Фото: http://$server/ru/category/image" -ForegroundColor White
+Write-Host "   🎬 Видео: http://$server/ru/category/video" -ForegroundColor White

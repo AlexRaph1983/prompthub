@@ -135,6 +135,17 @@
     "description": "Discover, publish and optimize AI prompts for ChatGPT, Claude, Gemini and more. Curated collections, ratings, multilingual, open & free.",
     "keywords": "AI prompts, prompt marketplace, ChatGPT prompts, Claude prompts, Gemini prompts, SEO prompts, design prompts, coding prompts, cooking prompts",
     "ogImage": "/og/prompt-hub-en.png"
+  },
+  "tagCloud": {
+    "title": "Popular Tags",
+    "description": "Most popular tags on the site",
+    "noTags": "No tags found"
+  },
+  "tagPage": {
+    "title": "Tag",
+    "allPrompts": "All prompts with this tag",
+    "noPrompts": "No prompts found",
+    "beFirstToCreate": "Be the first to create a prompt with this tag"
   }
 }
 
