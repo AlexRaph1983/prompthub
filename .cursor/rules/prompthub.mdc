@@ -6,3 +6,8 @@ alwaysApply: true
 Дальше всегда деплоить так:
 cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh
 Запускать скрипт, который делает migrate/seed В проде не нужно! Именно они валят деплой.
+Доступ к серверу для деплоя бери тут: 
+Сервер «Orange Curium» с Node.js, IP-адрес REDACTED_IP
+Доступ к серверу
+Логин: root
+Пароль: REDACTED_PASSWORD

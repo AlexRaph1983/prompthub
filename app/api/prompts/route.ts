@@ -128,6 +128,9 @@ export async function GET(request: Request) {
     const authorId = searchParams.get('authorId')
     const search = searchParams.get('q')
     const category = searchParams.get('category')
+    const categoryId = searchParams.get('categoryId')
+    const tag = searchParams.get('tag')
+    const nsfw = searchParams.get('nsfw') === 'true'
     const model = searchParams.get('model')
     const lang = searchParams.get('lang')
     const tags = searchParams.get('tags')?.split(',').filter(Boolean)
@@ -145,6 +148,9 @@ export async function GET(request: Request) {
           authorId: authorId || undefined,
           search: search || undefined,
           category: category || undefined,
+          categoryId: categoryId || undefined,
+          tag: tag || undefined,
+          nsfw: nsfw || undefined,
           model: model || undefined,
           lang: lang || undefined,
           tags: tags || undefined,
@@ -157,6 +163,9 @@ export async function GET(request: Request) {
           authorId: authorId || undefined,
           search: search || undefined,
           category: category || undefined,
+          categoryId: categoryId || undefined,
+          tag: tag || undefined,
+          nsfw: nsfw || undefined,
           model: model || undefined,
           lang: lang || undefined,
           tags: tags || undefined,

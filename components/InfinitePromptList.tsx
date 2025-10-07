@@ -35,6 +35,9 @@ interface InfinitePromptListProps {
     reputationCommentsCnt?: number | null
   }
   locale: string
+  categoryId?: string
+  tag?: string
+  nsfw?: boolean
 }
 
 export default function InfinitePromptList({ 
@@ -42,7 +45,10 @@ export default function InfinitePromptList({
   initialNextCursor, 
   authorId, 
   authorInfo,
-  locale 
+  locale,
+  categoryId,
+  tag,
+  nsfw
 }: InfinitePromptListProps) {
   const t = useTranslations()
   const router = useRouter()

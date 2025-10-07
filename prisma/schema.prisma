@@ -74,10 +74,17 @@ model Prompt {
   views       Int     @default(0)
   viewEvents  PromptViewEvent[]
 
+  // Связи с категориями и тегами
+  categoryId String?
+  categoryRef Category? @relation(fields: [categoryId], references: [id])
+  promptTags PromptTag[]
+
   @@unique([title, authorId])
   @@index([category])
+  @@index([categoryId])
   @@index([updatedAt])
   @@index([category, updatedAt])
+  @@index([categoryId, updatedAt])
 }
 
 model Rating {
@@ -271,5 +278,65 @@ model SearchMetrics {
   lastUpdated      DateTime @default(now()) @map("last_updated")
 
   @@index([id])
+}
+
+/// Категории промптов с поддержкой иерархии и i18n
+model Category {
+  id            String   @id @default(cuid())
+  nameRu        String   // Русское название для SEO
+  nameEn        String   // Английское название
+  slug          String   @unique // URL-слаг
+  descriptionRu String?  // Описание на русском
+  descriptionEn String?  // Описание на английском
+  parentId      String?  // ID родительской категории для иерархии
+  parent        Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children      Category[] @relation("CategoryHierarchy")
+  isActive      Boolean  @default(true) // Активна ли категория
+  sortOrder     Int      @default(0) // Порядок сортировки
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Связи
+  prompts       Prompt[]
+  promptCount   Int      @default(0) // Кэш количества промптов
+
+  @@index([parentId])
+  @@index([slug])
+  @@index([isActive, sortOrder])
+  @@index([parentId, sortOrder])
+}
+
+/// Теги для промптов
+model Tag {
+  id          String   @id @default(cuid())
+  name        String   // Название тега
+  slug        String   @unique // URL-слаг
+  description String?  // Описание тега
+  isNsfw      Boolean  @default(false) // NSFW тег
+  isActive    Boolean  @default(true) // Активен ли тег
+  color       String?  // Цвет тега (hex)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Связи
+  promptTags  PromptTag[]
+  promptCount Int      @default(0) // Кэш количества промптов
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([isNsfw])
+}
+
+/// Связь многие-ко-многим между промптами и тегами
+model PromptTag {
+  id       String @id @default(cuid())
+  promptId String
+  tagId    String
+  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([promptId, tagId])
+  @@index([promptId])
+  @@index([tagId])
 }
 

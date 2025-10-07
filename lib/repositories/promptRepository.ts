@@ -52,6 +52,9 @@ export interface PromptListParams {
   search?: string
   tags?: string[]
   category?: string
+  categoryId?: string
+  tag?: string
+  nsfw?: boolean
   model?: string
   lang?: string
 }
@@ -88,6 +91,30 @@ export class PromptRepository {
 
     if (params.category) {
       where.category = params.category
+    }
+
+    if (params.categoryId) {
+      where.categoryId = params.categoryId
+    }
+
+    if (params.tag) {
+      where.promptTags = {
+        some: {
+          tag: {
+            slug: params.tag
+          }
+        }
+      }
+    }
+
+    if (params.nsfw === false) {
+      where.promptTags = {
+        none: {
+          tag: {
+            isNsfw: true
+          }
+        }
+      }
     }
 
     if (params.model) {
