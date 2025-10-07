@@ -65,7 +65,10 @@ export default function InfinitePromptList({
   } = useInfinitePrompts({ 
     initialPrompts,
     initialNextCursor,
-    authorId 
+    authorId,
+    categoryId,
+    tag,
+    nsfw
   })
 
   // Intersection Observer для автоматической загрузки
