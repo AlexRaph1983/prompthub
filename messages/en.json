@@ -96,8 +96,8 @@
     "3D": "3D",
     "Animation": "Animation",
     "Business": "Business",
-    "Marketing": "Marketing",
-    "Writing": "Writing",
+    "Marketing": "Marketing & Writing",
+    "Writing": "Marketing & Writing",
     "Translation": "Translation",
     "Research": "Research",
     "Analysis": "Analysis",
@@ -107,6 +107,28 @@
     "Health": "Health",
     "Finance": "Finance",
     "Cooking": "Cooking"
+  },
+  "categoryNav": {
+    "title": "Categories",
+    "allCategories": "All categories",
+    "subcategories": "Subcategories",
+    "promptCount": "prompts",
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
+  "categoryPage": {
+    "title": "Prompts in category",
+    "subcategories": "Subcategories",
+    "popularTags": "Popular tags",
+    "allPrompts": "All prompts",
+    "noPrompts": "No prompts in this category yet",
+    "beFirstToCreate": "Be the first to create a prompt in this category"
+  },
+  "nsfw": {
+    "warning": "Adult content warning",
+    "confirm": "I am 18+ years old",
+    "cancel": "Cancel",
+    "remember": "Remember my choice"
   },
   "metadata": {
     "title": "PromptHub — AI Prompt Library & Marketplace",

@@ -5,6 +5,9 @@ interface PromptListParams {
   authorId?: string
   search?: string
   category?: string
+  categoryId?: string
+  tag?: string
+  nsfw?: boolean
   model?: string
   lang?: string
   tags?: string[]
@@ -26,6 +29,9 @@ async function fetchPrompts(params: PromptListParams & { cursor?: string | null 
   if (params.authorId) searchParams.set('authorId', params.authorId)
   if (params.search) searchParams.set('q', params.search)
   if (params.category) searchParams.set('category', params.category)
+  if (params.categoryId) searchParams.set('categoryId', params.categoryId)
+  if (params.tag) searchParams.set('tag', params.tag)
+  if (params.nsfw) searchParams.set('nsfw', 'true')
   if (params.model) searchParams.set('model', params.model)
   if (params.lang) searchParams.set('lang', params.lang)
   if (params.tags?.length) searchParams.set('tags', params.tags.join(','))
@@ -54,6 +60,9 @@ export function useInfinitePrompts({
   authorId,
   search,
   category,
+  categoryId,
+  tag,
+  nsfw,
   model,
   lang,
   tags,
@@ -61,11 +70,14 @@ export function useInfinitePrompts({
   order = 'desc',
 }: UseInfinitePromptsParams = {}) {
   return useInfiniteQuery({
-    queryKey: ['prompts', { authorId, search, category, model, lang, tags, sort, order }],
+    queryKey: ['prompts', { authorId, search, category, categoryId, tag, nsfw, model, lang, tags, sort, order }],
     queryFn: ({ pageParam }) => fetchPrompts({ 
       authorId, 
       search, 
       category, 
+      categoryId,
+      tag,
+      nsfw,
       model, 
       lang, 
       tags, 
