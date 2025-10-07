@@ -15,7 +15,11 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:e2e": "npx playwright test __tests__/e2e/search.e2e.test.ts",
+    "test:sitemap": "vitest run __tests__/lib/sitemap.test.ts",
+    "test:sitemap:e2e": "npx playwright test __tests__/e2e/sitemap.e2e.test.ts",
     "test:search": "vitest run __tests__/components/SearchBar.test.tsx __tests__/hooks/useSearchSuggestions.test.ts",
+    "sitemap:migrate": "node scripts/migrate-sitemap-indexes.js",
+    "sitemap:validate": "node scripts/validate-sitemap.js",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "postinstall": "prisma generate"
