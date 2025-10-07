@@ -1,0 +1,187 @@
+{
+  "version": "1.0",
+  "submitted_by": { "username": "PromptMaster", "user_id": "", "profile_url": "" },
+  "taxonomy": {
+    "languages": ["ru", "en", "multi"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Proprietary"],
+    "categories": ["writing", "coding", "data-analysis", "design", "marketing", "seo", "social-media", "education", "productivity", "business", "sales", "customer-support", "research", "translation", "summarization", "idea-generation", "legal", "finance", "health", "lifestyle", "arts", "image", "audio", "video", "devops", "data-science", "ecommerce", "gaming", "utilities"],
+    "models": ["any", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "claude-3.5-sonnet", "claude-3.5-haiku", "claude-3-opus", "gemini-1.5-pro", "gemini-1.5-flash", "llama-3.1-8b-instruct", "llama-3.1-70b-instruct", "mistral-large-latest", "mistral-small-latest", "command-r-plus", "command-r"]
+  },
+  "items": [
+    {
+      "title": "Создание песни в SUNO на русском языке",
+      "summary": "Промпт помогает сгенерировать песню в SUNO с текстом и стилем, близким к русской поп-музыке.",
+      "language": "ru",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["suno", "музыка", "песня", "русский поп"],
+      "prompt_text": "Создай песню на русском языке в стиле {стиль} с ярким припевом и запоминающимся мотивом. Вокал — {тип_вокала}. Сделай аранжировку в духе современного радио-хита с элементами {жанр}.",
+      "variables": [
+        { "name": "стиль", "type": "string", "required": true, "description": "Жанр и настроение песни", "example": "русский поп" },
+        { "name": "тип_вокала", "type": "string", "required": false, "description": "Тип вокала", "example": "женский вокал с эффектом реверба" },
+        { "name": "жанр", "type": "string", "required": false, "description": "Дополнительный музыкальный стиль", "example": "dance-pop" }
+      ],
+      "usage_instructions": "Добавь описание эмоций, чтобы SUNO подобрал подходящее настроение.",
+      "examples": ["Стиль: русский поп; жанр: dance; вокал: женский"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Lofi Hip-Hop трек для релаксации и отдыха",
+      "summary": "Промпт для генерации спокойного Lo-Fi трека с мягким битом и атмосферой уюта.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC0",
+      "tags": ["lofi", "hiphop", "relax", "music"],
+      "prompt_text": "Create a chill Lofi Hip-Hop track with warm vinyl textures, jazzy chords, soft drums, and nostalgic atmosphere perfect for study or relaxation.",
+      "usage_instructions": "Используй минималистичные инструменты — Rhodes, лёгкий бит и эмбиент.",
+      "examples": ["Lofi chill beat with vinyl crackle and lazy swing"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Русская танцевальная песня в современном звучании",
+      "summary": "Промпт помогает сгенерировать танцевальную композицию на русском языке в стиле радио-хита.",
+      "language": "ru",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["танцевальная", "русская песня", "музыка", "энергия"],
+      "prompt_text": "Создай танцевальную песню на русском языке с быстрым темпом (120-128 BPM), эмоциональным припевом и мотивом в духе радиостанции Europa Plus. Основной посыл — {тема}.",
+      "variables": [
+        { "name": "тема", "type": "string", "required": true, "description": "О чём песня", "example": "любовь и ночной город" }
+      ],
+      "usage_instructions": "Добавь в припев вокальные повторы и простую рифму для запоминаемости.",
+      "examples": ["Тема: летняя любовь"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Промпт для отдыхающего фона — звуки Таиланда",
+      "summary": "Создай расслабляющий аудиотрек с природными звуками, характерными для пляжей Таиланда.",
+      "language": "multi",
+      "model": "any",
+      "category": "audio",
+      "license": "CC0",
+      "tags": ["отдых", "тайланд", "природа", "релакс"],
+      "prompt_text": "Generate a relaxing ambient track featuring tropical sounds of Thailand — ocean waves, cicadas, soft percussion, distant birds. Ideal for meditation and travel videos.",
+      "usage_instructions": "Добавь лёгкий ветер и мягкие колокольчики для атмосферы.",
+      "examples": ["Ambient Thai beach soundscape for meditation"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание персонажа для ИИ-вселенной",
+      "summary": "Промпт для генерации уникального персонажа с внешностью, историей и стилем поведения.",
+      "language": "ru",
+      "model": "gpt-4o",
+      "category": "arts",
+      "license": "CC-BY-SA",
+      "tags": ["персонаж", "описание", "креатив", "вселенная"],
+      "prompt_text": "Придумай персонажа по параметрам: {тип}, {возраст}, {характер}. Опиши внешность, одежду, речь, хобби и цель. Добавь деталь, делающую героя запоминающимся.",
+      "variables": [
+        { "name": "тип", "type": "string", "required": true, "description": "Роль персонажа", "example": "музыкант" },
+        { "name": "возраст", "type": "number", "required": false, "description": "Возраст персонажа", "example": "28" },
+        { "name": "характер", "type": "string", "required": true, "description": "Основные черты личности", "example": "мечтательный, доброжелательный" }
+      ],
+      "usage_instructions": "Добавь личную фразу персонажа, чтобы сделать его живым.",
+      "examples": ["Тип: художник; характер: интроверт"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "План путешествия в Таиланд на неделю",
+      "summary": "Создай подробный маршрут на 7 дней с достопримечательностями, пляжами и советами по питанию.",
+      "language": "ru",
+      "model": "gemini-1.5-pro",
+      "category": "lifestyle",
+      "license": "CC-BY",
+      "tags": ["путешествие", "тайланд", "туризм", "маршрут"],
+      "prompt_text": "Составь план путешествия по Таиланду на {дни} дней с учётом интересов {интересы}. Укажи локации, время в пути, где остановиться и что попробовать из еды.",
+      "variables": [
+        { "name": "дни", "type": "number", "required": true, "description": "Количество дней в путешествии", "example": "7" },
+        { "name": "интересы", "type": "string", "required": false, "description": "Что нравится пользователю", "example": "пляжи и храмы" }
+      ],
+      "usage_instructions": "Добавь местные советы — уличную еду, рынки, достопримечательности.",
+      "examples": ["7 дней по островам Самуи и Пхукет"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Музыка для отдыха и релаксации",
+      "summary": "Сгенерируй музыкальный фон для релаксации с элементами Lo-Fi и эмбиента.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC0",
+      "tags": ["relax", "music", "ambient", "lofi"],
+      "prompt_text": "Create a relaxing background track combining Lofi Hip-Hop elements, soft pads, and ambient nature sounds. Perfect for studying or resting.",
+      "usage_instructions": "Фокусируйся на плавных переходах и атмосферности.",
+      "examples": ["Lo-Fi Chill mix with ambient textures"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание текста для песни о путешествиях",
+      "summary": "Помогает создать лиричный текст о путешествии, дороге и мечтах с рефреном.",
+      "language": "ru",
+      "model": "gpt-4.1-mini",
+      "category": "writing",
+      "license": "CC-BY",
+      "tags": ["текст", "песня", "путешествие", "лирика"],
+      "prompt_text": "Напиши текст песни о путешествии в стиле {жанр}, где герой {описание_героя}. Сделай структуру: куплет, припев, мост. Главная эмоция — {настроение}.",
+      "variables": [
+        { "name": "жанр", "type": "string", "required": true, "description": "Музыкальный стиль", "example": "поп-рок" },
+        { "name": "описание_героя", "type": "string", "required": false, "description": "Главный персонаж песни", "example": "молодой музыкант, ищущий вдохновение" },
+        { "name": "настроение", "type": "string", "required": false, "description": "Общее ощущение песни", "example": "свобода и ностальгия" }
+      ],
+      "usage_instructions": "Добавь повторы в припеве — это усилит запоминаемость.",
+      "examples": ["Жанр: инди-поп; герой: путешественник"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Генерация музыки в стиле Lo-Fi для видео и соцсетей",
+      "summary": "Создай короткий музыкальный отрывок Lo-Fi для использования в видео и сторис.",
+      "language": "multi",
+      "model": "any",
+      "category": "audio",
+      "license": "CC0",
+      "tags": ["lofi", "видео", "соцсети", "музыка"],
+      "prompt_text": "Generate a short 20-second Lo-Fi beat for social media videos with smooth piano, light percussion, and nostalgic vibe.",
+      "usage_instructions": "Подходит для фонов TikTok и Reels. Добавь fade-out в конце.",
+      "examples": ["20s Lo-Fi piano loop for Instagram Reels"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Песня о лете и отдыхе на море",
+      "summary": "Создай яркую песню о лете и море с лёгким вокалом и позитивным ритмом.",
+      "language": "ru",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["лето", "отдых", "песня", "поп"],
+      "prompt_text": "Создай летнюю песню о море и свободе в стиле {жанр}. Включи гитару, лёгкие синтезаторы и бодрый темп. Текст — про отдых, солнце и радость момента.",
+      "variables": [
+        { "name": "жанр", "type": "string", "required": true, "description": "Музыкальный стиль", "example": "поп" }
+      ],
+      "usage_instructions": "Добавь бэки и простую мелодию для припева.",
+      "examples": ["Жанр: поп; настроение: летнее"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}
