@@ -97,24 +97,35 @@ export class PromptRepository {
       where.categoryId = params.categoryId
     }
 
+    // Фильтрация по тегам и NSFW
+    const tagConditions = []
+    
     if (params.tag) {
-      where.promptTags = {
-        some: {
-          tag: {
-            slug: params.tag
+      tagConditions.push({
+        promptTags: {
+          some: {
+            tag: {
+              slug: params.tag
+            }
           }
         }
-      }
+      })
     }
 
     if (params.nsfw === false) {
-      where.promptTags = {
-        none: {
-          tag: {
-            isNsfw: true
+      tagConditions.push({
+        promptTags: {
+          none: {
+            tag: {
+              isNsfw: true
+            }
           }
         }
-      }
+      })
+    }
+
+    if (tagConditions.length > 0) {
+      where.AND = where.AND ? [...where.AND, ...tagConditions] : tagConditions
     }
 
     if (params.model) {
