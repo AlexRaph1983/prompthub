@@ -11,6 +11,7 @@ import {
   generateSlug 
 } from '@/lib/sitemap';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = SITEMAP_CONFIG.REVALIDATE_TIME;
 
 export async function GET(
