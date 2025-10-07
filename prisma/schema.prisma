@@ -75,6 +75,9 @@ model Prompt {
   viewEvents  PromptViewEvent[]
 
   @@unique([title, authorId])
+  @@index([category])
+  @@index([updatedAt])
+  @@index([category, updatedAt])
 }
 
 model Rating {
