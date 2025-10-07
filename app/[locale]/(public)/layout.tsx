@@ -1,5 +1,6 @@
 import CategoryNavServer from './CategoryNavServer';
 import CategoryDrawerServer from './CategoryDrawerServer';
+import TagCloudServer from './TagCloudServer';
 import type { Locale } from '@/i18n/index';
 
 interface PublicLayoutProps {
@@ -18,9 +19,9 @@ export default async function PublicLayout({ children, params }: PublicLayoutPro
       </div>
 
       {/* Десктопная трёхколоночная структура */}
-      <div className="hidden lg:grid lg:grid-cols-[280px_1fr_300px] lg:gap-6 lg:p-6">
+      <div className="hidden lg:grid lg:grid-cols-[320px_1fr_300px] lg:gap-6 lg:p-6">
         {/* Левая колонка - Навигация по категориям */}
-        <aside className="sticky top-6 h-fit">
+        <aside className="sticky top-6">
           <CategoryNavServer locale={locale} />
         </aside>
 
@@ -29,29 +30,9 @@ export default async function PublicLayout({ children, params }: PublicLayoutPro
           {children}
         </main>
 
-        {/* Правая колонка - Дополнительная информация */}
+        {/* Правая колонка - Облако тегов */}
         <aside className="sticky top-6 h-fit">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Популярные теги
-            </h3>
-            <div className="space-y-2">
-              <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                  ChatGPT
-                </span>
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                  Claude
-                </span>
-                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
-                  Gemini
-                </span>
-                <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
-                  Midjourney
-                </span>
-              </div>
-            </div>
-          </div>
+          <TagCloudServer locale={locale} />
         </aside>
       </div>
 
