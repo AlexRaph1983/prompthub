@@ -160,7 +160,7 @@ export default function CategoryNav({ locale, categories, currentCategory }: Cat
                         `}>
                           <IconComponent className="w-3.5 h-3.5" />
                         </div>
-                        <span className="truncate font-medium">{locale === 'ru' ? category.nameRu : category.nameEn}</span>
+                        <span className="truncate font-medium">{locale === 'ru' ? (category.nameRu || category.name) : (category.nameEn || category.name)}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         {category.promptCount > 0 && (
@@ -211,7 +211,7 @@ export default function CategoryNav({ locale, categories, currentCategory }: Cat
                                 `}>
                                   <ChildIconComponent className="w-3 h-3" />
                                 </div>
-                                <span className="truncate font-medium">{locale === 'ru' ? child.nameRu : child.nameEn}</span>
+                                <span className="truncate font-medium">{locale === 'ru' ? (child.nameRu || child.name) : (child.nameEn || child.name)}</span>
                               </div>
                               <div className="flex items-center gap-2">
                                 {child.promptCount > 0 && (

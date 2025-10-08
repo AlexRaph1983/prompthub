@@ -166,7 +166,7 @@ export default function CategoryDrawer({ locale, categories, currentCategory }: 
                                     `}
                                     aria-current={isChildActive ? 'page' : undefined}
                                   >
-                                    <span>{locale === 'ru' ? child.nameRu : child.nameEn}</span>
+                                    <span>{locale === 'ru' ? (child.nameRu || child.name) : (child.nameEn || child.name)}</span>
                                     {child.promptCount > 0 && (
                                       <span className="text-xs text-gray-500 dark:text-gray-400">
                                         {child.promptCount}

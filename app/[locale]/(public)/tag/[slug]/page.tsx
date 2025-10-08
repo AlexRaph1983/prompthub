@@ -17,10 +17,9 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   const t = await getTranslations({ locale, namespace: 'metadata' });
 
   try {
-    // Декодируем slug из URL
-    const decodedSlug = decodeURIComponent(slug);
+    // Используем slug напрямую (должен быть в латинском формате)
     const tag = await prisma.tag.findUnique({
-      where: { slug: decodedSlug },
+      where: { slug },
       select: { name: true, description: true }
     });
 
@@ -63,10 +62,9 @@ export default async function TagPage({ params }: TagPageProps) {
   const t = await getTranslations({ locale, namespace: 'tagPage' });
 
   try {
-    // Декодируем slug из URL
-    const decodedSlug = decodeURIComponent(slug);
+    // Используем slug напрямую (должен быть в латинском формате)
     const tag = await prisma.tag.findUnique({
-      where: { slug: decodedSlug },
+      where: { slug },
       select: {
         id: true,
         name: true,
@@ -112,7 +110,7 @@ export default async function TagPage({ params }: TagPageProps) {
           </h2>
           <InfinitePromptList 
             locale={locale}
-            tag={decodedSlug}
+            tag={slug}
           />
         </div>
       </div>
