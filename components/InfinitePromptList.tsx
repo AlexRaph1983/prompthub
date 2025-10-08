@@ -123,6 +123,15 @@ export default function InfinitePromptList({
 
   // Объединяем все страницы в один массив
   const allPrompts = data?.pages.flatMap(page => page.items) ?? initialPrompts
+  
+  // Отладочная информация
+  console.log('InfinitePromptList debug:', {
+    categoryId,
+    initialPromptsLength: initialPrompts.length,
+    dataPages: data?.pages?.length,
+    allPromptsLength: allPrompts.length,
+    data: data?.pages
+  })
 
   if (isLoading) {
     return <PromptCardSkeletonList count={6} />
