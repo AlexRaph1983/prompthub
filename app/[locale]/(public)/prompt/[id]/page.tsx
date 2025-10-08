@@ -1,3 +1,3 @@
-export { default } from '@/app/(public)/prompt/[id]/page';
+export { default, generateMetadata } from '@/app/(public)/prompt/[id]/page';
 
 
