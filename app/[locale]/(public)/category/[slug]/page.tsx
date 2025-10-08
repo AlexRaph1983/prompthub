@@ -158,20 +158,14 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 nsfw={nsfw === 'true'}
               />
             ) : (
-              <div className="text-center py-12">
-                <p className="text-gray-500 dark:text-gray-400 mb-4">
-                  {locale === 'ru' 
-                    ? 'В этой категории пока нет промптов'
-                    : 'No prompts in this category yet'
-                  }
-                </p>
-                <a
-                  href={`/${locale}/add`}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {locale === 'ru' ? 'Создать первый промпт' : 'Create first prompt'}
-                </a>
-              </div>
+              <InfinitePromptList
+                initialPrompts={[]}
+                initialNextCursor={null}
+                locale={locale}
+                categoryId={category.id}
+                tag={tag}
+                nsfw={nsfw === 'true'}
+              />
             )}
           </div>
         </div>
