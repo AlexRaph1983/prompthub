@@ -16,6 +16,7 @@ interface PromptState {
   hasMore: boolean
   nextCursor: string | null
   isInitialLoad: boolean
+  preselectedCategoryId: string | null
 }
 
 type PromptAction =
@@ -25,7 +26,7 @@ type PromptAction =
   | { type: 'UPDATE_PAGINATION'; payload: { hasMore: boolean; nextCursor: string | null } }
   | { type: 'UPDATE_PROMPT_RATING'; payload: { promptId: string; rating: number; ratingCount: number } }
   | { type: 'UPDATE_PROMPT_VIEWS'; payload: { promptId: string; views: number } }
-  | { type: 'TOGGLE_MODAL' }
+  | { type: 'TOGGLE_MODAL'; payload?: { preselectedCategoryId?: string } }
   | { type: 'SET_SEARCH_QUERY'; payload: string }
   | { type: 'SET_FILTER'; payload: { key: string; value: string } }
   | { type: 'RESET_FILTERS' }
@@ -43,6 +44,7 @@ const initialState: PromptState = {
   hasMore: true,
   nextCursor: null,
   isInitialLoad: true,
+  preselectedCategoryId: null,
 }
 
 function promptReducer(state: PromptState, action: PromptAction): PromptState {
@@ -92,6 +94,7 @@ function promptReducer(state: PromptState, action: PromptAction): PromptState {
       return {
         ...state,
         showModal: !state.showModal,
+        preselectedCategoryId: action.payload?.preselectedCategoryId || null,
       }
     case 'SET_SEARCH_QUERY':
       return {
@@ -134,7 +137,7 @@ interface PromptContextType {
   state: PromptState
   dispatch: React.Dispatch<PromptAction>
   addPrompt: (formData: PromptFormData) => Promise<void>
-  toggleModal: () => void
+  toggleModal: (preselectedCategoryId?: string) => void
   getFilteredPrompts: () => Prompt[]
   loadPrompts: () => Promise<void>
   loadMorePrompts: () => Promise<void>
@@ -265,8 +268,8 @@ export function PromptProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const toggleModal = () => {
-    dispatch({ type: 'TOGGLE_MODAL' })
+  const toggleModal = (preselectedCategoryId?: string) => {
+    dispatch({ type: 'TOGGLE_MODAL', payload: { preselectedCategoryId } })
   }
 
   const getFilteredPrompts = (): Prompt[] => {

@@ -12,6 +12,7 @@ import { PromptCardSkeleton, PromptCardSkeletonList } from '@/components/ui/skel
 import { useInfinitePrompts } from '@/lib/hooks/useInfinitePrompts'
 import { useIntersection } from '@/lib/hooks/useIntersection'
 import { PromptCardDTO } from '@/lib/repositories/promptRepository'
+import { usePromptStore } from '@/contexts/PromptStore'
 
 interface InfinitePromptListProps {
   initialPrompts: PromptCardDTO[]
@@ -50,6 +51,7 @@ export default function InfinitePromptList({
   tag,
   nsfw
 }: InfinitePromptListProps) {
+  const { toggleModal } = usePromptStore()
   const t = useTranslations()
   const router = useRouter()
   const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
@@ -166,9 +168,8 @@ export default function InfinitePromptList({
           </p>
           <Button 
             onClick={() => {
-              // Переход на страницу создания промпта с предвыбранной категорией
-              const categoryParam = categoryId ? `?category=${categoryId}` : '';
-              router.push(`/${locale}/add${categoryParam}`);
+              // Открываем модалку с предвыбранной категорией
+              toggleModal(categoryId || undefined);
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white"
           >

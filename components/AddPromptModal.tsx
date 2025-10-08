@@ -33,6 +33,16 @@ export function AddPromptModal() {
     prompt: '',
     example: '',
   })
+
+  // Устанавливаем предвыбранную категорию при открытии модалки
+  React.useEffect(() => {
+    if (state.preselectedCategoryId && state.showModal) {
+      setFormData(prev => ({
+        ...prev,
+        category: state.preselectedCategoryId!
+      }))
+    }
+  }, [state.preselectedCategoryId, state.showModal])
   
   // Константы для ограничений
   const MAX_TITLE_LENGTH = 60 // Оптимальная длина для SEO
