@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/prisma';
 import TagCloud from './TagCloud';
 import type { Locale } from '@/i18n/index';
 
@@ -8,28 +7,28 @@ interface TagCloudServerProps {
 
 export default async function TagCloudServer({ locale }: TagCloudServerProps) {
   try {
-    // Получаем топ 20 тегов с количеством промптов
-    const tags = await prisma.tag.findMany({
-      where: {
-        isActive: true,
-        promptCount: {
-          gt: 0
-        }
-      },
-      orderBy: {
-        promptCount: 'desc'
-      },
-      take: 20,
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        promptCount: true,
-        color: true
-      }
+    // Получаем теги из нашего API
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000'}/api/tags`, {
+      cache: 'no-store'
     });
-
-    return <TagCloud locale={locale} tags={tags} />;
+    
+    if (!response.ok) {
+      console.error('Failed to fetch tags:', response.status);
+      return <TagCloud locale={locale} tags={[]} />;
+    }
+    
+    const tagsData = await response.json();
+    
+    // Преобразуем формат для совместимости
+    const formattedTags = tagsData.map((tag: any, index: number) => ({
+      id: `tag-${index}`,
+      name: tag.tag,
+      slug: tag.tag.toLowerCase().replace(/\s+/g, '-'),
+      promptCount: tag.count,
+      color: undefined
+    }));
+    
+    return <TagCloud locale={locale} tags={formattedTags} />;
   } catch (error) {
     console.error('Error fetching tags for cloud:', error);
     return <TagCloud locale={locale} tags={[]} />;
