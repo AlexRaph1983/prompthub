@@ -129,7 +129,7 @@ export default function CategoryNav({ locale, categories, currentCategory }: Cat
                           }
                         `}
                         aria-expanded={isExpandedCategory}
-                        aria-label={`${isExpandedCategory ? 'Скрыть' : 'Показать'} подкатегории ${category.nameRu}`}
+                        aria-label={`${isExpandedCategory ? t('showLess') : t('showMore')} ${t('subcategories')} ${category.nameRu}`}
                       >
                         {isExpandedCategory ? (
                           <ChevronDown className="w-3.5 h-3.5" />
