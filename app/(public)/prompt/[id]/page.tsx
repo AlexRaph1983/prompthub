@@ -32,9 +32,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
     }
     
-    // Ограничиваем длину заголовка для SEO (50-60 символов)
-    const title = prompt.title.length > 50 
-      ? `${prompt.title.substring(0, 47)}... | PromptHub`
+    // Используем заголовок промпта как основной заголовок страницы
+    const title = prompt.title.length > 60 
+      ? `${prompt.title.substring(0, 57)}... | PromptHub`
       : `${prompt.title} | PromptHub`
     
     const description = prompt.description.length > 155
