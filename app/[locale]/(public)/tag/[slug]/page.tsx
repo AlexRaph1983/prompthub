@@ -17,11 +17,25 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   const t = await getTranslations({ locale, namespace: 'metadata' });
 
   try {
-    // Используем slug напрямую (должен быть в латинском формате)
-    const tag = await prisma.tag.findUnique({
+    // Ищем тег по slug или по названию (для обратной совместимости)
+    let tag = await prisma.tag.findUnique({
       where: { slug },
       select: { name: true, description: true }
     });
+
+    // Если не найден по slug, ищем по названию
+    if (!tag) {
+      const decodedSlug = decodeURIComponent(slug);
+      tag = await prisma.tag.findFirst({
+        where: { 
+          OR: [
+            { name: decodedSlug },
+            { name: { contains: decodedSlug, mode: 'insensitive' } }
+          ]
+        },
+        select: { name: true, description: true }
+      });
+    }
 
     if (!tag) {
       return {
@@ -62,8 +76,8 @@ export default async function TagPage({ params }: TagPageProps) {
   const t = await getTranslations({ locale, namespace: 'tagPage' });
 
   try {
-    // Используем slug напрямую (должен быть в латинском формате)
-    const tag = await prisma.tag.findUnique({
+    // Ищем тег по slug или по названию (для обратной совместимости)
+    let tag = await prisma.tag.findUnique({
       where: { slug },
       select: {
         id: true,
@@ -73,6 +87,26 @@ export default async function TagPage({ params }: TagPageProps) {
         color: true
       }
     });
+
+    // Если не найден по slug, ищем по названию
+    if (!tag) {
+      const decodedSlug = decodeURIComponent(slug);
+      tag = await prisma.tag.findFirst({
+        where: { 
+          OR: [
+            { name: decodedSlug },
+            { name: { contains: decodedSlug, mode: 'insensitive' } }
+          ]
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          promptCount: true,
+          color: true
+        }
+      });
+    }
 
     if (!tag) {
       notFound();
