@@ -161,9 +161,19 @@ export default function InfinitePromptList({
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             {t('prompts.noPrompts')}
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-500 mb-6">
             {t('prompts.beFirstToCreate')}
           </p>
+          <Button 
+            onClick={() => {
+              // Переход на страницу создания промпта с предвыбранной категорией
+              const categoryParam = categoryId ? `?category=${categoryId}` : '';
+              router.push(`/${locale}/add${categoryParam}`);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {t('common.addPrompt')}
+          </Button>
         </CardContent>
       </Card>
     )
