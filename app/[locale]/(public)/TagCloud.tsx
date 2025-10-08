@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { createTagUrl } from '@/lib/url';
 import type { Locale } from '@/i18n/index';
 
 interface Tag {
@@ -77,7 +78,7 @@ export default function TagCloud({ locale, tags }: TagCloudProps) {
           {topTags.map((tag, index) => (
             <Link
               key={tag.id}
-              href={`/${locale}/tag/${tag.slug}`}
+              href={createTagUrl(tag.slug, locale)}
               className={`
                 inline-block px-3 py-1.5 rounded-full transition-all duration-200 hover:scale-105 hover:shadow-md
                 ${getTagColor(tag, index)}
