@@ -1,4 +1,5 @@
 import TagCloud from './TagCloud';
+import { createTagSlug } from '@/lib/slugify';
 import type { Locale } from '@/i18n/index';
 
 interface TagCloudServerProps {
@@ -23,7 +24,7 @@ export default async function TagCloudServer({ locale }: TagCloudServerProps) {
     const formattedTags = tagsData.map((tag: any, index: number) => ({
       id: `tag-${index}`,
       name: tag.tag,
-      slug: tag.tag.toLowerCase().replace(/\s+/g, '-'),
+      slug: createTagSlug(tag.tag),
       promptCount: tag.count,
       color: undefined
     }));
