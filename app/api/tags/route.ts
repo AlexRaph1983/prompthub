@@ -14,23 +14,35 @@ export async function GET() {
         id: true,
         name: true,
         slug: true,
-        promptCount: true,
         color: true,
       },
-      orderBy: {
-        promptCount: 'desc',
-      },
-      take: 20, // Топ 20 тегов
+      take: 50, // Получаем больше тегов для подсчета
     });
 
-    // Форматируем теги для совместимости
-    const formattedTags = tags.map(tag => ({
-      id: tag.id,
-      name: tag.name,
-      slug: tag.slug,
-      promptCount: tag.promptCount,
-      color: tag.color,
+    // Считаем промпты для каждого тега динамически
+    const tagsWithCounts = await Promise.all(tags.map(async (tag) => {
+      const promptCount = await prisma.prompt.count({
+        where: {
+          tags: {
+            contains: tag.name
+          }
+        }
+      });
+      
+      return {
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        promptCount: promptCount,
+        color: tag.color,
+      };
     }));
+
+    // Фильтруем теги с промптами и сортируем по количеству
+    const formattedTags = tagsWithCounts
+      .filter(tag => tag.promptCount > 0)
+      .sort((a, b) => b.promptCount - a.promptCount)
+      .slice(0, 20); // Топ 20 тегов
 
     return NextResponse.json(formattedTags);
   } catch (error) {
