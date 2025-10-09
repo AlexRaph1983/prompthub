@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { locales } from '@/i18n/index';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const host = process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000';
+  const host = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
   const basePaths = ['', '/prompts', '/add'];
 
   const entries: MetadataRoute.Sitemap = [];
