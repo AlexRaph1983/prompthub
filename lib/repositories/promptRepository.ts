@@ -68,7 +68,7 @@ export interface PromptListResult {
 
 export class PromptRepository {
 
-  private buildWhereClause(params: PromptListParams) {
+  private async buildWhereClause(params: PromptListParams) {
     const where: any = {}
 
     if (params.authorId) {
@@ -101,15 +101,31 @@ export class PromptRepository {
     const tagConditions = []
     
     if (params.tag) {
-      tagConditions.push({
-        promptTags: {
-          some: {
-            tag: {
-              slug: params.tag
+      // Ищем по slug в таблице Tag
+      const tag = await prisma.tag.findUnique({
+        where: { slug: params.tag },
+        select: { name: true }
+      })
+      
+      if (tag) {
+        // Используем связь promptTags для нового способа
+        tagConditions.push({
+          promptTags: {
+            some: {
+              tag: {
+                slug: params.tag
+              }
             }
           }
-        }
-      })
+        })
+        
+        // И используем старый способ поиска по полю tags
+        tagConditions.push({
+          tags: {
+            contains: tag.name
+          }
+        })
+      }
     }
 
     if (params.nsfw === false) {
@@ -125,7 +141,8 @@ export class PromptRepository {
     }
 
     if (tagConditions.length > 0) {
-      where.AND = where.AND ? [...where.AND, ...tagConditions] : tagConditions
+      // Для тегов используем OR, чтобы найти промпты по любому из способов
+      where.OR = where.OR ? [...where.OR, ...tagConditions] : tagConditions
     }
 
     if (params.model) {
@@ -173,7 +190,7 @@ export class PromptRepository {
 
   async listPrompts(params: PromptListParams = {}): Promise<PromptListResult> {
     const limit = Math.min(params.limit || 20, 50) // Максимум 50
-    const where = this.buildWhereClause(params)
+    const where = await this.buildWhereClause(params)
     const orderBy = this.buildOrderBy(params)
 
     // Если есть cursor, добавляем условие для cursor-based pagination
@@ -310,7 +327,7 @@ export class PromptRepository {
   }
 
   async getTotalCount(params: Omit<PromptListParams, 'limit' | 'cursor'> = {}): Promise<number> {
-    const where = this.buildWhereClause(params)
+    const where = await this.buildWhereClause(params)
     
     return prisma.prompt.count({ where })
   }
