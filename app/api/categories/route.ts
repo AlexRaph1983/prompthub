@@ -5,30 +5,33 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    // Получаем все промпты с категориями
-    const prompts = await prisma.prompt.findMany({
+    // Получаем категории из новой таблицы Category
+    const categories = await prisma.category.findMany({
+      where: {
+        isActive: true,
+      },
       select: {
-        category: true,
+        id: true,
+        nameRu: true,
+        nameEn: true,
+        slug: true,
+        promptCount: true,
+        sortOrder: true,
+      },
+      orderBy: {
+        sortOrder: 'asc',
       },
     });
 
-    // Собираем уникальные категории
-    const categoryMap = new Map<string, number>();
-    
-    prompts.forEach(prompt => {
-      if (prompt.category) {
-        const count = categoryMap.get(prompt.category) || 0;
-        categoryMap.set(prompt.category, count + 1);
-      }
-    });
-
-    // Форматируем категории
-    const formattedCategories = Array.from(categoryMap.entries()).map(([name, count]) => ({
-      name,
-      nameRu: name,
-      nameEn: name,
-      slug: name.toLowerCase().replace(/\s+/g, '-'),
-      count,
+    // Форматируем категории для совместимости
+    const formattedCategories = categories.map(category => ({
+      id: category.id,
+      name: category.nameEn, // Для обратной совместимости
+      nameRu: category.nameRu,
+      nameEn: category.nameEn,
+      slug: category.slug,
+      count: category.promptCount,
+      sortOrder: category.sortOrder,
     }));
 
     return NextResponse.json(formattedCategories);
