@@ -3,6 +3,9 @@ import CategoryDrawerServer from './CategoryDrawerServer';
 import TagCloudServer from './TagCloudServer';
 import type { Locale } from '@/i18n/index';
 
+// Отключаем кэширование для динамических данных
+export const revalidate = 0;
+
 interface PublicLayoutProps {
   children: React.ReactNode;
   params: { locale: Locale };
