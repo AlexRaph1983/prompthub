@@ -24,6 +24,8 @@ export default async function CategoryNavServer({ locale, currentCategory }: Cat
     const formattedCategories = categories.map((cat: any) => ({
       id: cat.slug,
       name: cat.name,
+      nameRu: cat.nameRu,
+      nameEn: cat.nameEn,
       slug: cat.slug,
       promptCount: cat.count,
       isActive: true,
