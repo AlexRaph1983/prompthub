@@ -15,7 +15,6 @@ export async function GET() {
         nameRu: true,
         nameEn: true,
         slug: true,
-        promptCount: true,
         sortOrder: true,
       },
       orderBy: {
@@ -23,15 +22,56 @@ export async function GET() {
       },
     });
 
-    // Форматируем категории для совместимости
-    const formattedCategories = categories.map(category => ({
-      id: category.id,
-      name: category.nameEn, // Для обратной совместимости
-      nameRu: category.nameRu,
-      nameEn: category.nameEn,
-      slug: category.slug,
-      count: category.promptCount,
-      sortOrder: category.sortOrder,
+    // Маппинг старых категорий на новые slug
+    const categoryMapping = {
+      'Legal': 'legal',
+      'Photography': 'photography', 
+      'Health': 'health',
+      'Photo Editing': 'photo-editing',
+      'Education': 'education',
+      'NSFW 18+': 'nsfw',
+      'Marketing & Writing': 'marketing-writing',
+      'Image': 'image',
+      'Video': 'video',
+      'Chat': 'chat',
+      'Code': 'code',
+      'SEO': 'seo',
+      'Design': 'design',
+      'Music': 'music',
+      'Audio': 'audio',
+      '3D': '3d',
+      'Animation': 'animation',
+      'Business': 'business'
+    };
+
+    // Создаем обратный маппинг slug -> oldCategory
+    const reverseMapping = {};
+    Object.entries(categoryMapping).forEach(([old, slug]) => {
+      reverseMapping[slug] = old;
+    });
+
+    // Форматируем категории и считаем промпты по старому полю category
+    const formattedCategories = await Promise.all(categories.map(async (category) => {
+      const oldCategoryName = reverseMapping[category.slug];
+      let promptCount = 0;
+      
+      if (oldCategoryName) {
+        promptCount = await prisma.prompt.count({
+          where: {
+            category: oldCategoryName
+          }
+        });
+      }
+
+      return {
+        id: category.id,
+        name: category.nameEn, // Для обратной совместимости
+        nameRu: category.nameRu,
+        nameEn: category.nameEn,
+        slug: category.slug,
+        count: promptCount,
+        sortOrder: category.sortOrder,
+      };
     }));
 
     return NextResponse.json(formattedCategories);
