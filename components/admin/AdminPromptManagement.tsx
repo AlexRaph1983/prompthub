@@ -129,7 +129,11 @@ export function AdminPromptManagement() {
         sortOrder,
       })
 
-      const response = await fetch(`/api/admin/prompts?${params}`)
+      const response = await fetch(`/api/admin/prompts?${params}`, {
+        headers: {
+          'Authorization': 'Bearer test-admin-key'
+        }
+      })
       
       if (!response.ok) {
         throw new Error('Failed to fetch prompts')
@@ -148,6 +152,9 @@ export function AdminPromptManagement() {
     try {
       const response = await fetch(`/api/admin/prompts?id=${prompt.id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': 'Bearer test-admin-key'
+        }
       })
 
       if (!response.ok) {
@@ -176,7 +183,12 @@ export function AdminPromptManagement() {
 
     try {
       const promises = Array.from(selectedPrompts).map(id => 
-        fetch(`/api/admin/prompts?id=${id}`, { method: 'DELETE' })
+        fetch(`/api/admin/prompts?id=${id}`, { 
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer test-admin-key'
+          }
+        })
       )
       
       await Promise.all(promises)
