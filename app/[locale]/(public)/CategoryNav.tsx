@@ -160,7 +160,12 @@ export default function CategoryNav({ locale, categories, currentCategory }: Cat
                         `}>
                           <IconComponent className="w-3.5 h-3.5" />
                         </div>
-                        <span className="truncate font-medium">{locale === 'ru' ? (category.nameRu || category.name) : (category.nameEn || category.name)}</span>
+                        <span className="truncate font-medium">
+                          {locale === 'ru' 
+                            ? (category.nameRu || category.name)
+                            : (category.nameEn || category.name)
+                          }
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         {category.promptCount > 0 && (
