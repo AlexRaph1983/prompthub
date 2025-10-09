@@ -22,15 +22,14 @@ export async function GET() {
       },
     });
 
-    // Форматируем категории и считаем промпты по старому полю category
+    // Форматируем категории и считаем промпты по новому полю categoryId
     const formattedCategories = await Promise.all(categories.map(async (category) => {
       let promptCount = 0;
       
-      // Прямое сопоставление по названию категории
-      const categoryName = category.nameEn;
+      // Считаем промпты по новому полю categoryId
       promptCount = await prisma.prompt.count({
         where: {
-          category: categoryName
+          categoryId: category.id
         }
       });
 
