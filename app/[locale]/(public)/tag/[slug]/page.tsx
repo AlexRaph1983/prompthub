@@ -145,6 +145,8 @@ export default async function TagPage({ params }: TagPageProps) {
           <InfinitePromptList 
             locale={locale}
             tag={slug}
+            initialPrompts={[]}
+            initialNextCursor={null}
           />
         </div>
       </div>
