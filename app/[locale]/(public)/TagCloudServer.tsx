@@ -20,12 +20,12 @@ export default async function TagCloudServer({ locale }: TagCloudServerProps) {
     const tagsData = await response.json();
     
     // Преобразуем формат для совместимости
-    const formattedTags = tagsData.map((tag: any, index: number) => ({
-      id: `tag-${index}`,
-      name: tag.tag,
-      slug: tag.tag.toLowerCase().replace(/\s+/g, '-'),
-      promptCount: tag.count,
-      color: undefined
+    const formattedTags = tagsData.map((tag: any) => ({
+      id: tag.id,
+      name: tag.name,
+      slug: tag.slug,
+      promptCount: tag.promptCount,
+      color: tag.color
     }));
     
     return <TagCloud locale={locale} tags={formattedTags} />;
