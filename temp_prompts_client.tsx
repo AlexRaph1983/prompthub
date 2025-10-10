@@ -236,7 +236,9 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
     <Card className="hover:shadow-lg transition-shadow duration-200 overflow-hidden">
       <CardContent className="p-6 flex flex-col h-full">
         <div className="flex items-start justify-between mb-3 gap-2">
-          <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words flex-1 min-w-0">{prompt.title}</h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words">{prompt.title}</h3>
+          </div>
           <Badge variant="outline" className="text-xs whitespace-nowrap">
             {prompt.license}
           </Badge>
