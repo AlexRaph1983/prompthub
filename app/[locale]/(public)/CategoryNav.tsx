@@ -69,10 +69,12 @@ export default function CategoryNav({ locale, categories, currentCategory }: Cat
     <nav className="w-full" role="navigation" aria-label={t('title')}>
       <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm">
         <div className="p-4 border-b border-gray-200/60 dark:border-gray-700/60">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            {t('title')}
-          </h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+              {t('title')}
+            </h2>
+          </div>
         </div>
         
         <div className="p-3">

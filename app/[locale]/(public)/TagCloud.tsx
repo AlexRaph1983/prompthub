@@ -64,10 +64,12 @@ export default function TagCloud({ locale, tags }: TagCloudProps) {
   return (
     <div className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm">
       <div className="p-4 border-b border-gray-200/60 dark:border-gray-700/60">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-          {t('title')}
-        </h3>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            {t('title')}
+          </h3>
+        </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           {t('description')}
         </p>
