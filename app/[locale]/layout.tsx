@@ -43,7 +43,20 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
     openGraph: { title, description, url: `${host}/${locale}`, siteName: 'PromptHub', locale, type: 'website', images: [{ url: ogImage }] },
     twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
     robots: { index: true, follow: true },
-    icons: { icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }] },
+    icons: { 
+      icon: [
+        { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+        { url: '/favicon.svg', type: 'image/svg+xml' }
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+      ]
+    },
+    other: {
+      'preconnect': 'https://fonts.googleapis.com',
+      'preconnect-gstatic': 'https://fonts.gstatic.com',
+      'manifest': '/manifest.json'
+    }
   };
 }
 
@@ -58,10 +71,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
       <body className={inter.className}>
         {/* Yandex.Metrika */}
         <Script id="yandex-metrika" strategy="afterInteractive">{`
