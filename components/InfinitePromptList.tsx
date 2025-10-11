@@ -193,26 +193,67 @@ export default function InfinitePromptList({
     <div className="space-y-6">
       <div className="mx-auto max-w-7xl px-4 md:px-6 pt-6 md:pt-8">
         {authorId && authorInfo && (
-          <AuthorProfileBadge
-            className="mb-6"
-            author={{
-              id: authorInfo.id,
-              name: authorInfo.name || 'Anonymous',
-              image: authorInfo.image || undefined,
-              bio: authorInfo.bio || undefined,
-              website: authorInfo.website || undefined,
-              telegram: authorInfo.telegram || undefined,
-              github: authorInfo.github || undefined,
-              twitter: authorInfo.twitter || undefined,
-              linkedin: authorInfo.linkedin || undefined,
-              reputationScore: authorInfo.reputationScore ?? 0,
-              reputationPromptCount: authorInfo.reputationPromptCount ?? 0,
-              reputationLikesCnt: authorInfo.reputationLikesCnt ?? 0,
-              reputationSavesCnt: authorInfo.reputationSavesCnt ?? 0,
-              reputationRatingsCnt: authorInfo.reputationRatingsCnt ?? 0,
-              reputationCommentsCnt: authorInfo.reputationCommentsCnt ?? 0,
-            }}
-          />
+          <>
+            <AuthorProfileBadge
+              className="mb-6"
+              author={{
+                id: authorInfo.id,
+                name: authorInfo.name || 'Anonymous',
+                image: authorInfo.image || undefined,
+                bio: authorInfo.bio || undefined,
+                website: authorInfo.website || undefined,
+                telegram: authorInfo.telegram || undefined,
+                github: authorInfo.github || undefined,
+                twitter: authorInfo.twitter || undefined,
+                linkedin: authorInfo.linkedin || undefined,
+                reputationScore: authorInfo.reputationScore ?? 0,
+                reputationPromptCount: authorInfo.reputationPromptCount ?? 0,
+                reputationLikesCnt: authorInfo.reputationLikesCnt ?? 0,
+                reputationSavesCnt: authorInfo.reputationSavesCnt ?? 0,
+                reputationRatingsCnt: authorInfo.reputationRatingsCnt ?? 0,
+                reputationCommentsCnt: authorInfo.reputationCommentsCnt ?? 0,
+              }}
+            />
+            
+            {/* Дополнительный контент для SEO */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border border-purple-200 dark:border-purple-800 p-6 mb-6">
+              <div className="prose prose-gray dark:prose-invert max-w-none">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                  Решения от {authorInfo.name || 'автора'}
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                  Здесь собраны все {authorInfo.reputationPromptCount || 0} готовых решений и шаблонов от {authorInfo.name || 'этого автора'}. 
+                  Каждое решение создано с учетом лучших практик и проверено сообществом.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      📊 Статистика
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {authorInfo.reputationPromptCount || 0} решений, {authorInfo.reputationLikesCnt || 0} лайков
+                    </p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      ⭐ Рейтинг
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {authorInfo.reputationScore || 0} баллов репутации
+                    </p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      💬 Активность
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {authorInfo.reputationCommentsCnt || 0} комментариев
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {/* Список промптов */}
