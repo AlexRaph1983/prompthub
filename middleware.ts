@@ -24,7 +24,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // 2) Делегируем обработку next-intl middleware
+  // 2) Оптимизация: избегаем множественных редиректов
+  // Если запрос идет на корень, сразу редиректим на локализованную версию
+  if (pathname === '/') {
+    const locale = defaultLocale
+    return NextResponse.redirect(new URL(`/${locale}/home`, request.url))
+  }
+
+  // 3) Делегируем обработку next-intl middleware для остальных случаев
   return intlMiddleware(request)
 }
 

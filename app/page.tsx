@@ -7,5 +7,5 @@ export default function Page() {
   const acceptLanguage = headers().get('accept-language');
   const cookieLocale = cookieStore.get('locale')?.value;
   const locale = resolveLocale(cookieLocale, acceptLanguage);
-  redirect(`/${locale}/home`);
+  redirect(`/${locale}`);
 }
