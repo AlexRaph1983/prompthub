@@ -62,6 +62,18 @@ export function Navigation() {
             </Link>
 
             <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
+              <Link href={`/${currentLocale}/home`} className="inline-flex items-center gap-2">
+                <User className="w-4 h-4" />
+                <span>{t('home')}</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
+              <Link href={`/${currentLocale}/prompts`} className="inline-flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                <span>{t('prompts')}</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="hidden md:inline-flex">
               <Link href={`/${currentLocale}/leaders`} className="inline-flex items-center gap-2">
                 <Trophy className="w-4 h-4" />
                 <span>{t('leaders')}</span>
@@ -187,19 +199,31 @@ export function Navigation() {
           </div>
         </div>
         {/* Мобильная строка действий */}
-        <div className="flex justify-between items-center gap-3 py-2 md:hidden border-t">
-          <Button asChild variant="outline" size="sm" className="flex-1">
-            <Link href={`/${currentLocale}/leaders`} className="inline-flex items-center gap-2">
-              <Trophy className="w-4 h-4" />
+        <div className="flex justify-between items-center gap-1 py-2 md:hidden border-t">
+          <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
+            <Link href={`/${currentLocale}/home`} className="inline-flex items-center gap-1">
+              <User className="w-3 h-3" />
+              <span>{t('home')}</span>
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
+            <Link href={`/${currentLocale}/prompts`} className="inline-flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              <span>{t('prompts')}</span>
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="flex-1 text-xs">
+            <Link href={`/${currentLocale}/leaders`} className="inline-flex items-center gap-1">
+              <Trophy className="w-3 h-3" />
               <span>{t('leaders')}</span>
             </Link>
           </Button>
           <Button 
             onClick={toggleModal} 
             size="sm"
-            className="flex-1 inline-flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+            className="flex-1 inline-flex items-center gap-1 bg-violet-600 hover:bg-violet-700 text-white text-xs"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3 h-3" />
             <span>{t('addPrompt')}</span>
           </Button>
         </div>
