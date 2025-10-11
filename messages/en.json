@@ -1,6 +1,8 @@
 {
   "common": {
     "appName": "PromptHub",
+    "home": "Home",
+    "prompts": "Prompts",
     "leaders": "Leaders",
     "addPrompt": "Add Prompt",
     "profile": "Profile",
