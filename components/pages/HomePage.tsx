@@ -372,6 +372,45 @@ export default function HomePage() {
             </div>
           </div>
         )}
+
+        {/* Дополнительный контент для SEO */}
+        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
+          <div className="prose prose-gray dark:prose-invert max-w-none">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Добро пожаловать в PromptHub
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              PromptHub — это крупнейшая библиотека готовых решений и шаблонов для работы с искусственным интеллектом. 
+              Здесь вы найдете проверенные промпты для ChatGPT, Claude, Midjourney и других популярных ИИ-инструментов.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  🎯 Готовые решения
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Тысячи проверенных шаблонов для любых задач
+                </p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  ⚡ Быстрый поиск
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Найдите нужное решение за секунды
+                </p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  🔧 Адаптация
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Легко настройте под свои потребности
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <div className="grid gap-4">
           {allPrompts.map((prompt) => (

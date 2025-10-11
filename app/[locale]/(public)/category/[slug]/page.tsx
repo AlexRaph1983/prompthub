@@ -94,6 +94,37 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           </div>
         </div>
 
+        {/* Дополнительный контент для SEO */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
+          <div className="prose prose-gray dark:prose-invert max-w-none">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Что вы найдете в категории "{locale === 'ru' ? category.nameRu : category.nameEn}"
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              В этой категории собраны {category.promptCount} профессиональных решений и шаблонов для работы с искусственным интеллектом. 
+              Каждое решение тщательно отобрано и протестировано сообществом пользователей.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  🎯 Готовые к использованию
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Все шаблоны можно использовать сразу или адаптировать под ваши задачи
+                </p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  🔧 Проверенные решения
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Каждое решение протестировано и получило положительные отзывы
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Подкатегории */}
         {subcategories.length > 0 && (
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
