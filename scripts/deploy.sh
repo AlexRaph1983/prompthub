@@ -130,7 +130,8 @@ module.exports = {
       IMPERSONATION_SECRET: '${IMPERSONATION_SECRET}',
       GOOGLE_CLIENT_ID: '${GOOGLE_CLIENT_ID:-}',
       GOOGLE_CLIENT_SECRET: '${GOOGLE_CLIENT_SECRET:-}',
-      REDIS_URL: '${REDIS_URL:-}'
+      REDIS_URL: '${REDIS_URL:-}',
+      NEXT_PUBLIC_APP_HOST: '${NEXT_PUBLIC_APP_HOST:-}'
     },
     autorestart: true,
     max_restarts: 10
