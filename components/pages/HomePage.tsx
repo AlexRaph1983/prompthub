@@ -389,7 +389,7 @@ export default function HomePage() {
             <div className="flex justify-center items-center py-8">
               <div className="flex items-center gap-2 text-gray-500">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-violet-600"></div>
-                <span>Загружаем больше промптов...</span>
+                <span>Загружаем больше решений...</span>
               </div>
             </div>
           )}
@@ -398,7 +398,7 @@ export default function HomePage() {
           {!state.hasMore && state.prompts.length > 0 && (
             <div className="flex justify-center items-center py-8">
               <div className="text-gray-500 text-sm">
-                Вы просмотрели все доступные промпты
+                Вы просмотрели все доступные решения
               </div>
             </div>
           )}

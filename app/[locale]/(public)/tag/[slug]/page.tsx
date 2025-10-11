@@ -126,7 +126,7 @@ export default async function TagPage({ params }: TagPageProps) {
           )}
           <div className="mt-4 flex items-center justify-center gap-4">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-              {tag.promptCount} промптов
+              {tag.promptCount} готовых решений
             </span>
             {tag.color && (
               <div 

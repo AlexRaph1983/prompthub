@@ -87,9 +87,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           )}
 
           <div className="mt-4 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-            <span>{category.promptCount} промптов</span>
+            <span>{category.promptCount} готовых решений</span>
             {category.children && category.children.length > 0 && (
-              <span>{category.children.length} подкатегорий</span>
+              <span>{category.children.length} подразделов</span>
             )}
           </div>
         </div>
@@ -111,7 +111,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     {locale === 'ru' ? subcategory.nameRu : subcategory.nameEn}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {subcategory.promptCount} промптов
+                    {subcategory.promptCount} готовых решений
                   </p>
                 </a>
               ))}
@@ -122,9 +122,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         {/* Популярные теги */}
         {popularTags.length > 0 && (
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {locale === 'ru' ? 'Популярные теги' : 'Popular tags'}
-            </h2>
+            </h3>
             <div className="flex flex-wrap gap-2">
               {popularTags.map((tag) => (
                 <a
@@ -143,7 +143,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {locale === 'ru' ? 'Все промпты' : 'All prompts'}
+              {locale === 'ru' ? 'Готовые решения' : 'All prompts'}
             </h2>
           </div>
           
