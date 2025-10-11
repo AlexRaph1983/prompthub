@@ -43,6 +43,31 @@ export async function GET(request: NextRequest) {
           changefreq,
           priority,
         },
+        // Основные страницы без локали
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/prompts`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.8',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/add`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.7',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/home`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.9',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/leaders`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.6',
+        },
       ];
     });
 

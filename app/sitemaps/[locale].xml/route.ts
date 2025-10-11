@@ -34,6 +34,30 @@ export async function GET(
           changefreq,
           priority,
         },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/prompts`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.8',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/add`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.7',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/home`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.9',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/leaders`,
+          lastmod: formatLastMod(now),
+          changefreq,
+          priority: '0.6',
+        },
       ];
     });
 
