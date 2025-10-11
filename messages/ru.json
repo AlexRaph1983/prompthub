@@ -1,6 +1,8 @@
 {
   "common": {
     "appName": "PromptHub",
+    "home": "Главная",
+    "prompts": "Промпты",
     "leaders": "Лидеры",
     "addPrompt": "Добавить промпт",
     "profile": "Профиль",
