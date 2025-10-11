@@ -108,6 +108,8 @@ rm -rf .next
 
 if [ "${SKIP_BUILD}" != "1" ]; then
   log "Building application"
+  # Export NEXT_PUBLIC_* variables before build so Next.js can embed them
+  export NEXT_PUBLIC_APP_HOST="${NEXT_PUBLIC_APP_HOST:-}"
   npm run build
 else
   log "Skipping build step by request"
