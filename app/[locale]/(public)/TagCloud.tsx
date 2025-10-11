@@ -86,7 +86,7 @@ export default function TagCloud({ locale, tags }: TagCloudProps) {
                 ${getTagColor(tag, index)}
                 ${getTagSize(tag.promptCount)}
               `}
-              title={`${tag.promptCount} промптов`}
+              title={`${tag.promptCount} готовых решений`}
             >
               {tag.name}
             </Link>
