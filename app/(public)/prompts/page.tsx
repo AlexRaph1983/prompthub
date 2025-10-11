@@ -1,4 +1,5 @@
 import { unstable_setRequestLocale } from 'next-intl/server'
+import { Metadata } from 'next'
 import InfinitePromptList from '@/components/InfinitePromptList'
 import { promptRepository } from '@/lib/repositories/promptRepository'
 import { PromptCardDTO } from '@/lib/repositories/promptRepository'
@@ -60,6 +61,23 @@ async function getAuthorInfo(authorId?: string) {
   }
 }
 
+export const metadata: Metadata = {
+  title: 'Каталог промптов — PromptHub',
+  description: 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.',
+  keywords: 'промпты, каталог, ChatGPT, Claude, Gemini, ИИ, нейросети, шаблоны',
+  openGraph: {
+    title: 'Каталог промптов — PromptHub',
+    description: 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.',
+    type: 'website',
+    siteName: 'PromptHub'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Каталог промптов — PromptHub',
+    description: 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.'
+  }
+}
+
 export default async function PromptsPage({
   searchParams,
   params: { locale }
@@ -74,12 +92,17 @@ export default async function PromptsPage({
   const authorInfo = await getAuthorInfo(authorId)
 
   return (
-    <InfinitePromptList
-      initialPrompts={prompts}
-      initialNextCursor={nextCursor}
-      authorId={authorId}
-      authorInfo={authorInfo as any}
-      locale={locale}
-    />
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-4 text-gray-900">Каталог промптов</h1>
+      <p className="text-gray-600 text-lg mb-6">Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.</p>
+      
+      <InfinitePromptList
+        initialPrompts={prompts}
+        initialNextCursor={nextCursor}
+        authorId={authorId}
+        authorInfo={authorInfo as any}
+        locale={locale}
+      />
+    </div>
   )
 } 

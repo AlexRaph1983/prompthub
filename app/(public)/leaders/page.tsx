@@ -5,6 +5,24 @@ import { Card } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserReputationBadge } from '@/components/UserReputationBadge'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Рейтинг авторов — PromptHub',
+  description: 'Топ авторов по репутации и качеству промптов. Лучшие создатели контента в области искусственного интеллекта.',
+  keywords: 'рейтинг, авторы, репутация, лидеры, промпты, ИИ',
+  openGraph: {
+    title: 'Рейтинг авторов — PromptHub',
+    description: 'Топ авторов по репутации и качеству промптов. Лучшие создатели контента в области искусственного интеллекта.',
+    type: 'website',
+    siteName: 'PromptHub'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Рейтинг авторов — PromptHub',
+    description: 'Топ авторов по репутации и качеству промптов. Лучшие создатели контента в области искусственного интеллекта.'
+  }
+}
 export default function LeadersPage() {
   const [users, setUsers] = React.useState<Array<{ id: string; name: string | null; image: string | null; reputationScore: number }>>([])
   const [loading, setLoading] = React.useState(true)
