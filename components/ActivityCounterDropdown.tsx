@@ -8,6 +8,7 @@ import {
   DropdownMenuContent, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu'
+import { STATS_REFRESH_EVENT } from '@/hooks/useStatsRefresh'
 
 interface StatsData {
   users: number
@@ -49,7 +50,17 @@ export function ActivityCounterDropdown() {
     // Обновляем статистику каждые 30 секунд
     const interval = setInterval(fetchStats, 30000)
     
-    return () => clearInterval(interval)
+    // Слушаем кастомное событие для немедленного обновления
+    const handleStatsRefresh = () => {
+      fetchStats(true) // Принудительное обновление
+    }
+    
+    window.addEventListener(STATS_REFRESH_EVENT, handleStatsRefresh)
+    
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener(STATS_REFRESH_EVENT, handleStatsRefresh)
+    }
   }, [])
 
   const formatNumber = (num: number): string => {

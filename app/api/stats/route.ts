@@ -24,6 +24,11 @@ export async function GET(request: Request) {
       });
     }
 
+    // Если принудительное обновление, очищаем кэш
+    if (forceRefresh) {
+      statsCache = null;
+    }
+
 
     // Получаем статистику с единым источником просмотров
     const [

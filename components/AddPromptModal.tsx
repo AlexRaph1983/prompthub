@@ -11,12 +11,14 @@ import { PromptFormData, PROMPT_MODELS, PROMPT_CATEGORIES, PROMPT_LANGS } from '
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { useStatsRefresh } from '@/hooks/useStatsRefresh'
 
 export function AddPromptModal() {
   const { state, toggleModal, addPrompt } = usePromptStore()
   const { isAuthenticated, signIn } = useAuth()
   const router = useRouter()
   const t = useTranslations()
+  const { refreshStats } = useStatsRefresh()
   const [mounted, setMounted] = React.useState(false)
   
   React.useEffect(() => {
@@ -90,6 +92,10 @@ export function AddPromptModal() {
         const newPrompt = await response.json()
         console.log('Prompt created successfully:', newPrompt)
         addPrompt(newPrompt)
+        
+        // Обновляем статистику сразу после добавления промпта
+        refreshStats()
+        
         setFormData({
           title: '',
           description: '',
