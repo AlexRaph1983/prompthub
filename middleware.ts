@@ -6,7 +6,7 @@ import { locales, defaultLocale } from './i18n/index'
 const intlMiddleware = createIntlMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'always'
+  localePrefix: 'as-needed'
 })
 
 const PUBLIC_FILE = /\.(.*)$/

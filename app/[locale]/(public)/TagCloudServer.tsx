@@ -8,7 +8,7 @@ interface TagCloudServerProps {
 export default async function TagCloudServer({ locale }: TagCloudServerProps) {
   try {
     // Получаем теги из нашего API
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000'}/api/tags`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'}/api/tags`, {
       cache: 'no-store'
     });
     

@@ -24,7 +24,7 @@ type LayoutProps = {
 
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { locale } = params;
-  const host = process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000';
+  const host = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
   const messages = (await import(`@/messages/${locale}.json`)).default as any;
   const title = messages?.metadata?.title || 'PromptHub';
   const description = messages?.metadata?.description || '';

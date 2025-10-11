@@ -24,7 +24,7 @@ export async function generateMetadata({ params, searchParams }: CategoryPagePro
     };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
   return generateCategoryMetadata(category, locale, baseUrl);
 }
 
@@ -62,7 +62,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const subcategories = category.children || [];
 
   // Структурированные данные для SEO
-  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
   const structuredData = generateCategoryStructuredData(category, locale, baseUrl);
 
   return (

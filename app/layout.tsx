@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_HOST || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_HOST || "https://prompt-hub.site"),
   icons: { 
     icon: [
       { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
