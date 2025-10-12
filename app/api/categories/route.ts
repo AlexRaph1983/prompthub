@@ -1,12 +1,14 @@
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
-const prisma = new PrismaClient();
-
 export async function GET(request: Request) {
+  const prisma = new PrismaClient();
+  
   try {
     const url = new URL(request.url);
     const forceRefresh = url.searchParams.get('refresh') === 'true';
+    
+    console.log('API Categories - Force refresh:', forceRefresh);
     
     // Получаем категории из новой таблицы Category
     const categories = await prisma.category.findMany({
