@@ -3,8 +3,11 @@ import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const url = new URL(request.url);
+    const forceRefresh = url.searchParams.get('refresh') === 'true';
+    
     // Получаем категории из новой таблицы Category
     const categories = await prisma.category.findMany({
       where: {
@@ -44,6 +47,8 @@ export async function GET() {
       };
     }));
 
+    console.log('API Categories - Sample data:', formattedCategories.slice(0, 3));
+    
     const response = NextResponse.json(formattedCategories);
     response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
