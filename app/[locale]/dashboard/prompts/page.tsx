@@ -13,10 +13,6 @@ export default async function MyPromptsPage() {
     redirect('/api/auth/signin')
   }
 
-  console.log('Dashboard Debug - User ID:', session.user.id)
-  console.log('Dashboard Debug - User Email:', session.user.email)
-  console.log('Dashboard Debug - User Name:', session.user.name)
-
   const prompts = await prisma.prompt.findMany({
     where: {
       authorId: session.user.id
@@ -25,9 +21,6 @@ export default async function MyPromptsPage() {
       createdAt: 'desc'
     }
   })
-
-  console.log('Dashboard Debug - Found prompts:', prompts.length)
-  console.log('Dashboard Debug - Prompts data:', prompts.map(p => ({ id: p.id, title: p.title, authorId: p.authorId })))
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
