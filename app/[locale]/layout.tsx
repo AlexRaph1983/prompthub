@@ -46,7 +46,8 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
     icons: { 
       icon: [
         { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
-        { url: '/favicon.svg', type: 'image/svg+xml' }
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+        { url: '/favicon-120x120.svg', sizes: '120x120', type: 'image/svg+xml' }
       ],
       apple: [
         { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }

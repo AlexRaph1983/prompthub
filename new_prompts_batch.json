@@ -1,0 +1,187 @@
+{
+  "version": "1.0",
+  "submitted_by": { "username": "PromptMaster", "user_id": "", "profile_url": "" },
+  "taxonomy": {
+    "languages": ["ru", "en", "multi"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Proprietary"],
+    "categories": ["writing", "coding", "data-analysis", "design", "marketing", "seo", "social-media", "education", "productivity", "business", "sales", "customer-support", "research", "translation", "summarization", "idea-generation", "legal", "finance", "health", "lifestyle", "arts", "image", "audio", "video", "devops", "data-science", "ecommerce", "gaming", "utilities"],
+    "models": ["any", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "claude-3.5-sonnet", "claude-3.5-haiku", "claude-3-opus", "gemini-1.5-pro", "gemini-1.5-flash", "llama-3.1-8b-instruct", "llama-3.1-70b-instruct", "mistral-large-latest", "mistral-small-latest", "command-r-plus", "command-r"]
+  },
+  "items": [
+    {
+      "title": "Генерация клипа в SORA 2 с реалистичным персонажем",
+      "summary": "Создай кинематографичный ролик с реалистичным человеком в SORA 2. Отлично подходит для TikTok и YouTube Shorts.",
+      "language": "ru",
+      "model": "gpt-4o",
+      "category": "video",
+      "license": "CC-BY",
+      "tags": ["sora", "видео", "персонаж", "реализм"],
+      "prompt_text": "Сгенерируй видео в SORA 2, где {персонаж} находится в {сцена}. Добавь реалистичное освещение, эмоции лица и плавное движение камеры. Длина ролика {длина} секунд.",
+      "variables": [
+        { "name": "персонаж", "type": "string", "required": true, "description": "Описание внешности и одежды героя", "example": "молодой человек в черной куртке" },
+        { "name": "сцена", "type": "string", "required": true, "description": "Место действия", "example": "ночной город с неоновыми вывесками" },
+        { "name": "длина", "type": "number", "required": false, "description": "Длительность ролика в секундах", "example": "9" }
+      ],
+      "usage_instructions": "Используй яркие сцены и контрастный свет — SORA хорошо передаёт неон и отражения.",
+      "examples": ["Персонаж: девушка в дождливом Токио, длина: 10 секунд"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание музыкального трека в SUNO с параметрами BPM",
+      "summary": "Создай трек в SUNO, указав стиль, настроение и BPM — идеально для TikTok и саундтреков.",
+      "language": "multi",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["suno", "музыка", "bpm", "треки"],
+      "prompt_text": "Сгенерируй музыкальный трек в стиле {жанр} с темпом {bpm} BPM и настроением {настроение}. Добавь вокал {тип_вокала} и атмосферу {атмосфера}.",
+      "variables": [
+        { "name": "жанр", "type": "string", "required": true, "description": "Музыкальный стиль", "example": "love metal" },
+        { "name": "bpm", "type": "number", "required": true, "description": "Темп композиции", "example": "128" },
+        { "name": "настроение", "type": "string", "required": false, "description": "Эмоциональная атмосфера трека", "example": "драматичное и страстное" },
+        { "name": "тип_вокала", "type": "string", "required": false, "description": "Тип вокала", "example": "мужской с эффектом хорус" },
+        { "name": "атмосфера", "type": "string", "required": false, "description": "Звуковая среда трека", "example": "неоновые 2000-е" }
+      ],
+      "usage_instructions": "Используй BPM от 90 до 150 для радио- и TikTok-хитов.",
+      "examples": ["Жанр: love metal; BPM: 130; Настроение: драматичное"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Love Metal песня с эмоциями и гитарным драйвом",
+      "summary": "Сгенерируй мощную песню в стиле Love Metal с драматичным вокалом и эмоцией страсти.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY-SA",
+      "tags": ["love metal", "rock", "эмоции", "гитара"],
+      "prompt_text": "Generate a Love Metal song with heavy guitars, emotional vocals, and dark romantic lyrics. Include verses, chorus, and a bridge with a melodic solo.",
+      "usage_instructions": "Добавь контраст между куплетом и припевом для эмоциональной динамики.",
+      "examples": ["Reference: HIM, The 69 Eyes"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Промпт для логотипа бренда в современном стиле",
+      "summary": "Создай современный логотип с учётом ниши и фирменных цветов, идеально подходящий для стартапа.",
+      "language": "ru",
+      "model": "gpt-4.1",
+      "category": "design",
+      "license": "CC-BY",
+      "tags": ["логотип", "бренд", "дизайн", "фирменный стиль"],
+      "prompt_text": "Создай концепцию логотипа для бренда {название} в нише {ниша}. Используй цвета {цвета} и стиль {стиль}. Добавь идею, отражающую ценности компании.",
+      "variables": [
+        { "name": "название", "type": "string", "required": true, "description": "Название бренда", "example": "PromptHub" },
+        { "name": "ниша", "type": "string", "required": true, "description": "Сфера деятельности", "example": "технологии" },
+        { "name": "цвета", "type": "string", "required": false, "description": "Цветовая палитра", "example": "синий и белый" },
+        { "name": "стиль", "type": "string", "required": false, "description": "Визуальный стиль логотипа", "example": "минимализм" }
+      ],
+      "usage_instructions": "Укажи формат вывода (SVG, PNG) для финального результата.",
+      "examples": ["Название: PromptHub; Ниша: AI-платформа; Стиль: современный минимализм"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Портрет человека в художественном стиле",
+      "summary": "Создай цифровой портрет человека в выбранном художественном стиле — реализм, комикс или акварель.",
+      "language": "ru",
+      "model": "mistral-large-latest",
+      "category": "image",
+      "license": "CC-BY",
+      "tags": ["портрет", "человек", "изображение", "арт"],
+      "prompt_text": "Сгенерируй портрет человека {описание} в стиле {стиль}. Добавь фоновое освещение и мягкие тени для реалистичности.",
+      "variables": [
+        { "name": "описание", "type": "string", "required": true, "description": "Описание внешности", "example": "молодая женщина с короткими волосами" },
+        { "name": "стиль", "type": "string", "required": true, "description": "Художественный стиль", "example": "реализм" }
+      ],
+      "usage_instructions": "Уточни детали лица и освещение — это повысит качество рендера.",
+      "examples": ["Описание: мужчина с бородой; стиль: киберпанк"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание мем-видео для Хэллоуина",
+      "summary": "Сгенерируй короткое юмористическое видео в стиле SORA, посвящённое Хэллоуину — идеально для TikTok.",
+      "language": "ru",
+      "model": "gpt-4o-mini",
+      "category": "video",
+      "license": "CC-BY",
+      "tags": ["хэллоуин", "видео", "юмор", "sora"],
+      "prompt_text": "Создай короткое видео на тему Хэллоуина: {сцена}, {персонажи}, {эмоция}. Добавь свет от свечей, дым и атмосферу мистики.",
+      "variables": [
+        { "name": "сцена", "type": "string", "required": true, "description": "Описание места действия", "example": "заброшенный дом" },
+        { "name": "персонажи", "type": "string", "required": true, "description": "Главные герои сцены", "example": "бабушка-вампир и кот в шляпе" },
+        { "name": "эмоция", "type": "string", "required": false, "description": "Эмоциональный тон видео", "example": "забавно и немного страшно" }
+      ],
+      "usage_instructions": "Добавь неожиданный комедийный финал для вирусного эффекта.",
+      "examples": ["Сцена: кладбище; персонажи: два привидения"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Музыкальный трек от Suno Master с эмоциональным вокалом",
+      "summary": "Создай песню с ярким вокалом и запоминающимся припевом в стиле Suno Master — идеальна для клипов и релизов.",
+      "language": "ru",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY-SA",
+      "tags": ["suno master", "вокал", "эмоции", "музыка"],
+      "prompt_text": "Сгенерируй песню в стиле Suno Master с темой {тема}, где вокал передаёт {эмоции}. Аранжировка в жанре {жанр}, с мощным припевом и атмосферными синтами.",
+      "variables": [
+        { "name": "тема", "type": "string", "required": true, "description": "Сюжет песни", "example": "любовь после разлуки" },
+        { "name": "эмоции", "type": "string", "required": false, "description": "Основная эмоция", "example": "надежда и боль" },
+        { "name": "жанр", "type": "string", "required": false, "description": "Музыкальный жанр", "example": "инди-поп" }
+      ],
+      "usage_instructions": "Добавь вокальные гармонии и короткий брейк перед финалом.",
+      "examples": ["Тема: тоска; Эмоции: страсть и одиночество"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "BPM-калькулятор для музыкантов и продюсеров",
+      "summary": "Промпт помогает рассчитать BPM и ритмику по темпу или длительности трека, идеален для битмейкеров.",
+      "language": "ru",
+      "model": "gpt-4.1-mini",
+      "category": "utilities",
+      "license": "CC0",
+      "tags": ["bpm", "музыка", "утилита", "темп"],
+      "prompt_text": "Рассчитай BPM, если длительность трека {длина} секунд и количество тактов {такты}. Также укажи, как изменить темп для достижения {новая_скорость} BPM.",
+      "variables": [
+        { "name": "длина", "type": "number", "required": true, "description": "Длина трека в секундах", "example": "120" },
+        { "name": "такты", "type": "number", "required": true, "description": "Количество тактов", "example": "32" },
+        { "name": "новая_скорость", "type": "number", "required": false, "description": "Желаемое значение BPM", "example": "140" }
+      ],
+      "usage_instructions": "Используй этот расчёт при сведении для выравнивания треков в одном темпе.",
+      "examples": ["Длина: 90, Такты: 24, Новая скорость: 128"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Эссе «Память о человеке» — сочинение с глубоким смыслом",
+      "summary": "Промпт помогает написать эмоциональное эссе или сочинение на тему памяти, утраты и наследия.",
+      "language": "ru",
+      "model": "claude-3.5-sonnet",
+      "category": "writing",
+      "license": "CC-BY",
+      "tags": ["память", "человек", "эссе", "сочинение"],
+      "prompt_text": "Напиши эссе на тему «Память о человеке». Раскрой идею через личную историю, эмоции и философский смысл. Стиль — лирико-описательный, объём {объем} слов.",
+      "variables": [
+        { "name": "объем", "type": "number", "required": false, "description": "Примерный объём текста", "example": "300" }
+      ],
+      "usage_instructions": "Добавь цитату или образ, который связывает прошлое и настоящее.",
+      "examples": ["300 слов, история о дедушке и его влиянии на жизнь автора"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}

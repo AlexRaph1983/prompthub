@@ -1,0 +1,81 @@
+{
+  "version": "1.0",
+  "submitted_by": {
+    "username": "PromptMaster",
+    "user_id": "",
+    "profile_url": ""
+  },
+  "taxonomy": {
+    "languages": ["English", "Русский", "Español", "Deutsch"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Custom", "Paid"],
+    "categories": [
+      "Chat", "Code", "SEO", "Design", "Legal", "Education", "Image", "Video", 
+      "Music", "Audio", "3D", "Animation", "Business", "Marketing", "Writing", 
+      "Translation", "Research", "Analysis", "Creative", "Productivity", 
+      "Gaming", "Health", "Finance", "Cooking"
+    ],
+    "models": [
+      "GPT-5", "OpenAI Sora", "Claude Opus 4.1", "Gemini 2.5 Pro", 
+      "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Google Veo 3", 
+      "Llama 3.1", "Mistral Large", "DeepSeek", "Suno", "AIVA", "Runway Gen-2"
+    ]
+  },
+  "items": [
+    {
+      "title": "Пример промпта для создания контента",
+      "summary": "Краткое описание назначения промпта",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["контент", "копирайтинг", "маркетинг"],
+      "prompt_text": "Создай {тип_контента} на тему {тема} для аудитории {аудитория}. Стиль: {стиль}. Длина: {длина} слов.",
+      "variables": [
+        {
+          "name": "тип_контента",
+          "type": "string",
+          "required": true,
+          "description": "Тип создаваемого контента",
+          "example": "статью"
+        },
+        {
+          "name": "тема",
+          "type": "string", 
+          "required": true,
+          "description": "Основная тема контента",
+          "example": "искусственный интеллект"
+        },
+        {
+          "name": "аудитория",
+          "type": "string",
+          "required": true,
+          "description": "Целевая аудитория",
+          "example": "начинающие разработчики"
+        },
+        {
+          "name": "стиль",
+          "type": "string",
+          "required": false,
+          "description": "Стиль изложения",
+          "example": "профессиональный"
+        },
+        {
+          "name": "длина",
+          "type": "number",
+          "required": false,
+          "description": "Целевая длина в словах",
+          "example": "500"
+        }
+      ],
+      "usage_instructions": "Подробные инструкции по использованию промпта",
+      "examples": [
+        "тип_контента: пост в блог; тема: машинное обучение; аудитория: студенты; стиль: доступный; длина: 300"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}
