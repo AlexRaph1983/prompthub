@@ -39,7 +39,8 @@ export class ViewsService {
         return prompt.views
       }
 
-      // ПРИОРИТЕТ 4: promptInteraction (только тип 'view', НЕ 'open')
+      // ПРИОРИТЕТ 4: promptInteraction (только если нет данных в основных источниках)
+      // ИСПРАВЛЕНО: убран 'open' - это клик для перехода, а не просмотр
       const interactions = await prisma.promptInteraction.count({
         where: { promptId, type: 'view' }
       })
