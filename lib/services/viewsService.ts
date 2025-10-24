@@ -39,9 +39,9 @@ export class ViewsService {
         return prompt.views
       }
 
-      // ПРИОРИТЕТ 4: promptInteraction (только если нет данных в основных источниках)
+      // ПРИОРИТЕТ 4: promptInteraction (только тип 'view', НЕ 'open')
       const interactions = await prisma.promptInteraction.count({
-        where: { promptId, type: { in: ['view', 'open'] } }
+        where: { promptId, type: 'view' }
       })
       
       return interactions
