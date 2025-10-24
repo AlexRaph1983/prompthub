@@ -108,8 +108,13 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
   }
 
   const handleViewDetails = (promptId: string) => {
-    // Убрано дублирующее отслеживание через /api/interactions
-    // Основной просмотр уже учитывается через /api/track-view на странице промпта
+    try {
+      fetch('/api/interactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'open', promptId })
+      })
+    } catch {}
     
     // Отслеживаем клик, если есть поисковый запрос
     if (searchValue.trim()) {
