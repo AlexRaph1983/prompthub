@@ -29,22 +29,22 @@ export class ViewsService {
         return viewEvents
       }
 
-      // ПРИОРИТЕТ 3: promptInteraction (взаимодействия типа view/open)
-      const interactions = await prisma.promptInteraction.count({
-        where: { promptId, type: { in: ['view', 'open'] } }
-      })
-      
-      if (interactions > 0) {
-        return interactions
-      }
-
-      // ПРИОРИТЕТ 4: fallback к полю views в таблице prompt
+      // ПРИОРИТЕТ 3: fallback к полю views в таблице prompt (основной источник)
       const prompt = await prisma.prompt.findUnique({
         where: { id: promptId },
         select: { views: true }
       })
       
-      return prompt?.views || 0
+      if (prompt?.views && prompt.views > 0) {
+        return prompt.views
+      }
+
+      // ПРИОРИТЕТ 4: promptInteraction (только если нет данных в основных источниках)
+      const interactions = await prisma.promptInteraction.count({
+        where: { promptId, type: { in: ['view', 'open'] } }
+      })
+      
+      return interactions
     } catch (error) {
       console.error('Error getting prompt views:', error)
       return 0

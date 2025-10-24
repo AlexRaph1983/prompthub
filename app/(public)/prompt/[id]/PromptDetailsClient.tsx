@@ -219,15 +219,8 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
         if (!cancelled && payload && typeof payload.views === 'number') {
           dispatch({ type: 'UPDATE_PROMPT_VIEWS', payload: { promptId, views: payload.views } })
         }
-        if (!cancelled) {
-          try {
-            await fetch('/api/interactions', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ type: 'view', promptId }),
-            })
-          } catch {}
-        }
+        // Убрано дублирующее отслеживание просмотра через interactions
+        // Основной просмотр уже учитывается через /api/track-view
       } catch (error) {
         console.warn('Failed to track prompt view', error)
       } finally {
