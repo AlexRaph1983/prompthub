@@ -210,13 +210,8 @@ export default function HomePage() {
   }
 
   const handleViewDetails = (promptId: string) => {
-    try { 
-      fetch('/api/interactions', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ type: 'open', promptId }) 
-      }) 
-    } catch {}
+    // Убрано дублирующее отслеживание через /api/interactions
+    // Основной просмотр уже учитывается через /api/track-view на странице промпта
     
     // Отслеживаем клик по результату поиска, если есть поисковый запрос
     if (debouncedValue.trim() && allPrompts.length > 0) {
