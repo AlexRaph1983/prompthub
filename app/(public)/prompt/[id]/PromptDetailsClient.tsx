@@ -181,11 +181,19 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
     return () => clearTimeout(timer)
   }, [shareScriptLoaded, prompt?.title, prompt?.description])
 
+  // Флаг для предотвращения повторного отслеживания просмотра
+  const viewTrackedRef = React.useRef(false)
+
   React.useEffect(() => {
     if (!promptId || !fingerprintReady) return
 
     const storageKey = `ph_prompt_viewed_${promptId}`
     if (typeof window !== 'undefined' && window.sessionStorage.getItem(storageKey) === '1') {
+      return
+    }
+
+    // Дополнительная защита от повторного отслеживания
+    if (viewTrackedRef.current) {
       return
     }
 
@@ -226,6 +234,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
       } finally {
         if (!cancelled && viewAttempted && typeof window !== 'undefined') {
           window.sessionStorage.setItem(storageKey, '1')
+          viewTrackedRef.current = true // Помечаем, что просмотр уже отслежен
         }
       }
     }
