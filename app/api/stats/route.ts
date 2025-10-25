@@ -63,7 +63,7 @@ export async function GET(request: Request) {
     const totalViews = Array.from(viewsMap.values()).reduce((sum, v) => sum + v, 0);
 
     const stats = {
-      users: totalActiveUsers,
+      users: totalUsers, // Используем общее количество пользователей вместо отфильтрованного
       prompts: totalPrompts,
       views: totalViews,
       ratings: totalRatings,
