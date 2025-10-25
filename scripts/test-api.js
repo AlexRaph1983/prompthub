@@ -1,11 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { NextResponse } from 'next/server';
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
 
-const prisma = new PrismaClient();
-
-export async function GET() {
+async function testAPI() {
   try {
-    console.log('Tags API called');
+    console.log('Тестируем API логику...')
     
     // Получаем теги из таблицы Tag
     const tags = await prisma.tag.findMany({
@@ -22,7 +20,7 @@ export async function GET() {
       take: 50, // Получаем больше тегов для подсчета
     });
 
-    console.log('Found tags:', tags.length);
+    console.log('Найдено тегов:', tags.length)
 
     // Используем уже подсчитанный promptCount из базы
     const formattedTags = tags
@@ -37,12 +35,12 @@ export async function GET() {
         color: tag.color,
       }));
 
-    console.log('Formatted tags:', formattedTags.length);
-    return NextResponse.json(formattedTags);
+    console.log('Отфильтровано тегов:', formattedTags.length)
+    console.log('Первые 5 тегов:', formattedTags.slice(0, 5))
+    
   } catch (error) {
-    console.error('Ошибка при получении тегов:', error);
-    return NextResponse.json({ error: 'Ошибка при получении тегов' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
+    console.error('Ошибка:', error.message)
   }
 }
+
+testAPI().finally(() => prisma.$disconnect())
