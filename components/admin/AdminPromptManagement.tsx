@@ -431,6 +431,20 @@ export function AdminPromptManagement() {
                         </span>
                       </div>
                       
+                      {/* Теги */}
+                      {prompt.tags && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {prompt.tags.split(',').map((tag, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                            >
+                              {tag.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      
                       {/* Автор */}
                       <div className="flex items-center space-x-2 text-sm">
                         <span className="text-gray-500">Автор:</span>
