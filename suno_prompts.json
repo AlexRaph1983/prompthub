@@ -182,6 +182,187 @@
       "attribution": { "author_name": "PromptMaster" },
       "visibility": "public",
       "status": "published"
+    },
+    {
+      "title": "Drum & Bass трек в SUNO с плотным басом и атмосферой",
+      "summary": "Сгенерируй энергичный Drum & Bass трек в SUNO с мощным басом, брейкбитами и кинематографической атмосферой.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["dnb", "suno", "drum and bass", "музыка", "энергия"],
+      "prompt_text": "Create a Drum & Bass track in SUNO with rolling basslines, sharp drums, and lush pads. Tempo {bpm} BPM, mood {настроение}. Include liquid-style breakdowns and cinematic intro.",
+      "variables": [
+        { "name": "bpm", "type": "number", "required": true, "description": "Темп композиции", "example": "174" },
+        { "name": "настроение", "type": "string", "required": false, "description": "Общее настроение", "example": "энергичное и атмосферное" }
+      ],
+      "usage_instructions": "Идеально подходит для коротких видео и трейлеров. Укажи BPM для ритмической точности.",
+      "examples": ["BPM: 172; Mood: deep & driving"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Liquid DnB трек для расслабленного настроения",
+      "summary": "Создай атмосферный Liquid Drum & Bass трек с глубоким басом, плавными синтами и лёгким вокалом.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY-SA",
+      "tags": ["liquid dnb", "suno", "музыка", "chill", "drum and bass"],
+      "prompt_text": "Generate a Liquid Drum & Bass track with emotional chords, rolling drums, and soft female vocals. BPM {bpm}. Include organic textures and reverb-heavy ambience.",
+      "variables": [
+        { "name": "bpm", "type": "number", "required": false, "description": "Темп композиции", "example": "174" }
+      ],
+      "usage_instructions": "Добавь вокальные фразы и фильтрованный интро-пад для атмосферы.",
+      "examples": ["Liquid DnB 172 BPM, soft female vocal"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Ретро Synthwave трек с ностальгическим вайбом",
+      "summary": "Создай ретро трек в стиле 80-х с аналоговыми синтами, мягким басом и атмосферой неона.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["retro", "synthwave", "80s", "suno", "неон"],
+      "prompt_text": "Create a retro Synthwave track with analog synths, deep basslines, and nostalgic melodies. BPM {bpm}, mood {mood}. Add gated reverb drums and lush pads.",
+      "variables": [
+        { "name": "bpm", "type": "number", "required": false, "description": "Темп трека", "example": "110" },
+        { "name": "mood", "type": "string", "required": false, "description": "Эмоциональное настроение", "example": "nostalgic and cinematic" }
+      ],
+      "usage_instructions": "Используй для видеороликов в стиле ретро и ночных неоновых сцен.",
+      "examples": ["Retro synthwave 105 BPM, cinematic vibe"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Кинематографичный клип в SORA 2 с движением камеры",
+      "summary": "Создай видеосцену в SORA 2 с кинематографическим освещением, плавной камерой и глубокой атмосферой.",
+      "language": "ru",
+      "model": "gpt-4o",
+      "category": "video",
+      "license": "CC-BY",
+      "tags": ["sora", "sora 2", "видео", "кинематографично"],
+      "prompt_text": "Создай видео в SORA 2, где {персонаж} находится в {локация}. Камера движется плавно, освещение атмосферное, присутствует туман и реалистичные отражения.",
+      "variables": [
+        { "name": "персонаж", "type": "string", "required": true, "description": "Главный герой видео", "example": "девушка в плаще с неоновыми очками" },
+        { "name": "локация", "type": "string", "required": true, "description": "Место действия", "example": "ночной город после дождя" }
+      ],
+      "usage_instructions": "Используй неоновые цвета и контраст света для глубины сцены.",
+      "examples": ["Персонаж: парень в капюшоне; локация: переулок с вывесками"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Suno вокальный трек с эмоциональной историей",
+      "summary": "Сгенерируй песню в SUNO с сюжетом, вокалом и развивающейся динамикой — идеально для клипов и TikTok.",
+      "language": "multi",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["suno", "песня", "вокал", "история"],
+      "prompt_text": "Generate a SUNO vocal track in {genre} style about {theme}. Include verses, chorus, and bridge. Emotion: {emotion}. Add modern mastering and depth.",
+      "variables": [
+        { "name": "genre", "type": "string", "required": true, "description": "Жанр композиции", "example": "pop rock" },
+        { "name": "theme", "type": "string", "required": true, "description": "Тематика песни", "example": "finding love in chaos" },
+        { "name": "emotion", "type": "string", "required": false, "description": "Эмоциональная окраска", "example": "hopeful sadness" }
+      ],
+      "usage_instructions": "Добавь эффект delay на вокале для создания глубины и эмоций.",
+      "examples": ["Genre: indie pop; Theme: loneliness; Emotion: bittersweet"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Drum’n’Base трек с энергией ночного клуба",
+      "summary": "Создай динамичный Drum’n’Base трек с глубоким суббасом и танцевальной структурой.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["drum n base", "dnb", "club", "bass"],
+      "prompt_text": "Produce a high-energy Drum’n’Base track with deep sub-bass, crisp drums, and club-ready build-ups. BPM {bpm}. Add vocal samples and stutter effects.",
+      "variables": [
+        { "name": "bpm", "type": "number", "required": true, "description": "Темп композиции", "example": "175" }
+      ],
+      "usage_instructions": "Подходит для клубных сетов и EDM фестивалей.",
+      "examples": ["Drum’n’Base 175 BPM with female vocal cuts"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "SORA короткометражка в стиле ретрофутуризма",
+      "summary": "Создай видео в стиле ретрофутуризма — неон, дождь, голограммы и атмосферное освещение.",
+      "language": "ru",
+      "model": "gpt-4o",
+      "category": "video",
+      "license": "CC-BY-SA",
+      "tags": ["sora", "ретро", "футуризм", "видео"],
+      "prompt_text": "Сгенерируй сцену в стиле ретрофутуризма в SORA, где {герой} идёт по {улица}. Добавь отражения неона, цифровой дождь и лёгкий VHS-эффект.",
+      "variables": [
+        { "name": "герой", "type": "string", "required": true, "description": "Главный персонаж", "example": "механик в длинном пальто" },
+        { "name": "улица", "type": "string", "required": true, "description": "Окружение", "example": "улица с голографическими рекламами" }
+      ],
+      "usage_instructions": "Добавь лёгкую зернистость и плёночные блики для ностальгии.",
+      "examples": ["Герой: пилот в неоновом городе"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Suno ретро-трек в стиле VHS 80-х",
+      "summary": "Создай песню в стиле 80-х с ностальгическими синтами, гитарными рифами и VHS-звучанием.",
+      "language": "multi",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["retro", "vhs", "80s", "suno", "nostalgia"],
+      "prompt_text": "Generate a Suno retro track with analog synths, vintage drums, and a nostalgic guitar riff. BPM {bpm}, style {style}. Add chorus and tape saturation.",
+      "variables": [
+        { "name": "bpm", "type": "number", "required": false, "description": "Темп композиции", "example": "108" },
+        { "name": "style", "type": "string", "required": false, "description": "Подстиль", "example": "synthpop" }
+      ],
+      "usage_instructions": "Добавь фоновые вокальные слои для ностальгического эффекта.",
+      "examples": ["Retro Suno synthpop 108 BPM with guitar lead"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Видео в SORA с визуализацией Drum & Bass трека",
+      "summary": "Создай клип в SORA, синхронизированный с ритмом DnB-композиции — идеально для музыкальных релизов.",
+      "language": "multi",
+      "model": "gpt-4o-mini",
+      "category": "video",
+      "license": "CC-BY",
+      "tags": ["sora", "dnb", "видео", "визуализация"],
+      "prompt_text": "Создай видеоряд в SORA под Drum & Bass трек. Камера реагирует на басовые удары, цветовая палитра — неон, синий и фиолетовый. Добавь дым, световые вспышки и отражения пола.",
+      "usage_instructions": "Подходит для создания музыкальных клипов и визуальных лайвов.",
+      "examples": ["SORA clip with bass-synced neon strobes"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Энергичный DnB ремикс в SUNO",
+      "summary": "Сгенерируй ремикс существующей композиции в стиле Drum & Bass — быстрый темп, мощный драйв и футуристичный звук.",
+      "language": "en",
+      "model": "any",
+      "category": "audio",
+      "license": "CC-BY",
+      "tags": ["dnb", "remix", "suno", "bass", "club"],
+      "prompt_text": "Remix a song into a Drum & Bass version using SUNO. Add 174 BPM tempo, punchy snares, heavy bass, and glitch transitions. Keep vocals rhythmic and energetic.",
+      "usage_instructions": "Идеально для TikTok, YouTube Shorts и DJ-сетов.",
+      "examples": ["Pop song remixed to DnB 174 BPM version"],
+      "attribution": { "author_name": "PromptMaster" },
+      "visibility": "public",
+      "status": "published"
     }
   ]
 }
