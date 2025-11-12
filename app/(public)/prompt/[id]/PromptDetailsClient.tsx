@@ -183,17 +183,28 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
 
   // Флаг для предотвращения повторного отслеживания просмотра
   const viewTrackedRef = React.useRef(false)
+  const mountIdRef = React.useRef(crypto.randomUUID())
 
   React.useEffect(() => {
     if (!promptId || !fingerprintReady) return
 
     const storageKey = `ph_prompt_viewed_${promptId}`
     if (typeof window !== 'undefined' && window.sessionStorage.getItem(storageKey) === '1') {
+      console.log('[VIEW_TRACKING] Skipped - already tracked in session', {
+        promptId,
+        mountId: mountIdRef.current,
+        fingerprint: fingerprintRef.current?.slice(0, 8),
+        pathname: window.location.pathname
+      })
       return
     }
 
     // Дополнительная защита от повторного отслеживания
     if (viewTrackedRef.current) {
+      console.log('[VIEW_TRACKING] Skipped - already tracked in component', {
+        promptId,
+        mountId: mountIdRef.current
+      })
       return
     }
 
@@ -201,6 +212,15 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
     let viewAttempted = false
 
     const trackView = async () => {
+      const startTime = performance.now()
+      console.log('[VIEW_TRACKING] Starting track view', {
+        promptId,
+        mountId: mountIdRef.current,
+        fingerprint: fingerprintRef.current?.slice(0, 8),
+        pathname: typeof window !== 'undefined' ? window.location.pathname : undefined,
+        timestamp: new Date().toISOString()
+      })
+
       try {
         const tokenResponse = await fetch('/api/view-token', {
           method: 'POST',
@@ -208,33 +228,70 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
           credentials: 'include',
           body: JSON.stringify({ cardId: promptId, fingerprint: fingerprintRef.current }),
         })
+        
+        console.log('[VIEW_TRACKING] Token response', {
+          status: tokenResponse.status,
+          ok: tokenResponse.ok,
+          elapsed: `${(performance.now() - startTime).toFixed(0)}ms`
+        })
+        
         if (!tokenResponse.ok) {
           return
         }
         const tokenPayload = await tokenResponse.json().catch(() => null)
         if (!tokenPayload?.viewToken) {
+          console.log('[VIEW_TRACKING] No token received')
           return
         }
 
+        console.log('[VIEW_TRACKING] Sending track-view request', {
+          promptId,
+          tokenPrefix: tokenPayload.viewToken.slice(0, 16)
+        })
+
         const trackResponse = await fetch('/api/track-view', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'x-fingerprint': fingerprintRef.current || ''
+          },
           credentials: 'include',
           body: JSON.stringify({ cardId: promptId, viewToken: tokenPayload.viewToken }),
         })
         viewAttempted = true
+        
         const payload = await trackResponse.json().catch(() => null)
+        
+        console.log('[VIEW_TRACKING] Track-view response', {
+          status: trackResponse.status,
+          ok: trackResponse.ok,
+          counted: payload?.counted,
+          views: payload?.views,
+          error: payload?.error,
+          reason: payload?.reason,
+          elapsed: `${(performance.now() - startTime).toFixed(0)}ms`
+        })
+        
         if (!cancelled && payload && typeof payload.views === 'number') {
           dispatch({ type: 'UPDATE_PROMPT_VIEWS', payload: { promptId, views: payload.views } })
         }
         // Убрано дублирующее отслеживание просмотра через interactions
         // Основной просмотр уже учитывается через /api/track-view
       } catch (error) {
-        console.warn('Failed to track prompt view', error)
+        console.warn('[VIEW_TRACKING] Failed to track prompt view', {
+          error: error instanceof Error ? error.message : String(error),
+          promptId,
+          mountId: mountIdRef.current
+        })
       } finally {
         if (!cancelled && viewAttempted && typeof window !== 'undefined') {
           window.sessionStorage.setItem(storageKey, '1')
           viewTrackedRef.current = true // Помечаем, что просмотр уже отслежен
+          console.log('[VIEW_TRACKING] Completed and marked as tracked', {
+            promptId,
+            mountId: mountIdRef.current,
+            totalElapsed: `${(performance.now() - startTime).toFixed(0)}ms`
+          })
         }
       }
     }
@@ -243,6 +300,11 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
 
     return () => {
       cancelled = true
+      console.log('[VIEW_TRACKING] Component cleanup', {
+        promptId,
+        mountId: mountIdRef.current,
+        tracked: viewTrackedRef.current
+      })
     }
   }, [promptId, fingerprintReady, dispatch])
 
