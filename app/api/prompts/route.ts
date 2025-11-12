@@ -4,6 +4,53 @@ import { prisma } from '@/lib/prisma'
 import { calculateReputation } from '@/lib/reputation'
 import { recomputeAllPromptVectors } from '@/lib/recommend'
 
+// Функция для обновления счетчиков
+async function updateCounters() {
+  try {
+    // Обновляем счетчики тегов
+    const tags = await prisma.tag.findMany();
+    
+    for (const tag of tags) {
+      const promptCount = await prisma.prompt.count({
+        where: {
+          tags: {
+            contains: tag.name
+          }
+        }
+      });
+      
+      await prisma.tag.update({
+        where: { id: tag.id },
+        data: { promptCount }
+      });
+    }
+    
+    // Обновляем счетчики категорий
+    const categories = await prisma.category.findMany();
+    
+    for (const category of categories) {
+      const promptCount = await prisma.prompt.count({
+        where: {
+          category: category.slug
+        }
+      });
+      
+      await prisma.category.update({
+        where: { id: category.id },
+        data: { promptCount }
+      });
+    }
+    
+    // Очищаем кеш
+    const { revalidatePath } = await import('next/cache');
+    revalidatePath('/api/tags');
+    revalidatePath('/api/categories');
+    revalidatePath('/api/stats');
+  } catch (error) {
+    console.error('Error updating counters:', error);
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('POST /api/prompts called')
@@ -83,6 +130,9 @@ export async function POST(request: NextRequest) {
 
     // Update vector cache asynchronously (not blocking response)
     Promise.resolve(recomputeAllPromptVectors()).catch(() => {})
+    
+    // Обновляем счетчики тегов и категорий асинхронно
+    Promise.resolve(updateCounters()).catch(() => {})
 
     // Преобразуем в формат интерфейса
     // Используем кэшированные значения рейтинга из БД

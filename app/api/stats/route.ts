@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const forceRefresh = url.searchParams.get('refresh') === 'true';
+    const checkOnly = url.searchParams.get('check') === 'true';
     
     // Проверяем кэш (если не принудительное обновление)
     const now = Date.now();
@@ -27,6 +28,14 @@ export async function GET(request: Request) {
     // Если принудительное обновление, очищаем кэш
     if (forceRefresh) {
       statsCache = null;
+    }
+
+    // Если только проверка обновлений, возвращаем время последнего обновления
+    if (checkOnly) {
+      return NextResponse.json({
+        lastUpdated: statsCache?.data?.timestamp || new Date().toISOString(),
+        hasCache: !!statsCache
+      });
     }
 
 

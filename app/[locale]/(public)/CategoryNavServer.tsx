@@ -8,9 +8,10 @@ interface CategoryNavServerProps {
 
 export default async function CategoryNavServer({ locale, currentCategory }: CategoryNavServerProps) {
   try {
-    // Получаем категории из нашего API
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'}/api/categories`, {
-      cache: 'no-store'
+    // Получаем категории из нашего API с принудительным обновлением
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'}/api/categories?t=${Date.now()}`, {
+      cache: 'no-store',
+      next: { revalidate: 0 }
     });
     
     if (!response.ok) {

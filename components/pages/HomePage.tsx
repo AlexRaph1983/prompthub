@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { SearchBar } from '@/components/SearchBar'
 import { getABTestFeatures } from '@/analytics/abTestConfig'
+import AutoRefreshWidgets from '@/components/AutoRefreshWidgets'
 
 export default function HomePage() {
   const [mounted, setMounted] = React.useState(false)
@@ -346,6 +347,7 @@ export default function HomePage() {
   if (!mounted) return null
   return (
     <main className="bg-gray-50 min-h-screen pb-12">
+      <AutoRefreshWidgets refreshInterval={10000} />
       <section className="mx-auto max-w-3xl mt-8 px-2">
         <h1 className="text-3xl font-semibold mb-2">{t('home.title')}</h1>
         <p className="text-gray-500 mb-6">{t('home.subtitle')}</p>
