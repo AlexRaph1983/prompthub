@@ -264,8 +264,7 @@ async function importPrompts() {
       systemUser = await prisma.user.create({
         data: {
           email: 'system@prompthub.site',
-          name: 'System',
-          role: 'USER'
+          name: 'System'
         }
       });
       console.log('✅ Создан системный пользователь для импорта');
