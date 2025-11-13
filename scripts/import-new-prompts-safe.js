@@ -205,16 +205,19 @@ const promptsData = {
  * Создать или найти тег
  */
 async function getOrCreateTag(tagName) {
-  const slug = tagName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const slug = tagName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9а-яё-]/g, '');
   
+  // Ищем по slug (более надёжно)
   let tag = await prisma.tag.findFirst({
-    where: {
-      OR: [
-        { slug },
-        { name: { equals: tagName, mode: 'insensitive' } }
-      ]
-    }
+    where: { slug }
   });
+
+  // Если не нашли по slug, ищем по точному совпадению имени
+  if (!tag) {
+    tag = await prisma.tag.findFirst({
+      where: { name: tagName }
+    });
+  }
 
   if (!tag) {
     tag = await prisma.tag.create({
