@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { prisma } from '@/lib/prisma'
+import { prisma, createPromptAndSync } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,22 +37,26 @@ export async function POST(request: NextRequest) {
 
     const createdPrompts = []
 
+    // Используем createPromptAndSync для автоматического обновления счётчиков
     for (const promptData of prompts) {
-      const prompt = await prisma.prompt.create({
-        data: {
-          title: promptData.title,
-          description: promptData.description,
-          prompt: promptData.prompt,
-          model: promptData.model,
-          lang: promptData.lang,
-          category: promptData.category,
-          tags: promptData.tags,
-          license: promptData.license,
-          authorId: user.id,
+      const prompt = await createPromptAndSync({
+        title: promptData.title,
+        description: promptData.description,
+        prompt: promptData.prompt,
+        model: promptData.model,
+        lang: promptData.lang,
+        category: promptData.category,
+        categoryId: promptData.categoryId, // Поддержка нового поля
+        tags: promptData.tags,
+        license: promptData.license,
+        author: {
+          connect: { id: user.id }
         }
       })
       createdPrompts.push(prompt)
     }
+    
+    console.log(`[Bulk Create] Created ${createdPrompts.length} prompts, category counters updated automatically`)
 
     return NextResponse.json({ 
       success: true, 

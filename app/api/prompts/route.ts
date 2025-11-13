@@ -1,55 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authFromRequest } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { prisma, createPromptAndSync } from '@/lib/prisma'
 import { calculateReputation } from '@/lib/reputation'
 import { recomputeAllPromptVectors } from '@/lib/recommend'
-
-// Функция для обновления счетчиков
-async function updateCounters() {
-  try {
-    // Обновляем счетчики тегов
-    const tags = await prisma.tag.findMany();
-    
-    for (const tag of tags) {
-      const promptCount = await prisma.prompt.count({
-        where: {
-          tags: {
-            contains: tag.name
-          }
-        }
-      });
-      
-      await prisma.tag.update({
-        where: { id: tag.id },
-        data: { promptCount }
-      });
-    }
-    
-    // Обновляем счетчики категорий
-    const categories = await prisma.category.findMany();
-    
-    for (const category of categories) {
-      const promptCount = await prisma.prompt.count({
-        where: {
-          category: category.slug
-        }
-      });
-      
-      await prisma.category.update({
-        where: { id: category.id },
-        data: { promptCount }
-      });
-    }
-    
-    // Очищаем кеш
-    const { revalidatePath } = await import('next/cache');
-    revalidatePath('/api/tags');
-    revalidatePath('/api/categories');
-    revalidatePath('/api/stats');
-  } catch (error) {
-    console.error('Error updating counters:', error);
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,18 +51,25 @@ export async function POST(request: NextRequest) {
     const { title, description, prompt, model, lang, category, tags, license, example } = body
 
     console.log('Creating prompt with authorId:', user.id)
-    const newPrompt = await prisma.prompt.create({
-      data: {
-        title,
-        description,
-        prompt,
-        model,
-        lang,
-        category,
-        tags,
-        license,
-        authorId: user.id,
-      },
+    
+    // Используем createPromptAndSync для автоматического обновления счётчика категории
+    const newPrompt = await createPromptAndSync({
+      title,
+      description,
+      prompt,
+      model,
+      lang,
+      category,
+      tags,
+      license,
+      author: {
+        connect: { id: user.id }
+      }
+    })
+
+    // Получаем связанные данные для ответа
+    const promptWithRelations = await prisma.prompt.findUnique({
+      where: { id: newPrompt.id },
       include: {
         author: {
           select: {
@@ -126,33 +86,34 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    console.log('Prompt created:', newPrompt)
+    if (!promptWithRelations) {
+      throw new Error('Failed to fetch created prompt')
+    }
+
+    console.log('Prompt created:', promptWithRelations)
 
     // Update vector cache asynchronously (not blocking response)
     Promise.resolve(recomputeAllPromptVectors()).catch(() => {})
-    
-    // Обновляем счетчики тегов и категорий асинхронно
-    Promise.resolve(updateCounters()).catch(() => {})
 
     // Преобразуем в формат интерфейса
     // Используем кэшированные значения рейтинга из БД
-    const avg = newPrompt.averageRating || 0
-    const ratingCount = newPrompt.totalRatings || 0
+    const avg = promptWithRelations.averageRating || 0
+    const ratingCount = promptWithRelations.totalRatings || 0
 
     const formattedPrompt = {
-      id: newPrompt.id,
-      title: newPrompt.title,
-      description: newPrompt.description,
-      model: newPrompt.model,
-      lang: newPrompt.lang,
-      tags: newPrompt.tags.split(',').map((tag: string) => tag.trim()),
+      id: promptWithRelations.id,
+      title: promptWithRelations.title,
+      description: promptWithRelations.description,
+      model: promptWithRelations.model,
+      lang: promptWithRelations.lang,
+      tags: promptWithRelations.tags.split(',').map((tag: string) => tag.trim()),
       rating: avg,
       ratingCount,
-      license: newPrompt.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
-      prompt: newPrompt.prompt,
-      author: newPrompt.author?.name || 'Anonymous',
-      authorId: newPrompt.authorId,
-      createdAt: newPrompt.createdAt.toISOString().split('T')[0],
+      license: promptWithRelations.license as 'CC-BY' | 'CC0' | 'Custom' | 'Paid',
+      prompt: promptWithRelations.prompt,
+      author: promptWithRelations.author?.name || 'Anonymous',
+      authorId: promptWithRelations.authorId,
+      createdAt: promptWithRelations.createdAt.toISOString().split('T')[0],
     }
 
     console.log('Returning formatted prompt:', formattedPrompt)
