@@ -11,12 +11,18 @@ const prisma = new PrismaClient();
 // Копируем функцию createPromptAndSync для использования в скрипте
 async function createPromptAndSync(data) {
   return prisma.$transaction(async (tx) => {
+    // Извлекаем categoryId из categoryRef.connect.id если есть
+    let categoryId = null;
+    if (data.categoryRef && data.categoryRef.connect && data.categoryRef.connect.id) {
+      categoryId = data.categoryRef.connect.id;
+    }
+    
     const created = await tx.prompt.create({ data });
     
     // Если указана категория, увеличиваем счётчик
-    if (created.categoryId) {
+    if (categoryId) {
       await tx.category.update({
-        where: { id: created.categoryId },
+        where: { id: categoryId },
         data: { promptCount: { increment: 1 } }
       });
     }
@@ -318,7 +324,9 @@ async function importPrompts() {
           model: item.model || 'any',
           lang: item.language || 'ru',
           category: category.nameEn, // Старое поле для совместимости
-          categoryId: category.id,    // Новое поле с foreign key
+          categoryRef: {
+            connect: { id: category.id }
+          },
           tags: tagsString,
           license: item.license || 'CC0',
           author: {
