@@ -34,7 +34,7 @@ async function updateCategoryCounts() {
           .filter(g => g.categoryId !== null)
           .map(g =>
             prisma.category.update({
-              where: { id: g.categoryId! },
+              where: { id: g.categoryId },
               data: { promptCount: g._count._all }
             })
           )
