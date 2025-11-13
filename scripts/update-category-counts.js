@@ -4,50 +4,93 @@ const prisma = new PrismaClient();
 
 /**
  * Обновить счётчики промптов для всех категорий
+ * Использует groupBy для эффективного подсчёта
  */
 async function updateCategoryCounts() {
   console.log('🔄 Updating category prompt counts...');
 
   try {
-    // Получаем все категории
-    const categories = await prisma.category.findMany({
-      select: { id: true, slug: true, nameRu: true }
+    // Шаг 1: Обнуляем все счётчики категорий
+    const resetResult = await prisma.category.updateMany({
+      data: { promptCount: 0 }
+    });
+    console.log(`Reset ${resetResult.count} category counters to 0`);
+
+    // Шаг 2: Группируем промпты по categoryId (эффективный одиночный запрос)
+    const groupedPrompts = await prisma.prompt.groupBy({
+      by: ['categoryId'],
+      _count: { _all: true },
+      where: {
+        categoryId: { not: null }
+      }
     });
 
-    console.log(`Found ${categories.length} categories`);
+    console.log(`Found ${groupedPrompts.length} categories with prompts`);
 
-    // Обновляем счётчики для каждой категории
-    for (const category of categories) {
-      const count = await prisma.prompt.count({
-        where: { categoryId: category.id }
+    // Шаг 3: Обновляем счётчики батчем в транзакции
+    if (groupedPrompts.length > 0) {
+      await prisma.$transaction(
+        groupedPrompts
+          .filter(g => g.categoryId !== null)
+          .map(g =>
+            prisma.category.update({
+              where: { id: g.categoryId! },
+              data: { promptCount: g._count._all }
+            })
+          )
+      );
+
+      // Показываем топ-10 категорий
+      const topCategories = await prisma.category.findMany({
+        select: { nameRu: true, promptCount: true },
+        orderBy: { promptCount: 'desc' },
+        take: 10
       });
 
-      await prisma.category.update({
-        where: { id: category.id },
-        data: { promptCount: count }
+      console.log('\n📊 Top 10 categories:');
+      topCategories.forEach(cat => {
+        console.log(`✅ ${cat.nameRu}: ${cat.promptCount} prompts`);
       });
-
-      console.log(`✅ ${category.nameRu}: ${count} prompts`);
     }
 
-    // Обновляем счётчики для тегов
-    const tags = await prisma.tag.findMany({
-      select: { id: true, name: true }
-    });
-
+    // Обновляем счётчики для тегов (аналогично оптимизировано)
     console.log(`\n🔄 Updating tag prompt counts...`);
 
-    for (const tag of tags) {
-      const count = await prisma.promptTag.count({
-        where: { tagId: tag.id }
+    // Обнуляем счётчики тегов
+    await prisma.tag.updateMany({
+      data: { promptCount: 0 }
+    });
+
+    // Группируем связи промптов с тегами
+    const groupedTags = await prisma.promptTag.groupBy({
+      by: ['tagId'],
+      _count: { _all: true }
+    });
+
+    console.log(`Found ${groupedTags.length} tags with prompts`);
+
+    // Обновляем счётчики тегов батчем
+    if (groupedTags.length > 0) {
+      await prisma.$transaction(
+        groupedTags.map(g =>
+          prisma.tag.update({
+            where: { id: g.tagId },
+            data: { promptCount: g._count._all }
+          })
+        )
+      );
+
+      // Показываем топ-10 тегов
+      const topTags = await prisma.tag.findMany({
+        select: { name: true, promptCount: true },
+        orderBy: { promptCount: 'desc' },
+        take: 10
       });
 
-      await prisma.tag.update({
-        where: { id: tag.id },
-        data: { promptCount: count }
+      console.log('\n🏷️ Top 10 tags:');
+      topTags.forEach(tag => {
+        console.log(`✅ ${tag.name}: ${tag.promptCount} prompts`);
       });
-
-      console.log(`✅ ${tag.name}: ${count} prompts`);
     }
 
     console.log('\n🎉 Category and tag counts updated successfully!');

@@ -1,54 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, updatePromptAndSync, deletePromptAndSync } from '@/lib/prisma'
 import { authFromRequest } from '@/lib/auth'
 import { ViewsService } from '@/lib/services/viewsService'
-
-// Функция для обновления счетчиков
-async function updateCounters() {
-  try {
-    // Обновляем счетчики тегов
-    const tags = await prisma.tag.findMany();
-    
-    for (const tag of tags) {
-      const promptCount = await prisma.prompt.count({
-        where: {
-          tags: {
-            contains: tag.name
-          }
-        }
-      });
-      
-      await prisma.tag.update({
-        where: { id: tag.id },
-        data: { promptCount }
-      });
-    }
-    
-    // Обновляем счетчики категорий
-    const categories = await prisma.category.findMany();
-    
-    for (const category of categories) {
-      const promptCount = await prisma.prompt.count({
-        where: {
-          category: category.slug
-        }
-      });
-      
-      await prisma.category.update({
-        where: { id: category.id },
-        data: { promptCount }
-      });
-    }
-    
-    // Очищаем кеш
-    const { revalidatePath } = await import('next/cache');
-    revalidatePath('/api/tags');
-    revalidatePath('/api/categories');
-    revalidatePath('/api/stats');
-  } catch (error) {
-    console.error('Error updating counters:', error);
-  }
-}
 
 export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
@@ -153,14 +106,12 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     const body = await request.json()
     const updatable: any = {}
-    for (const key of ['title', 'description', 'prompt', 'model', 'lang', 'category', 'tags', 'license']) {
+    for (const key of ['title', 'description', 'prompt', 'model', 'lang', 'category', 'categoryId', 'tags', 'license']) {
       if (typeof body[key] !== 'undefined') updatable[key] = body[key]
     }
 
-    const updated = await prisma.prompt.update({ where: { id: params.id }, data: updatable })
-    
-    // Обновляем счетчики асинхронно
-    Promise.resolve(updateCounters()).catch(() => {})
+    // Используем updatePromptAndSync для автоматического обновления счётчиков категорий
+    const updated = await updatePromptAndSync({ id: params.id }, updatable)
     
     return NextResponse.json(updated)
   } catch (e) {
@@ -181,10 +132,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    await prisma.prompt.delete({ where: { id: params.id } })
-    
-    // Обновляем счетчики асинхронно
-    Promise.resolve(updateCounters()).catch(() => {})
+    // Используем deletePromptAndSync для автоматического обновления счётчиков категорий
+    await deletePromptAndSync({ id: params.id })
     
     return NextResponse.json({ success: true })
   } catch (e) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma, deletePromptAndSync } from '@/lib/prisma'
 import { requirePermission } from '@/lib/admin-auth'
 
 export async function GET(request: NextRequest) {
@@ -155,10 +155,8 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Prompt not found' }, { status: 404 })
     }
 
-    // Удаляем промпт (каскадное удаление связанных записей)
-    await prisma.prompt.delete({
-      where: { id: promptId }
-    })
+    // Удаляем промпт и автоматически обновляем счётчик категории
+    await deletePromptAndSync({ id: promptId })
 
     console.log(`[ADMIN] Prompt deleted by ${adminSession.user.email}: ${prompt.title} (ID: ${promptId}) by ${prompt.author.email}`)
 

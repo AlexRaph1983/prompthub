@@ -1,65 +1,118 @@
-import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+
+interface CategoryNode {
+  id: string;
+  name: string;
+  nameRu: string;
+  nameEn: string;
+  slug: string;
+  promptCount: number;
+  sortOrder: number;
+  parentId: string | null;
+  isActive: boolean;
+  children: CategoryNode[];
+}
 
 export async function GET(request: Request) {
-  const prisma = new PrismaClient();
-  
   try {
     const url = new URL(request.url);
-    const forceRefresh = url.searchParams.get('refresh') === 'true';
+    const validateCounts = process.env.CATEGORIES_VALIDATE_COUNTS === 'true';
     
-    console.log('API Categories - Force refresh:', forceRefresh);
-    
-    // Получаем категории из новой таблицы Category
+    // Единственный запрос к БД - получаем все категории с кэшированными счётчиками
     const categories = await prisma.category.findMany({
-      where: {
-        isActive: true,
-      },
+      where: { isActive: true },
       select: {
         id: true,
         nameRu: true,
         nameEn: true,
         slug: true,
+        parentId: true,
+        promptCount: true,
         sortOrder: true,
+        isActive: true,
       },
-      orderBy: {
-        sortOrder: 'asc',
-      },
+      orderBy: [
+        { parentId: 'asc' },
+        { sortOrder: 'asc' },
+        { nameRu: 'asc' }
+      ],
     });
 
-    // Форматируем категории и считаем промпты по новому полю categoryId
-    const formattedCategories = await Promise.all(categories.map(async (category) => {
-      let promptCount = 0;
-      
-      // Считаем промпты по новому полю categoryId
-      promptCount = await prisma.prompt.count({
-        where: {
-          categoryId: category.id
-        }
-      });
-
-      return {
-        id: category.id,
-        name: category.nameEn, // Для обратной совместимости
-        nameRu: category.nameRu,
-        nameEn: category.nameEn,
-        slug: category.slug,
-        count: promptCount,
-        sortOrder: category.sortOrder,
-      };
-    }));
-
-    console.log('API Categories - Sample data:', formattedCategories.slice(0, 3));
+    // Строим дерево категорий
+    const byId = new Map<string, CategoryNode>();
     
-    const response = NextResponse.json(formattedCategories);
-    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
-    response.headers.set('Pragma', 'no-cache');
-    response.headers.set('Expires', '0');
+    // Сначала создаём все узлы
+    categories.forEach(cat => {
+      byId.set(cat.id, {
+        id: cat.id,
+        name: cat.nameEn, // Для обратной совместимости
+        nameRu: cat.nameRu,
+        nameEn: cat.nameEn,
+        slug: cat.slug,
+        promptCount: cat.promptCount,
+        sortOrder: cat.sortOrder,
+        parentId: cat.parentId,
+        isActive: cat.isActive,
+        children: []
+      });
+    });
+
+    // Затем строим иерархию
+    const roots: CategoryNode[] = [];
+    for (const node of byId.values()) {
+      if (node.parentId && byId.has(node.parentId)) {
+        // Добавляем в children родителя
+        byId.get(node.parentId)!.children.push(node);
+      } else {
+        // Корневая категория
+        roots.push(node);
+      }
+    }
+
+    // Фоновая валидация в DEV (не блокирует ответ)
+    if (validateCounts && process.env.NODE_ENV !== 'production') {
+      Promise.resolve().then(async () => {
+        try {
+          const grouped = await prisma.prompt.groupBy({
+            by: ['categoryId'],
+            _count: { _all: true },
+            where: { categoryId: { not: null } }
+          });
+          
+          const countMap = new Map(grouped.map(g => [g.categoryId!, g._count._all]));
+          
+          for (const cat of categories) {
+            const actualCount = countMap.get(cat.id) || 0;
+            if (actualCount !== cat.promptCount) {
+              console.warn(
+                `[CATEGORIES_VALIDATE] Mismatch for ${cat.slug}: ` +
+                `cached=${cat.promptCount}, actual=${actualCount}`
+              );
+            }
+          }
+        } catch (err) {
+          console.error('[CATEGORIES_VALIDATE] Error:', err);
+        }
+      }).catch(() => {});
+    }
+
+    // Логируем источник данных в DEV
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[API Categories] Source: cache, categories:', roots.length);
+    }
+
+    const response = NextResponse.json(roots);
+    
+    // Кэшируем на короткое время (CDN edge может кэшировать)
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
+    
     return response;
   } catch (error) {
-    console.error('Ошибка при получении категорий:', error);
-    return NextResponse.json({ error: 'Ошибка при получении категорий' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
+    console.error('[API Categories] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch categories' },
+      { status: 500 }
+    );
   }
 }
