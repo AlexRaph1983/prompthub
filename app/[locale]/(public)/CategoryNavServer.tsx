@@ -25,7 +25,6 @@ export default async function CategoryNavServer({ locale, currentCategory }: Cat
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'}/api/categories`, 
       {
-        cache: 'no-store',
         next: { revalidate: 60 } // Кэшируем на 60 секунд
       }
     );
