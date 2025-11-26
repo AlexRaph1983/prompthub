@@ -49,6 +49,12 @@ interface SearchAnalyticsData {
     createdAt: string
     userAgent: string | null
   }>
+  pagination: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
 }
 
 export function AdminSearchAnalytics() {
@@ -59,15 +65,19 @@ export function AdminSearchAnalytics() {
   const [selectedQueries, setSelectedQueries] = useState<Set<string>>(new Set())
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(100)
+  const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
     fetchAnalytics()
-  }, [selectedPeriod])
+  }, [selectedPeriod, currentPage, pageSize])
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/admin/search-analytics?days=${selectedPeriod}&limit=100`)
+      const effectivePageSize = showAll ? 10000 : pageSize
+      const response = await fetch(`/api/admin/search-analytics?days=${selectedPeriod}&limit=100&page=${currentPage}&pageSize=${effectivePageSize}`)
       
       if (!response.ok) {
         throw new Error('Failed to fetch search analytics')
@@ -391,7 +401,45 @@ export function AdminSearchAnalytics() {
       {/* Последние поисковые запросы */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Последние поисковые запросы</h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium text-gray-900">
+              Все поисковые запросы
+              {data.pagination && (
+                <span className="ml-2 text-sm font-normal text-gray-500">
+                  (Всего: {data.pagination.total.toLocaleString()})
+                </span>
+              )}
+            </h3>
+            <div className="flex items-center space-x-3">
+              <label className="flex items-center space-x-2 text-sm text-gray-600">
+                <input
+                  type="checkbox"
+                  checked={showAll}
+                  onChange={(e) => {
+                    setShowAll(e.target.checked)
+                    setCurrentPage(1)
+                  }}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span>Показать все</span>
+              </label>
+              {!showAll && (
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value))
+                    setCurrentPage(1)
+                  }}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value={50}>50 на странице</option>
+                  <option value={100}>100 на странице</option>
+                  <option value={200}>200 на странице</option>
+                  <option value={500}>500 на странице</option>
+                </select>
+              )}
+            </div>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -402,7 +450,7 @@ export function AdminSearchAnalytics() {
                     onClick={handleSelectAll}
                     className="flex items-center space-x-2 hover:text-gray-700"
                   >
-                    {selectedQueries.size === data.recentQueries.length ? (
+                    {selectedQueries.size === data.recentQueries.length && data.recentQueries.length > 0 ? (
                       <CheckSquare className="w-4 h-4" />
                     ) : (
                       <Square className="w-4 h-4" />
@@ -428,7 +476,7 @@ export function AdminSearchAnalytics() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {data.recentQueries.slice(0, 20).map((query) => (
+              {data.recentQueries.map((query) => (
                 <tr key={query.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
@@ -443,7 +491,7 @@ export function AdminSearchAnalytics() {
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
+                    <div className="text-sm font-medium text-gray-900 max-w-xs truncate" title={query.query}>
                       "{query.query}"
                     </div>
                   </td>
@@ -476,6 +524,47 @@ export function AdminSearchAnalytics() {
             </tbody>
           </table>
         </div>
+        {!showAll && data.pagination && data.pagination.totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              Страница {data.pagination.page} из {data.pagination.totalPages}
+              {' '}(Показано {((data.pagination.page - 1) * data.pagination.pageSize + 1).toLocaleString()} - {Math.min(data.pagination.page * data.pagination.pageSize, data.pagination.total).toLocaleString()} из {data.pagination.total.toLocaleString()})
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={data.pagination.page === 1}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Первая
+              </button>
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={data.pagination.page === 1}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Назад
+              </button>
+              <span className="px-3 py-1.5 text-sm text-gray-700">
+                {data.pagination.page}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(data.pagination.totalPages, p + 1))}
+                disabled={data.pagination.page === data.pagination.totalPages}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Вперед
+              </button>
+              <button
+                onClick={() => setCurrentPage(data.pagination.totalPages)}
+                disabled={data.pagination.page === data.pagination.totalPages}
+                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Последняя
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Модальное окно подтверждения удаления */}

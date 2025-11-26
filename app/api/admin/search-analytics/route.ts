@@ -14,11 +14,14 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const days = parseInt(searchParams.get('days') || '30', 10)
     const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 1000)
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const pageSize = parseInt(searchParams.get('pageSize') || '100', 10)
+    const skip = (page - 1) * pageSize
     
     const startDate = new Date()
     startDate.setDate(startDate.getDate() - days)
 
-    console.log(`📊 Fetching analytics for ${days} days`)
+    console.log(`📊 Fetching analytics for ${days} days, page ${page}, pageSize ${pageSize}`)
 
     // Получаем топ поисковых запросов
     const topQueries = await prisma.searchQuery.groupBy({
@@ -81,7 +84,16 @@ export async function GET(request: NextRequest) {
       take: 50
     })
 
-    // Получаем последние поисковые запросы
+    // Получаем общее количество запросов для пагинации
+    const totalQueriesCount = await prisma.searchQuery.count({
+      where: {
+        createdAt: {
+          gte: startDate
+        }
+      }
+    })
+
+    // Получаем последние поисковые запросы с пагинацией
     const recentQueries = await prisma.searchQuery.findMany({
       where: {
         createdAt: {
@@ -100,7 +112,8 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: 'desc'
       },
-      take: 100
+      skip: skip,
+      take: pageSize
     })
 
     // Общая статистика
@@ -163,7 +176,13 @@ export async function GET(request: NextRequest) {
         hasClick: !!q.clickedResult,
         createdAt: q.createdAt,
         userAgent: q.userAgent?.substring(0, 100) // Обрезаем для безопасности
-      }))
+      })),
+      pagination: {
+        page,
+        pageSize,
+        total: totalQueriesCount,
+        totalPages: Math.ceil(totalQueriesCount / pageSize)
+      }
     }
 
     console.log('📊 Analytics result:', {
