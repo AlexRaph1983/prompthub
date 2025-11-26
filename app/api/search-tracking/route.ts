@@ -77,6 +77,54 @@ export async function POST(request: NextRequest) {
       }, { status: 409 })
     }
 
+    // Проверяем и заменяем недописанные запросы
+    // Ищем недавние запросы от того же пользователя, которые являются префиксом нового запроса
+    const recentQueries = await prisma.searchQuery.findMany({
+      where: {
+        userId: userId || null,
+        ipHash: userId ? null : ipHash,
+        createdAt: {
+          gte: new Date(Date.now() - 30 * 1000) // Последние 30 секунд
+        },
+        query: {
+          not: validation.normalizedQuery! // Исключаем сам запрос
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 10
+    })
+
+    const normalizedNewQuery = validation.normalizedQuery!.toLowerCase().trim()
+    const queriesToDelete: string[] = []
+
+    for (const recentQuery of recentQueries) {
+      const normalizedOldQuery = recentQuery.query.toLowerCase().trim()
+      
+      // Если новый запрос начинается со старого и новый длиннее - старый был недописанным
+      if (normalizedNewQuery.startsWith(normalizedOldQuery) && normalizedNewQuery.length > normalizedOldQuery.length) {
+        // Проверяем, что разница не слишком большая (не более 50 символов)
+        // чтобы не удалять совершенно разные запросы
+        if (normalizedNewQuery.length - normalizedOldQuery.length <= 50) {
+          queriesToDelete.push(recentQuery.id)
+          console.log(`🔄 Replacing incomplete query "${normalizedOldQuery}" with complete "${normalizedNewQuery}"`)
+        }
+      }
+    }
+
+    // Удаляем недописанные запросы
+    if (queriesToDelete.length > 0) {
+      await prisma.searchQuery.deleteMany({
+        where: {
+          id: {
+            in: queriesToDelete
+          }
+        }
+      })
+      console.log(`🗑️ Deleted ${queriesToDelete.length} incomplete query(ies)`)
+    }
+
     const userAgent = request.headers.get('user-agent') || null
 
     // Сохраняем поисковый запрос
