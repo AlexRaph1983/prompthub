@@ -51,27 +51,28 @@ export function AuthorProfileBadge({ author, className }: Props) {
   const hasLinks = author.website || author.telegram || author.github || author.twitter || author.linkedin
 
   return (
-    <Card className={className}>
+    <Card className={`${className} overflow-hidden`}>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12">
+        <div className="flex items-center justify-between min-w-0 gap-2">
+          <div className="flex items-center space-x-3 min-w-0 flex-1">
+            <Avatar className="h-12 w-12 flex-shrink-0">
               <AvatarImage src={author.image || ''} alt={author.name} />
               <AvatarFallback>
                 {author.name?.charAt(0) || 'A'}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 min-w-0">
                 <Link 
                   href={`/prompts?authorId=${encodeURIComponent(author.id)}`}
-                  className="font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                  className="font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate min-w-0"
+                  title={author.name}
                 >
                   {author.name}
                 </Link>
                 <UserReputationBadge score={author.reputationScore} tier={tier} />
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 whitespace-nowrap truncate">
                 {author.reputationPromptCount} промптов • {author.reputationLikesCnt} лайков
               </div>
             </div>
@@ -81,7 +82,7 @@ export function AuthorProfileBadge({ author, className }: Props) {
               variant="ghost"
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1"
+              className="p-1 flex-shrink-0"
             >
               {isExpanded ? (
                 <ChevronUp className="w-4 h-4" />
@@ -98,9 +99,9 @@ export function AuthorProfileBadge({ author, className }: Props) {
           <div className="space-y-4">
             {/* Описание */}
             {author.bio && (
-              <div>
+              <div className="min-w-0">
                 <h4 className="text-sm font-medium text-gray-700 mb-2">О авторе</h4>
-                <p className="text-sm text-gray-600 whitespace-pre-wrap">{author.bio}</p>
+                <p className="text-sm text-gray-600 whitespace-pre-wrap break-words min-w-0">{author.bio}</p>
               </div>
             )}
 

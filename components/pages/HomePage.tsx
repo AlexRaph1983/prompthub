@@ -490,39 +490,40 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
 
   return (
     <Card className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 overflow-hidden ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}>
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-center gap-2 flex-wrap min-w-0">
         {prompt.isRecommended && (
-          <div className="flex items-center gap-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-            <Sparkles className="w-3 h-3" aria-hidden="true" />
+          <div className="flex items-center gap-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex-shrink-0">
+            <Sparkles className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
             <span className="sr-only">{t('home.recommended')}</span>
           </div>
         )}
-        <span className="bg-violet-100 text-violet-800 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap">{prompt.model}</span>
-        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap">{prompt.lang}</span>
-        <Badge variant={getLicenseVariant(prompt.license)} className="ml-auto text-xs whitespace-nowrap">
+        <span className="bg-violet-100 text-violet-800 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex-shrink-0">{prompt.model}</span>
+        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-medium whitespace-nowrap flex-shrink-0">{prompt.lang}</span>
+        <Badge variant={getLicenseVariant(prompt.license)} className="ml-auto text-xs whitespace-nowrap flex-shrink-0">
           {prompt.license}
         </Badge>
       </div>
-      <h2 className="font-bold text-lg break-words">{prompt.title}</h2>
-      <div className="text-gray-500 text-sm break-words">{prompt.description}</div>
-      <div className="flex gap-2 mt-1 flex-wrap">
+      <h2 className="font-bold text-lg break-words line-clamp-2 min-w-0">{prompt.title}</h2>
+      <div className="text-gray-500 text-sm break-words line-clamp-3 min-w-0">{prompt.description}</div>
+      <div className="flex gap-2 mt-1 flex-wrap min-w-0">
         {prompt.tags.map((tag, i) => (
-          <span key={i} className="bg-gray-100 rounded px-2 py-0.5 text-xs whitespace-nowrap">{tag}</span>
+          <span key={i} className="bg-gray-100 rounded px-2 py-0.5 text-xs whitespace-nowrap truncate max-w-full">{tag}</span>
         ))}
       </div>
 
-      <div className="mt-auto flex flex-col gap-3">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-gray-400">By <button
+      <div className="mt-auto flex flex-col gap-3 min-w-0">
+        <div className="flex items-center justify-between flex-wrap gap-2 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap min-w-0 flex-1">
+            <span className="text-xs text-gray-400 min-w-0">By <button
               type="button"
-              className="underline hover:text-gray-600"
+              className="underline hover:text-gray-600 truncate max-w-[120px] inline-block"
               onClick={() => (prompt as any).authorId && router.push(`/prompts?authorId=${encodeURIComponent((prompt as any).authorId)}`)}
               disabled={!(prompt as any).authorId}
+              title={prompt.author}
             >{prompt.author}</button></span>
             {prompt.createdAt && (
-              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
-                <Calendar className="w-3 h-3" />
+              <span className="inline-flex items-center gap-1 text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
+                <Calendar className="w-3 h-3 flex-shrink-0" />
                 <time dateTime={prompt.createdAt} suppressHydrationWarning>
                   {formatDistanceToNow(new Date(prompt.createdAt), { 
                     addSuffix: true, 
@@ -532,29 +533,29 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-violet-600 font-semibold text-sm flex items-center gap-1">
-              <Star className="w-3 h-3 fill-current" />
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <span className="text-violet-600 font-semibold text-sm flex items-center gap-1 whitespace-nowrap">
+              <Star className="w-3 h-3 fill-current flex-shrink-0" />
               {(prompt.rating ?? 0).toFixed(1)}
               <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
             </span>
             {views !== null && (
               <span
                 title="Unique views with anti-fraud protection"
-                className="inline-flex items-center gap-1 text-sm text-gray-500"
+                className="inline-flex items-center gap-1 text-sm text-gray-500 whitespace-nowrap"
               >
-                <Eye className="w-3 h-3" />
+                <Eye className="w-3 h-3 flex-shrink-0" />
                 {views}
               </span>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2 mt-1 relative">
+        <div className="flex flex-col sm:flex-row gap-2 mt-1 relative min-w-0">
           <Button
             size="sm"
             disabled={copyState?.isCopying}
-            className={`transition-all duration-200 rounded-xl w-full sm:flex-1 ${
+            className={`transition-all duration-200 rounded-xl w-full sm:flex-1 min-w-0 ${
               copyState?.success 
                 ? 'bg-green-600 text-white hover:bg-green-700' 
                 : copyState?.isCopying 
@@ -563,16 +564,16 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
             }`}
             onClick={() => onCopy(prompt.prompt, prompt.id)}
           >
-            <Copy className={`w-4 h-4 mr-1 transition-transform duration-200 ${copyState?.isCopying ? 'animate-pulse' : ''}`} />
-            {copyState?.success ? 'Скопировано!' : copyState?.isCopying ? 'Копирование...' : t('common.copyPrompt')}
+            <Copy className={`w-4 h-4 mr-1 flex-shrink-0 transition-transform duration-200 ${copyState?.isCopying ? 'animate-pulse' : ''}`} />
+            <span className="truncate">{copyState?.success ? 'Скопировано!' : copyState?.isCopying ? 'Копирование...' : t('common.copyPrompt')}</span>
           </Button>
           <Button 
             size="sm" 
             variant="outline" 
-            className="rounded-xl w-full sm:flex-1"
+            className="rounded-xl w-full sm:flex-1 min-w-0"
             onClick={() => onViewDetails(prompt.id)}
           >
-            {t('common.details')}
+            <span className="truncate">{t('common.details')}</span>
           </Button>
           
           {copyState?.success && (

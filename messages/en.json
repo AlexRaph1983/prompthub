@@ -126,6 +126,169 @@
     "noPrompts": "No prompts in this category yet",
     "beFirstToCreate": "Be the first to create a prompt in this category"
   },
+  "privacy": {
+    "pageTitle": "Privacy Policy",
+    "pageDescription": "PromptHub Personal Data Processing Policy in accordance with Federal Law No. 152-FZ",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated",
+    "section1": {
+      "title": "1. General Provisions",
+      "p1": "This Privacy Policy (hereinafter referred to as the Policy) defines the procedure for processing personal data and measures to ensure the security of personal data taken by PromptHub (hereinafter referred to as the Operator).",
+      "p2": "The Policy is developed in accordance with Federal Law No. 152-FZ dated July 27, 2006 \"On Personal Data\".",
+      "p3": "By using the prompt-hub.site website, you agree to the terms of this Policy. If you do not agree with the terms, please do not use the site."
+    },
+    "section2": {
+      "title": "2. Key Definitions",
+      "term1": "Personal Data",
+      "def1": "Any information relating to a directly or indirectly identified or identifiable natural person (personal data subject).",
+      "term2": "Personal Data Processing",
+      "def2": "Any action (operation) or set of actions (operations) performed with or without automation tools with personal data.",
+      "term3": "Operator",
+      "def3": "PromptHub — a person who independently or jointly with other persons organizes and/or processes personal data.",
+      "term4": "Personal Data Subject",
+      "def4": "A natural person to whom the personal data processed by the Operator belongs."
+    },
+    "section3": {
+      "title": "3. Personal Data Operator",
+      "p1": "The personal data operator is PromptHub, which processes personal data of users of the prompt-hub.site website.",
+      "contact": "Contact Information"
+    },
+    "section4": {
+      "title": "4. Categories of Personal Data Processed",
+      "p1": "The Operator processes the following categories of personal data:",
+      "cat1": {
+        "title": "Authorization Data (via Google OAuth 2.0)",
+        "item1": "Unique user identifier (User ID)",
+        "item2": "Email address",
+        "item3": "User name",
+        "item4": "Profile picture (image URL)"
+      },
+      "cat2": {
+        "title": "Profile Data (voluntarily provided by the user)",
+        "item1": "Biography (bio)",
+        "item2": "Website (website URL)",
+        "item3": "Social media links (Telegram, GitHub, Twitter/X, LinkedIn)"
+      },
+      "cat3": {
+        "title": "Technical Data (in hashed form)",
+        "item1": "IP address hash (SHA-256)",
+        "item2": "Browser User Agent hash",
+        "item3": "Device fingerprint hash",
+        "item4": "Site interaction data (views, clicks, searches)"
+      }
+    },
+    "section5": {
+      "title": "5. Purposes of Personal Data Processing",
+      "purpose1": "User identification and providing access to personal account",
+      "purpose2": "Publishing prompts and managing content",
+      "purpose3": "Personalizing user experience and recommendations",
+      "purpose4": "Analyzing user behavior to improve service quality",
+      "purpose5": "Protection against fraud and metric manipulation (anti-fraud)",
+      "purpose6": "Providing communication with users regarding service operation"
+    },
+    "section6": {
+      "title": "6. Legal Basis for Processing",
+      "basis1": "Consent of the personal data subject (Article 9 of Federal Law No. 152-FZ)",
+      "basis2": "Performance of agreement on service use (Article 6 of Federal Law No. 152-FZ)",
+      "basis3": "Exercise of rights and legitimate interests of the Operator (Article 10 of Federal Law No. 152-FZ)"
+    },
+    "section7": {
+      "title": "7. Methods of Personal Data Processing",
+      "p1": "The Operator processes personal data using the following methods:",
+      "method1": "Automated processing using computing tools",
+      "method2": "Data storage in a secure SQLite/PostgreSQL database",
+      "method3": "Hashing of identification data (IP, User Agent) using SHA-256",
+      "method4": "Data transmission via secure HTTPS protocol"
+    },
+    "section8": {
+      "title": "8. Personal Data Protection Measures",
+      "measure1": "Use of secure cookies in production environment",
+      "measure2": "Hashing of IP addresses and User Agent using SHA-256 cryptographic algorithm",
+      "measure3": "Session protection through JWT tokens with secret keys",
+      "measure4": "Anti-fraud system to prevent unauthorized access",
+      "measure5": "Restriction of access to personal data only to authorized employees"
+    },
+    "section9": {
+      "title": "9. Use of Cookies and Analytics",
+      "p1": "The site uses cookie technology to ensure functionality and improve user experience:",
+      "cookie1": {
+        "name": "Necessary cookies",
+        "desc": "Used for authentication, storing language settings, and ensuring basic site functionality. Cannot be disabled."
+      },
+      "p2": "Analytics tools:",
+      "analytics1": "Collection of anonymized visit statistics, analysis of user behavior to improve service quality. Can be disabled in cookie settings."
+    },
+    "section10": {
+      "title": "10. Rights of Personal Data Subjects",
+      "right1": "Receive information about the availability and content of their personal data",
+      "right2": "Require clarification, updating, or deletion of their personal data",
+      "right3": "Withdraw consent to the processing of personal data",
+      "right4": "Receive a copy of their personal data",
+      "right5": "Appeal the actions of the Operator to the authorized body for the protection of the rights of personal data subjects",
+      "right6": "Protect their rights and legitimate interests in court",
+      "contact": "To exercise your rights, send a request to: privacy@prompt-hub.site"
+    },
+    "section11": {
+      "title": "11. Terms of Processing and Storage of Personal Data",
+      "p1": "Personal data is processed and stored for the following periods:",
+      "period1": "Authorization data — until the user deletes the account",
+      "period2": "Technical data (hashes) — 12 months from the last activity",
+      "period3": "Interaction data (views, likes) — until account deletion or upon user request"
+    },
+    "section12": {
+      "title": "12. Changes to the Privacy Policy",
+      "p1": "The Operator has the right to make changes to this Policy. When making changes, the date of the last update is indicated at the beginning of the document. The new version of the Policy comes into force from the moment it is posted on the site."
+    },
+    "contactTitle": "Contact Information",
+    "contactText": "For all questions related to the processing of personal data, please contact:"
+  },
+  "cookieConsent": {
+    "title": "🍪 We use cookies",
+    "description": "We use necessary cookies for site functionality and analytical cookies to improve service quality. You can customize the use of cookies according to your preferences. Learn more in our",
+    "privacyPolicyLink": "Privacy Policy",
+    "acceptAll": "Accept All",
+    "rejectAnalytics": "Essential Only",
+    "customize": "Customize",
+    "close": "Close",
+    "settingsTitle": "Cookie Settings",
+    "necessary": {
+      "title": "Necessary Cookies",
+      "description": "These cookies are necessary for basic site functionality (authentication, interface language, security). They cannot be disabled."
+    },
+    "analytics": {
+      "title": "Analytics Cookies",
+      "description": "Help us understand how visitors interact with the site by collecting anonymous statistics. This data is used to improve service quality.",
+      "tools": "Tools used"
+    },
+    "alwaysActive": "Always Active",
+    "moreInfo": "Want to know more?",
+    "moreInfoText": "Detailed information about what data we collect and how we use it is available in our",
+    "saveSettings": "Save Settings",
+    "cancel": "Cancel"
+  },
+  "privacyCheckbox": {
+    "text": "I have read and agree to the",
+    "privacyPolicyLink": "Privacy Policy",
+    "and": "and consent to the",
+    "dataProcessing": "processing of my personal data",
+    "including": "in accordance with Federal Law No. 152-FZ, including",
+    "dataTypes": "email, name, profile photo and site activity data",
+    "required": "Consent to personal data processing is required",
+    "confirmation": "Thank you for your consent! Your data will be processed in accordance with Federal Law No. 152-FZ"
+  },
+  "footer": {
+    "about": "Platform for publishing and finding AI prompts. Open. Free. Multilingual.",
+    "navigation": "Navigation",
+    "home": "Home",
+    "prompts": "Prompts",
+    "leaders": "Leaders",
+    "legal": "Legal Information",
+    "privacy": "Privacy Policy",
+    "cookieSettings": "Cookie Settings",
+    "contact": "Contact",
+    "rights": "All rights reserved",
+    "compliance": "Personal data processing is carried out in accordance with Federal Law No. 152-FZ"
+  },
   "nsfw": {
     "warning": "Adult content warning",
     "confirm": "I am 18+ years old",

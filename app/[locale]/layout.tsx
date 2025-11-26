@@ -10,6 +10,8 @@ import { PromptProvider } from '@/contexts/PromptStore';
 import { Navigation } from '@/components/Navigation';
 import { AddPromptModal } from '@/components/AddPromptModal';
 import { ClientProviders } from '@/components/ClientProviders';
+import CookieConsent from '@/components/CookieConsent';
+import Footer from '@/components/Footer';
 import Script from 'next/script';
 export const dynamic = 'force-dynamic';
 
@@ -95,7 +97,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
               <div className="min-h-screen">
                 {children}
               </div>
+              <Footer />
               <AddPromptModal />
+              <CookieConsent />
             </PromptProvider>
           </AuthProvider>
         </NextIntlClientProvider>
