@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star, Eye } from 'lucide-react'
+import { Copy, Star, Eye, Calendar } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { ru } from 'date-fns/locale'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
 import { useSearchTracking } from '@/hooks/useSearchTracking'
 
@@ -327,13 +329,26 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
         </div>
 
         <div className="mt-auto flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span>By <button
-              type="button"
-              className="underline hover:text-gray-600"
-              onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
-              disabled={!prompt.authorId}
-            >{prompt.author}</button></span>
+          <div className="flex items-center justify-between text-xs text-gray-400 flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span>By <button
+                type="button"
+                className="underline hover:text-gray-600"
+                onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
+                disabled={!prompt.authorId}
+              >{prompt.author}</button></span>
+              {(prompt as any).createdAt && (
+                <span className="inline-flex items-center gap-1 text-gray-400">
+                  <Calendar className="w-3 h-3" />
+                  <time dateTime={(prompt as any).createdAt} suppressHydrationWarning>
+                    {formatDistanceToNow(new Date((prompt as any).createdAt), { 
+                      addSuffix: true, 
+                      locale: locale === 'ru' ? ru : undefined 
+                    })}
+                  </time>
+                </span>
+              )}
+            </div>
           </div>
 
           {prompt.authorProfile && (

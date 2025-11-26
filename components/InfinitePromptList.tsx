@@ -6,7 +6,9 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star, Eye, Loader2, AlertCircle } from 'lucide-react'
+import { Copy, Star, Eye, Loader2, AlertCircle, Calendar } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { ru } from 'date-fns/locale'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
 import { PromptCardSkeleton, PromptCardSkeletonList } from '@/components/ui/skeleton'
 import { useInfinitePrompts } from '@/lib/hooks/useInfinitePrompts'
@@ -379,7 +381,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale, copyState }: Prompt
         </div>
 
         <div className="mt-auto flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs text-gray-400">
+          <div className="flex items-center justify-between text-xs text-gray-400 flex-wrap gap-2">
             <span>
               By <button
                 type="button"
@@ -390,6 +392,17 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale, copyState }: Prompt
                 {prompt.author}
               </button>
             </span>
+            {prompt.createdAt && (
+              <span className="inline-flex items-center gap-1 text-gray-400">
+                <Calendar className="w-3 h-3" />
+                <time dateTime={prompt.createdAt} suppressHydrationWarning>
+                  {formatDistanceToNow(new Date(prompt.createdAt), { 
+                    addSuffix: true, 
+                    locale: locale === 'ru' ? ru : undefined 
+                  })}
+                </time>
+              </span>
+            )}
           </div>
 
           {prompt.authorProfile && (

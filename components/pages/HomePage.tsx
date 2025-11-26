@@ -6,7 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star, Sparkles, Eye } from 'lucide-react'
+import { Copy, Star, Sparkles, Eye, Calendar } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { ru } from 'date-fns/locale'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useSearch } from '@/hooks/useSearch'
 import { useSearchTracking } from '@/hooks/useSearchTracking'
@@ -466,6 +468,7 @@ interface PromptCardProps {
     likesCount?: number
     views?: number
     isRecommended?: boolean
+    createdAt?: string
   }
   onCopy: (prompt: string, promptId: string) => void
   onViewDetails: (promptId: string) => void
@@ -509,13 +512,26 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
       </div>
 
       <div className="mt-auto flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400">By <button
-            type="button"
-            className="underline hover:text-gray-600"
-            onClick={() => (prompt as any).authorId && router.push(`/prompts?authorId=${encodeURIComponent((prompt as any).authorId)}`)}
-            disabled={!(prompt as any).authorId}
-          >{prompt.author}</button></span>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-400">By <button
+              type="button"
+              className="underline hover:text-gray-600"
+              onClick={() => (prompt as any).authorId && router.push(`/prompts?authorId=${encodeURIComponent((prompt as any).authorId)}`)}
+              disabled={!(prompt as any).authorId}
+            >{prompt.author}</button></span>
+            {prompt.createdAt && (
+              <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+                <Calendar className="w-3 h-3" />
+                <time dateTime={prompt.createdAt} suppressHydrationWarning>
+                  {formatDistanceToNow(new Date(prompt.createdAt), { 
+                    addSuffix: true, 
+                    locale: ru 
+                  })}
+                </time>
+              </span>
+            )}
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-violet-600 font-semibold text-sm flex items-center gap-1">
               <Star className="w-3 h-3 fill-current" />
