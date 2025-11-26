@@ -85,6 +85,25 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
     setSearchValue(e.target.value)
   }
 
+  // Filter prompts by search with normalization
+  const filteredPrompts = React.useMemo(() => {
+    if (!searchValue) return prompts
+    
+    const searchLower = searchValue.toLowerCase().trim()
+    const normalizedSearch = searchLower.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
+    
+    const filtered = prompts.filter(prompt => {
+      const titleMatch = prompt.title.toLowerCase().includes(normalizedSearch)
+      const descriptionMatch = prompt.description.toLowerCase().includes(normalizedSearch)
+      const authorMatch = prompt.author.toLowerCase().includes(normalizedSearch)
+      const tagsMatch = prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch))
+      
+      return titleMatch || descriptionMatch || authorMatch || tagsMatch
+    })
+    
+    return filtered
+  }, [prompts, searchValue])
+
   // Real-time поиск с debounce для аналитики
   React.useEffect(() => {
     if (searchValue.trim()) {
@@ -125,25 +144,6 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
     window.scrollTo(0, 0)
     router.push(`/prompt/${promptId}`)
   }
-
-  // Filter prompts by search with normalization
-  const filteredPrompts = React.useMemo(() => {
-    if (!searchValue) return prompts
-    
-    const searchLower = searchValue.toLowerCase().trim()
-    const normalizedSearch = searchLower.replace(/[^\w\s\u0400-\u04FF]/g, ' ')
-    
-    const filtered = prompts.filter(prompt => {
-      const titleMatch = prompt.title.toLowerCase().includes(normalizedSearch)
-      const descriptionMatch = prompt.description.toLowerCase().includes(normalizedSearch)
-      const authorMatch = prompt.author.toLowerCase().includes(normalizedSearch)
-      const tagsMatch = prompt.tags.some((tag: string) => tag.toLowerCase().includes(normalizedSearch))
-      
-      return titleMatch || descriptionMatch || authorMatch || tagsMatch
-    })
-    
-    return filtered
-  }, [prompts, searchValue])
 
 
   return (
@@ -242,93 +242,96 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
 
   return (
     <Card className="hover:shadow-lg transition-shadow duration-200 overflow-hidden">
-      <CardContent className="p-6 flex flex-col h-full">
-        <div className="flex items-start justify-between mb-3 gap-2">
+      <CardContent className="p-6 flex flex-col h-full min-w-0">
+        <div className="flex items-start justify-between mb-3 gap-2 min-w-0">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words">{prompt.title}</h3>
+            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words min-w-0">{prompt.title}</h3>
           </div>
-          <Badge variant="outline" className="text-xs whitespace-nowrap">
+          <Badge variant="outline" className="text-xs whitespace-nowrap flex-shrink-0">
             {prompt.license}
           </Badge>
         </div>
 
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{prompt.description}</p>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-3 break-words min-w-0">{prompt.description}</p>
 
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-1 mb-3 min-w-0">
           {prompt.tags.slice(0, 3).map((tag: string) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
+            <Badge key={tag} variant="secondary" className="text-xs truncate max-w-full">
               {tag}
             </Badge>
           ))}
           {prompt.tags.length > 3 && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="secondary" className="text-xs whitespace-nowrap flex-shrink-0">
               +{prompt.tags.length - 3}
             </Badge>
           )}
         </div>
 
-        <div className="flex items-center justify-between mb-4 gap-2">
-          <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
-            <span className="whitespace-nowrap">{prompt.model}</span>
-            <span aria-hidden="true">•</span>
-            <span className="whitespace-nowrap">{prompt.lang}</span>
+        <div className="flex items-center justify-between mb-4 gap-2 min-w-0">
+          <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap min-w-0 flex-1">
+            <span className="whitespace-nowrap flex-shrink-0">{prompt.model}</span>
+            <span aria-hidden="true" className="flex-shrink-0">•</span>
+            <span className="whitespace-nowrap flex-shrink-0">{prompt.lang}</span>
             {(prompt as any)?.category && (
               <>
-                <span aria-hidden="true">•</span>
-                <span className="whitespace-nowrap">{(prompt as any).category}</span>
+                <span aria-hidden="true" className="flex-shrink-0">•</span>
+                <span className="whitespace-nowrap flex-shrink-0 truncate max-w-[100px]">{(prompt as any).category}</span>
               </>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <span className="text-violet-600 font-semibold text-sm flex items-center gap-1 whitespace-nowrap">
-              <Star className="w-3 h-3 fill-current" />
+              <Star className="w-3 h-3 fill-current flex-shrink-0" />
               {(prompt.rating ?? 0).toFixed(1)}
               <span className="text-gray-500">({prompt.ratingCount ?? 0})</span>
             </span>
             {views !== null && (
               <span
                 title="Unique views with anti-fraud protection"
-                className="inline-flex items-center gap-1 text-sm text-gray-500"
+                className="inline-flex items-center gap-1 text-sm text-gray-500 whitespace-nowrap"
               >
-                <Eye className="w-3 h-3" />
+                <Eye className="w-3 h-3 flex-shrink-0" />
                 {views}
               </span>
             )}
           </div>
         </div>
 
-        <div className="mt-auto flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span>By <button
-              type="button"
-              className="underline hover:text-gray-600"
-              onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
-              disabled={!prompt.authorId}
-            >{prompt.author}</button></span>
+        <div className="mt-auto flex flex-col gap-3 min-w-0">
+          <div className="flex items-center justify-between text-xs text-gray-400 flex-wrap gap-2 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap min-w-0 flex-1">
+              <span className="min-w-0">By <button
+                type="button"
+                className="underline hover:text-gray-600 truncate max-w-[120px] inline-block"
+                onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
+                disabled={!prompt.authorId}
+                title={prompt.author}
+              >{prompt.author}</button></span>
+            </div>
           </div>
 
           {prompt.authorProfile && (
-            <div>
+            <div className="min-w-0">
               <AuthorProfileBadge author={prompt.authorProfile} />
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-2 mt-1">
+          <div className="flex flex-col sm:flex-row gap-2 mt-1 min-w-0">
             <Button
               size="sm"
-              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl w-full sm:flex-1"
+              className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl w-full sm:flex-1 min-w-0"
               onClick={() => onCopy(prompt.prompt, prompt.id)}
             >
-              <Copy className="w-4 h-4 mr-1" />
-              {t('common.copyPrompt')}
+              <Copy className="w-4 h-4 mr-1 flex-shrink-0" />
+              <span className="truncate">{t('common.copyPrompt')}</span>
             </Button>
             <Button
               size="sm"
               variant="outline"
-              className="rounded-xl w-full sm:flex-1"
+              className="rounded-xl w-full sm:flex-1 min-w-0"
               onClick={() => onViewDetails(prompt.id)}
             >
-              {t('common.details')}
+              <span className="truncate">{t('common.details')}</span>
             </Button>
           </div>
         </div>
