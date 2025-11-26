@@ -13,25 +13,25 @@ const prisma = new PrismaClient();
 const categoryMapping = {
   'Music': 'music',
   'Video': 'video',
-  'Writing': 'marketing-writing',
-  'Creative': 'creative',
-  'Marketing': 'marketing-writing',
-  'Animation': 'animation',
-  'Health': 'health',
+  'Writing': 'writing', // Используем 'writing' вместо 'marketing-writing'
+  'Creative': 'design', // Используем 'design' для творческих промптов
+  'Marketing': 'marketing', // Используем 'marketing' вместо 'marketing-writing'
+  'Animation': 'video', // Используем 'video' для анимации
+  'Health': 'productivity', // Используем 'productivity' для здоровья
   'Audio': 'audio',
   'Design': 'design',
   'Image': 'image',
-  'Code': 'code',
-  'Chat': 'chat',
-  'SEO': 'seo',
-  'Legal': 'legal',
-  'Education': 'education',
-  'Business': 'business',
-  'Research': 'research',
-  'Analysis': 'analysis',
+  'Code': 'productivity', // Используем 'productivity' для кода
+  'Chat': 'productivity', // Используем 'productivity' для чата
+  'SEO': 'marketing', // Используем 'marketing' для SEO
+  'Legal': 'productivity', // Используем 'productivity' для юридических
+  'Education': 'productivity', // Используем 'productivity' для образования
+  'Business': 'marketing', // Используем 'marketing' для бизнеса
+  'Research': 'productivity', // Используем 'productivity' для исследований
+  'Analysis': 'productivity', // Используем 'productivity' для анализа
   'Productivity': 'productivity',
-  'Gaming': 'gaming',
-  'Finance': 'finance',
+  'Gaming': 'design', // Используем 'design' для игр
+  'Finance': 'productivity', // Используем 'productivity' для финансов
   'Cooking': 'cooking',
   '3D': '3d'
 };
