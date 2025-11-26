@@ -10,7 +10,7 @@ interface SearchTrackingOptions {
 }
 
 export function useSearchTracking(options: SearchTrackingOptions = {}) {
-  const { sessionId = uuidv4(), debounceMs = 600 } = options
+  const { sessionId = uuidv4(), debounceMs = 3000 } = options
   const lastTrackedQuery = useRef<string>('')
 
   const trackSearch = useCallback(async (

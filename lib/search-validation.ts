@@ -206,59 +206,11 @@ export function validateSearchQuery(
   // Нормализация
   const normalized = normalizeUnicode(query)
   
-  // Проверка длины (увеличено до 4 символов для лучшей фильтрации)
-  if (normalized.length < 4) {
+  // Проверка длины (минимальная длина 3 символа)
+  if (normalized.length < 3) {
     return {
       valid: false,
       reason: 'TOO_SHORT',
-      normalizedQuery: normalized,
-      metrics: {
-        length: normalized.length,
-        percentLetters: calculateLetterPercentage(normalized),
-        maxConsecutiveChars: getMaxConsecutiveChars(normalized),
-        hasOnlyNumbers: hasOnlyNumbers(normalized),
-        hasOnlySpecialChars: hasOnlySpecialChars(normalized)
-      }
-    }
-  }
-  
-  // Проверка на запросы, начинающиеся со спецсимволов
-  if (startsWithSpecialChar(normalized)) {
-    return {
-      valid: false,
-      reason: 'STARTS_WITH_SPECIAL_CHAR',
-      normalizedQuery: normalized,
-      metrics: {
-        length: normalized.length,
-        percentLetters: calculateLetterPercentage(normalized),
-        maxConsecutiveChars: getMaxConsecutiveChars(normalized),
-        hasOnlyNumbers: hasOnlyNumbers(normalized),
-        hasOnlySpecialChars: hasOnlySpecialChars(normalized)
-      }
-    }
-  }
-  
-  // Проверка на недописанные слова
-  if (isIncompleteWord(normalized)) {
-    return {
-      valid: false,
-      reason: 'INCOMPLETE_WORD',
-      normalizedQuery: normalized,
-      metrics: {
-        length: normalized.length,
-        percentLetters: calculateLetterPercentage(normalized),
-        maxConsecutiveChars: getMaxConsecutiveChars(normalized),
-        hasOnlyNumbers: hasOnlyNumbers(normalized),
-        hasOnlySpecialChars: hasOnlySpecialChars(normalized)
-      }
-    }
-  }
-  
-  // Проверка на мусорные паттерны
-  if (hasInvalidPattern(normalized)) {
-    return {
-      valid: false,
-      reason: 'INVALID_PATTERN',
       normalizedQuery: normalized,
       metrics: {
         length: normalized.length,
@@ -372,16 +324,13 @@ export function getRejectionReasonDescription(reason: string): string {
   const reasons: Record<string, string> = {
     'MISSING_QUERY': 'Отсутствует поисковый запрос',
     'QUERY_NOT_FINISHED': 'Запрос не завершен (отсутствует флаг finished)',
-    'TOO_SHORT': 'Слишком короткий запрос (менее 4 символов)',
+    'TOO_SHORT': 'Слишком короткий запрос (менее 3 символов)',
     'TOO_LONG': 'Слишком длинный запрос (более 200 символов)',
     'INSUFFICIENT_LETTERS': 'Недостаточно букв (менее 40%)',
     'TOO_MANY_CONSECUTIVE_CHARS': 'Слишком много одинаковых символов подряд (более 3)',
     'ONLY_NUMBERS': 'Запрос состоит только из цифр',
     'ONLY_SPECIAL_CHARS': 'Запрос состоит только из спецсимволов',
-    'EMPTY_AFTER_NORMALIZATION': 'Пустой запрос после нормализации',
-    'STARTS_WITH_SPECIAL_CHAR': 'Запрос начинается со спецсимвола',
-    'INCOMPLETE_WORD': 'Недописанное слово или слишком короткий запрос',
-    'INVALID_PATTERN': 'Мусорный паттерн или опечатка'
+    'EMPTY_AFTER_NORMALIZATION': 'Пустой запрос после нормализации'
   }
   
   return reasons[reason] || 'Неизвестная причина'
