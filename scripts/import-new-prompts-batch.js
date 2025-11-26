@@ -159,18 +159,20 @@ async function importPrompts() {
 
     // Читаем JSON из файла или используем данные из аргументов
     let promptsData;
-    const filePath = path.join(__dirname, '..', 'new_prompts_batch.json');
+    // Проверяем, указан ли файл как аргумент командной строки
+    const fileName = process.argv[2] || 'new_prompts_batch.json';
+    const filePath = path.join(__dirname, '..', fileName);
     
     if (fs.existsSync(filePath)) {
       promptsData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-      console.log(`📁 Загружено из файла: ${promptsData.items.length} промптов`);
+      console.log(`📁 Загружено из файла ${fileName}: ${promptsData.items.length} промптов`);
     } else {
-      // Используем данные из аргументов командной строки
+      // Используем данные из аргументов командной строки (если передан JSON напрямую)
       const dataArg = process.argv[2];
-      if (dataArg) {
+      if (dataArg && dataArg.startsWith('{')) {
         promptsData = JSON.parse(dataArg);
       } else {
-        throw new Error('Не указан файл или данные для импорта');
+        throw new Error(`Файл не найден: ${filePath}. Укажите имя файла как аргумент или передайте JSON напрямую.`);
       }
     }
 
