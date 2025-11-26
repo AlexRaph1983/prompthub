@@ -1,187 +1,302 @@
 {
   "version": "1.0",
-  "submitted_by": { "username": "PromptMaster", "user_id": "", "profile_url": "" },
+  "submitted_by": {
+    "username": "PromptMaster",
+    "user_id": "",
+    "profile_url": ""
+  },
   "taxonomy": {
-    "languages": ["ru", "en", "multi"],
-    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Proprietary"],
-    "categories": ["writing", "coding", "data-analysis", "design", "marketing", "seo", "social-media", "education", "productivity", "business", "sales", "customer-support", "research", "translation", "summarization", "idea-generation", "legal", "finance", "health", "lifestyle", "arts", "image", "audio", "video", "devops", "data-science", "ecommerce", "gaming", "utilities"],
-    "models": ["any", "gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "claude-3.5-sonnet", "claude-3.5-haiku", "claude-3-opus", "gemini-1.5-pro", "gemini-1.5-flash", "llama-3.1-8b-instruct", "llama-3.1-70b-instruct", "mistral-large-latest", "mistral-small-latest", "command-r-plus", "command-r"]
+    "languages": ["English", "Русский", "Español", "Deutsch"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Custom", "Paid"],
+    "categories": ["Chat", "Code", "SEO", "Design", "Legal", "Education", "Image", "Video", "Music", "Audio", "3D", "Animation", "Business", "Marketing", "Writing", "Translation", "Research", "Analysis", "Creative", "Productivity", "Gaming", "Health", "Finance", "Cooking"],
+    "models": ["GPT-5", "OpenAI Sora", "Claude Opus 4.1", "Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Google Veo 3", "Llama 3.1", "Mistral Large", "DeepSeek", "Suno", "AIVA", "Runway Gen-2"]
   },
   "items": [
     {
-      "title": "Генерация клипа в SORA 2 с реалистичным персонажем",
-      "summary": "Создай кинематографичный ролик с реалистичным человеком в SORA 2. Отлично подходит для TikTok и YouTube Shorts.",
-      "language": "ru",
-      "model": "gpt-4o",
-      "category": "video",
+      "title": "Генератор трека в стиле DnB (Suno)",
+      "summary": "Создание Drum & Bass трека с параметрами ритма, темпа и атмосферы.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
       "license": "CC-BY",
-      "tags": ["sora", "видео", "персонаж", "реализм"],
-      "prompt_text": "Сгенерируй видео в SORA 2, где {персонаж} находится в {сцена}. Добавь реалистичное освещение, эмоции лица и плавное движение камеры. Длина ролика {длина} секунд.",
+      "tags": ["dnb", "drum and bass", "music", "suno", "electronic"],
+      "prompt_text": "Create a Drum & Bass track with fast-paced rhythm, punchy drums and rolling bassline. Theme: {theme}. Mood: {mood}. BPM: {bpm}. Vocal style: {vocal}.",
       "variables": [
-        { "name": "персонаж", "type": "string", "required": true, "description": "Описание внешности и одежды героя", "example": "молодой человек в черной куртке" },
-        { "name": "сцена", "type": "string", "required": true, "description": "Место действия", "example": "ночной город с неоновыми вывесками" },
-        { "name": "длина", "type": "number", "required": false, "description": "Длительность ролика в секундах", "example": "9" }
-      ],
-      "usage_instructions": "Используй яркие сцены и контрастный свет — SORA хорошо передаёт неон и отражения.",
-      "examples": ["Персонаж: девушка в дождливом Токио, длина: 10 секунд"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
+        {"name": "theme", "type": "string", "required": true, "example": "urban night"},
+        {"name": "mood", "type": "string", "required": true, "example": "energetic"},
+        {"name": "bpm", "type": "number", "required": false, "example": 172},
+        {"name": "vocal", "type": "string", "required": false, "example": "female airy vocals"}
+      ]
     },
     {
-      "title": "Создание музыкального трека в SUNO с параметрами BPM",
-      "summary": "Создай трек в SUNO, указав стиль, настроение и BPM — идеально для TikTok и саундтреков.",
-      "language": "multi",
-      "model": "any",
-      "category": "audio",
+      "title": "Liquid DnB Atmospheres (Suno)",
+      "summary": "Создание мягкого лиричного Liquid DnB трека.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
       "license": "CC-BY",
-      "tags": ["suno", "музыка", "bpm", "треки"],
-      "prompt_text": "Сгенерируй музыкальный трек в стиле {жанр} с темпом {bpm} BPM и настроением {настроение}. Добавь вокал {тип_вокала} и атмосферу {атмосфера}.",
-      "variables": [
-        { "name": "жанр", "type": "string", "required": true, "description": "Музыкальный стиль", "example": "love metal" },
-        { "name": "bpm", "type": "number", "required": true, "description": "Темп композиции", "example": "128" },
-        { "name": "настроение", "type": "string", "required": false, "description": "Эмоциональная атмосфера трека", "example": "драматичное и страстное" },
-        { "name": "тип_вокала", "type": "string", "required": false, "description": "Тип вокала", "example": "мужской с эффектом хорус" },
-        { "name": "атмосфера", "type": "string", "required": false, "description": "Звуковая среда трека", "example": "неоновые 2000-е" }
-      ],
-      "usage_instructions": "Используй BPM от 90 до 150 для радио- и TikTok-хитов.",
-      "examples": ["Жанр: love metal; BPM: 130; Настроение: драматичное"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
+      "tags": ["liquid dnb", "suno", "music"],
+      "prompt_text": "Generate a Liquid Drum & Bass track with warm pads, soft breaks, emotional melodies. Theme: {theme}. Mood: {mood}. Vocals: {vocals}."
     },
     {
-      "title": "Love Metal песня с эмоциями и гитарным драйвом",
-      "summary": "Сгенерируй мощную песню в стиле Love Metal с драматичным вокалом и эмоцией страсти.",
-      "language": "en",
-      "model": "any",
-      "category": "audio",
-      "license": "CC-BY-SA",
-      "tags": ["love metal", "rock", "эмоции", "гитара"],
-      "prompt_text": "Generate a Love Metal song with heavy guitars, emotional vocals, and dark romantic lyrics. Include verses, chorus, and a bridge with a melodic solo.",
-      "usage_instructions": "Добавь контраст между куплетом и припевом для эмоциональной динамики.",
-      "examples": ["Reference: HIM, The 69 Eyes"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
-    },
-    {
-      "title": "Промпт для логотипа бренда в современном стиле",
-      "summary": "Создай современный логотип с учётом ниши и фирменных цветов, идеально подходящий для стартапа.",
-      "language": "ru",
-      "model": "gpt-4.1",
-      "category": "design",
+      "title": "Rock Ballad Generator",
+      "summary": "Генерация эмоциональной рок-баллады.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
       "license": "CC-BY",
-      "tags": ["логотип", "бренд", "дизайн", "фирменный стиль"],
-      "prompt_text": "Создай концепцию логотипа для бренда {название} в нише {ниша}. Используй цвета {цвета} и стиль {стиль}. Добавь идею, отражающую ценности компании.",
-      "variables": [
-        { "name": "название", "type": "string", "required": true, "description": "Название бренда", "example": "PromptHub" },
-        { "name": "ниша", "type": "string", "required": true, "description": "Сфера деятельности", "example": "технологии" },
-        { "name": "цвета", "type": "string", "required": false, "description": "Цветовая палитра", "example": "синий и белый" },
-        { "name": "стиль", "type": "string", "required": false, "description": "Визуальный стиль логотипа", "example": "минимализм" }
-      ],
-      "usage_instructions": "Укажи формат вывода (SVG, PNG) для финального результата.",
-      "examples": ["Название: PromptHub; Ниша: AI-платформа; Стиль: современный минимализм"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
+      "tags": ["rock", "rock ballad", "suno"],
+      "prompt_text": "Compose a powerful rock ballad with emotional vocals, wide guitars and dramatic progression. Theme: {theme}. Vocal tone: {tone}. Instrument focus: {instrument}."
     },
     {
-      "title": "Портрет человека в художественном стиле",
-      "summary": "Создай цифровой портрет человека в выбранном художественном стиле — реализм, комикс или акварель.",
-      "language": "ru",
-      "model": "mistral-large-latest",
-      "category": "image",
+      "title": "Electronic Dance Track Creator",
+      "summary": "Создание EDM трека с танцевальной структурой.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
       "license": "CC-BY",
-      "tags": ["портрет", "человек", "изображение", "арт"],
-      "prompt_text": "Сгенерируй портрет человека {описание} в стиле {стиль}. Добавь фоновое освещение и мягкие тени для реалистичности.",
-      "variables": [
-        { "name": "описание", "type": "string", "required": true, "description": "Описание внешности", "example": "молодая женщина с короткими волосами" },
-        { "name": "стиль", "type": "string", "required": true, "description": "Художественный стиль", "example": "реализм" }
-      ],
-      "usage_instructions": "Уточни детали лица и освещение — это повысит качество рендера.",
-      "examples": ["Описание: мужчина с бородой; стиль: киберпанк"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
+      "tags": ["edm", "electronic dance", "music"],
+      "prompt_text": "Create an energetic electronic dance track with festival-style drop. Theme: {theme}. BPM: {bpm}. Energy level: {energy}."
     },
     {
-      "title": "Создание мем-видео для Хэллоуина",
-      "summary": "Сгенерируй короткое юмористическое видео в стиле SORA, посвящённое Хэллоуину — идеально для TikTok.",
-      "language": "ru",
-      "model": "gpt-4o-mini",
-      "category": "video",
-      "license": "CC-BY",
-      "tags": ["хэллоуин", "видео", "юмор", "sora"],
-      "prompt_text": "Создай короткое видео на тему Хэллоуина: {сцена}, {персонажи}, {эмоция}. Добавь свет от свечей, дым и атмосферу мистики.",
-      "variables": [
-        { "name": "сцена", "type": "string", "required": true, "description": "Описание места действия", "example": "заброшенный дом" },
-        { "name": "персонажи", "type": "string", "required": true, "description": "Главные герои сцены", "example": "бабушка-вампир и кот в шляпе" },
-        { "name": "эмоция", "type": "string", "required": false, "description": "Эмоциональный тон видео", "example": "забавно и немного страшно" }
-      ],
-      "usage_instructions": "Добавь неожиданный комедийный финал для вирусного эффекта.",
-      "examples": ["Сцена: кладбище; персонажи: два привидения"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
-    },
-    {
-      "title": "Музыкальный трек от Suno Master с эмоциональным вокалом",
-      "summary": "Создай песню с ярким вокалом и запоминающимся припевом в стиле Suno Master — идеальна для клипов и релизов.",
-      "language": "ru",
-      "model": "any",
-      "category": "audio",
-      "license": "CC-BY-SA",
-      "tags": ["suno master", "вокал", "эмоции", "музыка"],
-      "prompt_text": "Сгенерируй песню в стиле Suno Master с темой {тема}, где вокал передаёт {эмоции}. Аранжировка в жанре {жанр}, с мощным припевом и атмосферными синтами.",
-      "variables": [
-        { "name": "тема", "type": "string", "required": true, "description": "Сюжет песни", "example": "любовь после разлуки" },
-        { "name": "эмоции", "type": "string", "required": false, "description": "Основная эмоция", "example": "надежда и боль" },
-        { "name": "жанр", "type": "string", "required": false, "description": "Музыкальный жанр", "example": "инди-поп" }
-      ],
-      "usage_instructions": "Добавь вокальные гармонии и короткий брейк перед финалом.",
-      "examples": ["Тема: тоска; Эмоции: страсть и одиночество"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
-    },
-    {
-      "title": "BPM-калькулятор для музыкантов и продюсеров",
-      "summary": "Промпт помогает рассчитать BPM и ритмику по темпу или длительности трека, идеален для битмейкеров.",
-      "language": "ru",
-      "model": "gpt-4.1-mini",
-      "category": "utilities",
+      "title": "Retro Vibe Synthwave Creator",
+      "summary": "Создание ретро-синтвейв музыки.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
       "license": "CC0",
-      "tags": ["bpm", "музыка", "утилита", "темп"],
-      "prompt_text": "Рассчитай BPM, если длительность трека {длина} секунд и количество тактов {такты}. Также укажи, как изменить темп для достижения {новая_скорость} BPM.",
-      "variables": [
-        { "name": "длина", "type": "number", "required": true, "description": "Длина трека в секундах", "example": "120" },
-        { "name": "такты", "type": "number", "required": true, "description": "Количество тактов", "example": "32" },
-        { "name": "новая_скорость", "type": "number", "required": false, "description": "Желаемое значение BPM", "example": "140" }
-      ],
-      "usage_instructions": "Используй этот расчёт при сведении для выравнивания треков в одном темпе.",
-      "examples": ["Длина: 90, Такты: 24, Новая скорость: 128"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
+      "tags": ["retro", "synthwave", "80s", "music"],
+      "prompt_text": "Create a retro synthwave track with neon pads, analog synths and 80s drums. Theme: {theme}. Mood: {mood}."
     },
     {
-      "title": "Эссе «Память о человеке» — сочинение с глубоким смыслом",
-      "summary": "Промпт помогает написать эмоциональное эссе или сочинение на тему памяти, утраты и наследия.",
-      "language": "ru",
-      "model": "claude-3.5-sonnet",
-      "category": "writing",
+      "title": "Samba Latin Groove Maker",
+      "summary": "Генерация музыки в стиле самба.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
       "license": "CC-BY",
-      "tags": ["память", "человек", "эссе", "сочинение"],
-      "prompt_text": "Напиши эссе на тему «Память о человеке». Раскрой идею через личную историю, эмоции и философский смысл. Стиль — лирико-описательный, объём {объем} слов.",
-      "variables": [
-        { "name": "объем", "type": "number", "required": false, "description": "Примерный объём текста", "example": "300" }
-      ],
-      "usage_instructions": "Добавь цитату или образ, который связывает прошлое и настоящее.",
-      "examples": ["300 слов, история о дедушке и его влиянии на жизнь автора"],
-      "attribution": { "author_name": "PromptMaster" },
-      "visibility": "public",
-      "status": "published"
+      "tags": ["samba", "latin", "music"],
+      "prompt_text": "Compose a samba track with Brazilian percussion, acoustic guitars and lively rhythms. Theme: {theme}. Tempo: {tempo}."
+    },
+    {
+      "title": "Sport Motivation Anthem",
+      "summary": "Музыка для спорта и тренировок.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
+      "license": "CC-BY",
+      "tags": ["sport", "motivation", "workout", "music"],
+      "prompt_text": "Generate an energetic workout anthem with powerful drums and motivational vibe. Mood: {mood}. BPM: {bpm}."
+    },
+    {
+      "title": "Epic Viral Character Creator",
+      "summary": "Создание концепции вирального персонажа.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["viral character", "persona", "тренды"],
+      "prompt_text": "Создай вирального персонажа с уникальной внешностью, поведением и фразами. Опиши: стиль, слабость, сильную сторону, мемность, подходящие сюжеты контента. Тема: {theme}."
+    },
+    {
+      "title": "Creative Writer Booster",
+      "summary": "Промпт для прокачки писательского мастерства.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["writer", "writing", "creativity"],
+      "prompt_text": "Сгенерируй литературный текст в стиле {style} на тему {theme}. Добавь образность, динамику, эмоциональные сцены и уникальные образы."
+    },
+    {
+      "title": "SORA Video: Cat Action Scene",
+      "summary": "Генерация видеосцены с котом, выполняющим приёмы.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["sora", "cat", "action", "video"],
+      "prompt_text": "A realistic scene where a small cat performs martial arts moves, strikes an object and breaks it. High realism, correct physics, dramatic timing. Scene theme: {theme}."
+    },
+    {
+      "title": "SORA Doorbell Camera Shock Scene",
+      "summary": "Сцена неожиданности с выходом героя к сюрпризу во дворе.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["sora", "video", "doorbell", "shock"],
+      "prompt_text": "A static doorbell-camera shot. The door opens and @{nickname} steps outside to see a giant mechanical creature in the yard. Hyperreal, dynamic destruction. Replace @{nickname} with a SORA cameo name."
+    },
+    {
+      "title": "SORA: Flying Sports Cinematic",
+      "summary": "Спортивная кинематографичная сцена.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["sora", "sport", "cinematic"],
+      "prompt_text": "Create a cinematic slow-motion sports sequence highlighting movement, strength and emotion. Scene type: {type}. Atmosphere: {mood}."
+    },
+    {
+      "title": "Rock Style Lyrics Generator",
+      "summary": "Создание рок-текста любой сложности.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["rock", "lyrics"],
+      "prompt_text": "Write rock lyrics in the style of {style}. Theme: {theme}. Emotional tone: {tone}. Add metaphors and expressive imagery."
+    },
+    {
+      "title": "Cute Cat Story Creator",
+      "summary": "Мини-истории о котах.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC0",
+      "tags": ["кот", "история", "cute"],
+      "prompt_text": "Напиши короткую историю про кота. Задай характер: {характер}. Событие: {событие}. Атмосфера: {атмосфера}."
+    },
+    {
+      "title": "Retro Video Aesthetic Prompt",
+      "summary": "Создание ретро-видео эстетики.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["retro", "video", "aesthetic"],
+      "prompt_text": "Generate a retro-style video with VHS textures, low saturation, analog noise and 80s atmosphere. Theme: {theme}."
+    },
+    {
+      "title": "Writer's Block Destroyer",
+      "summary": "Снятие творческой блокировки писателя.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC0",
+      "tags": ["writer", "creativity", "writing"],
+      "prompt_text": "Дай 10 идей для начала текста в стиле {стиль} на тему {тема}. Укажи возможные сюжетные ходы."
+    },
+    {
+      "title": "SORA: Viral Supermarket Scene",
+      "summary": "Виральная сцена в супермаркете.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["viral", "sora", "supermarket"],
+      "prompt_text": "A comedic realistic supermarket scene where a person behaves unexpectedly. Scene theme: {theme}. Motion: natural, detailed."
+    },
+    {
+      "title": "Epic Sports Motivation Script",
+      "summary": "Скрипт для спортивного видео.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["sport", "script"],
+      "prompt_text": "Write a motivational sports monologue with emotional rise, metaphors and intensity. Sport: {sport}. Tone: {tone}."
+    },
+    {
+      "title": "Samba Dance Visualization",
+      "summary": "Визуализация танца самба.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["samba", "dance", "video"],
+      "prompt_text": "Create a vibrant samba dance visual with rhythmic movement, colorful outfits and dynamic camera. Mood: {mood}."
+    },
+    {
+      "title": "EDM Drop Generator",
+      "summary": "Создание крутых EDM дропов.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Music",
+      "license": "CC-BY",
+      "tags": ["edm", "drop"],
+      "prompt_text": "Generate 5 unique concepts for a powerful EDM drop. Describe rhythm, synths and mood. Theme: {theme}."
+    },
+    {
+      "title": "Rock Guitar Riff Designer",
+      "summary": "Создание уникальных рок-рифов.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Music",
+      "license": "CC-BY",
+      "tags": ["rock", "guitar"],
+      "prompt_text": "Design five rock guitar riff concepts. Include tempo, feel, technique and mood."
+    },
+    {
+      "title": "Sport Nutrition Mini-Guide",
+      "summary": "Мини-гайд по спортивному питанию.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Health",
+      "license": "CC-BY",
+      "tags": ["спорт", "здоровье"],
+      "prompt_text": "Создай мини-гайд по спортивному питанию для цели: {цель}. Опиши: режим, продукты, ошибки."
+    },
+    {
+      "title": "Retro 8-bit Music Creator",
+      "summary": "Создание chiptune музыки.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
+      "license": "CC0",
+      "tags": ["retro", "8bit", "music"],
+      "prompt_text": "Generate 8-bit chiptune music with nostalgic mood and game-style melodies. Theme: {theme}."
+    },
+    {
+      "title": "Fantasy Writer Worldbuilder",
+      "summary": "Создание вымышленного мира.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["writer", "worldbuilding"],
+      "prompt_text": "Создай фэнтези-мир: география, культура, магия, конфликты. Тема: {тема}."
+    },
+    {
+      "title": "Viral TikTok Concept Generator",
+      "summary": "Идеи для виральных tiktok-роликов.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Marketing",
+      "license": "CC-BY",
+      "tags": ["viral", "tiktok"],
+      "prompt_text": "Create 10 viral TikTok concepts based on trend: {trend}. Include hook, twist and visual style."
+    },
+    {
+      "title": "Sport Commercial Script",
+      "summary": "Рекламный спортивный ролик.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Marketing",
+      "license": "CC-BY",
+      "tags": ["sport", "commercial"],
+      "prompt_text": "Write a 20-second sport commercial script with emotional arc. Product: {product}. Audience: {audience}."
+    },
+    {
+      "title": "Cute Cat Animation Concept",
+      "summary": "Концепт анимации про кота.",
+      "language": "English",
+      "model": "Claude Opus 4.1",
+      "category": "Animation",
+      "license": "CC0",
+      "tags": ["cat", "animation"],
+      "prompt_text": "Design a short animation concept about a cute cat. Theme: {theme}. Tone: {tone}."
+    },
+    {
+      "title": "SORA: High-Energy Action Scene",
+      "summary": "Экшн-сцена высокой интенсивности.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["sora", "action", "video"],
+      "prompt_text": "Generate a high-energy action sequence with dynamic camera, debris movement and cinematic lighting. Theme: {theme}."
     }
   ]
 }
