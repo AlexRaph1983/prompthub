@@ -17,23 +17,34 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   const t = await getTranslations({ locale, namespace: 'metadata' });
 
   try {
-    // Ищем тег по slug или по названию (для обратной совместимости)
+    // Декодируем slug из URL
+    const decodedSlug = decodeURIComponent(slug);
+    
+    // Ищем тег по slug (как закодированному, так и декодированному)
     let tag = await prisma.tag.findUnique({
       where: { slug },
       select: { name: true, description: true }
     });
 
+    // Если не найден по оригинальному slug, пробуем декодированный
+    if (!tag && decodedSlug !== slug) {
+      tag = await prisma.tag.findUnique({
+        where: { slug: decodedSlug },
+        select: { name: true, description: true }
+      });
+    }
+
     // Если не найден по slug, ищем по названию
     if (!tag) {
-      const decodedSlug = decodeURIComponent(slug);
       tag = await prisma.tag.findFirst({
         where: { 
           OR: [
             { name: decodedSlug },
-            { name: { contains: decodedSlug, mode: 'insensitive' } }
+            { name: { contains: decodedSlug } },
+            { slug: decodedSlug }
           ]
         },
-        select: { name: true, description: true }
+        select: { name: true, slug: true, description: true }
       });
     }
 
@@ -76,31 +87,51 @@ export default async function TagPage({ params }: TagPageProps) {
   const t = await getTranslations({ locale, namespace: 'tagPage' });
 
   try {
-    // Ищем тег по slug или по названию (для обратной совместимости)
+    // Декодируем slug из URL
+    const decodedSlug = decodeURIComponent(slug);
+    
+    // Ищем тег по slug (как закодированному, так и декодированному)
     let tag = await prisma.tag.findUnique({
       where: { slug },
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         promptCount: true,
         color: true
       }
     });
 
+    // Если не найден по оригинальному slug, пробуем декодированный
+    if (!tag && decodedSlug !== slug) {
+      tag = await prisma.tag.findUnique({
+        where: { slug: decodedSlug },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          promptCount: true,
+          color: true
+        }
+      });
+    }
+
     // Если не найден по slug, ищем по названию
     if (!tag) {
-      const decodedSlug = decodeURIComponent(slug);
       tag = await prisma.tag.findFirst({
         where: { 
           OR: [
             { name: decodedSlug },
-            { name: { contains: decodedSlug, mode: 'insensitive' } }
+            { name: { contains: decodedSlug } },
+            { slug: decodedSlug }
           ]
         },
         select: {
           id: true,
           name: true,
+          slug: true,
           description: true,
           promptCount: true,
           color: true
@@ -173,7 +204,7 @@ export default async function TagPage({ params }: TagPageProps) {
           </h2>
           <InfinitePromptList 
             locale={locale}
-            tag={slug}
+            tag={tag.slug || tag.name}
             initialPrompts={[]}
             initialNextCursor={null}
           />
