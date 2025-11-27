@@ -11,8 +11,9 @@ export function createCategoryUrl(slug: string, locale: Locale): string {
  * Создать URL для тега
  */
 export function createTagUrl(slug: string, locale: Locale): string {
-  // Используем slug напрямую (должен быть уже в латинском формате)
-  return `/${locale}/tag/${slug}`;
+  // Кодируем slug для правильной обработки кириллицы и спецсимволов
+  const encodedSlug = encodeURIComponent(slug);
+  return `/${locale}/tag/${encodedSlug}`;
 }
 
 /**
