@@ -1,8 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
 import { format } from 'date-fns';
 import { ru, enUS } from 'date-fns/locale';
 import type { Locale } from '@/i18n/index';
 import type { ArticleWithRelations } from '@/lib/repositories/articleRepository';
+import { getArticleCover } from '@/lib/articleCover';
 import { ArticleContent } from './ArticleContent';
 import { ArticleTags } from './ArticleTags';
 import { ArticleAuthor } from './ArticleAuthor';
@@ -32,6 +34,8 @@ export function ArticleLayout({
   const formattedDate = article.publishedAt
     ? format(article.publishedAt, 'dd MMMM yyyy', { locale: dateLocale })
     : null;
+
+  const coverImage = getArticleCover(article.slug, article.coverImage);
 
   // Извлечь заголовки для оглавления
   const headings = extractHeadings(content);
@@ -93,13 +97,18 @@ export function ArticleLayout({
       </header>
 
       {/* Обложка */}
-      {article.coverImage && (
-        <div className="mb-8 rounded-lg overflow-hidden">
-          <img
-            src={article.coverImage}
-            alt={title}
-            className="w-full h-auto"
-          />
+      {coverImage && (
+        <div className="mb-8 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-900/60 border border-gray-200/70 dark:border-gray-700/70">
+          <div className="relative w-full h-56 sm:h-64 md:h-72">
+            <Image
+              src={coverImage}
+              alt={title}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 960px"
+              className="object-cover"
+            />
+          </div>
         </div>
       )}
 
