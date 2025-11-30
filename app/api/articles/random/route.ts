@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
         titleEn: true,
         descriptionRu: true,
         descriptionEn: true,
+        coverImage: true,
         publishedAt: true
       },
       orderBy: {
