@@ -27,6 +27,10 @@ export async function GET(request: NextRequest) {
           loc: `${baseUrl}/sitemaps/tags.xml`,
           lastmod: formatLastMod(now),
         },
+        {
+          loc: `${baseUrl}/sitemaps/articles.xml`,
+          lastmod: formatLastMod(now),
+        },
         // Добавляем sitemap для каждого языка
         ...SITEMAP_CONFIG.LOCALES.map(locale => ({
           loc: `${baseUrl}/sitemaps/${locale}.xml`,

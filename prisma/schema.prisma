@@ -28,6 +28,7 @@ model User {
   comments  Comment[]
   preferences UserPreference?
   adminUser AdminUser?
+  articles  Article[] // Статьи автора
 
   // Profile fields
   bio       String?  // Описание профиля
@@ -320,6 +321,7 @@ model Tag {
 
   // Связи
   promptTags  PromptTag[]
+  articleTags ArticleTag[]
   promptCount Int      @default(0) // Кэш количества промптов
 
   @@index([slug])
@@ -337,6 +339,47 @@ model PromptTag {
 
   @@unique([promptId, tagId])
   @@index([promptId])
+  @@index([tagId])
+}
+
+/// Статьи и посты блога с поддержкой i18n
+model Article {
+  id            String   @id @default(cuid())
+  slug          String   @unique // URL-слаг для статьи
+  titleRu       String   // Заголовок на русском
+  titleEn       String   // Заголовок на английском
+  descriptionRu String   // Описание на русском
+  descriptionEn String   // Описание на английском
+  contentRu     String   // Контент на русском (Markdown)
+  contentEn     String   // Контент на английском (Markdown)
+  coverImage    String?  // URL изображения обложки
+  authorId      String   // Автор статьи
+  author        User     @relation(fields: [authorId], references: [id])
+  status        String   @default("draft") // draft | published | archived
+  publishedAt   DateTime? // Дата публикации
+  viewCount     Int      @default(0) // Счетчик просмотров
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Связи
+  articleTags   ArticleTag[]
+
+  @@index([slug])
+  @@index([status, publishedAt])
+  @@index([authorId])
+  @@index([publishedAt])
+}
+
+/// Связь многие-ко-многим между статьями и тегами
+model ArticleTag {
+  id        String  @id @default(cuid())
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, tagId])
+  @@index([articleId])
   @@index([tagId])
 }
 
