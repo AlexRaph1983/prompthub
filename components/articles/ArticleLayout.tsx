@@ -12,6 +12,7 @@ import { ArticleTableOfContents } from './ArticleTableOfContents';
 import { RelatedArticles } from './RelatedArticles';
 import { RelatedPrompts } from './RelatedPrompts';
 import { ArticleCTA } from './ArticleCTA';
+import { ArticleShareBlock } from './ArticleShareBlock';
 
 interface ArticleLayoutProps {
   article: ArticleWithRelations;
@@ -41,135 +42,138 @@ export function ArticleLayout({
   const headings = extractHeadings(content);
 
   return (
-    <article className="max-w-4xl mx-auto px-4 py-8">
-      {/* Хлебные крошки */}
-      <nav className="mb-6 text-sm text-gray-600 dark:text-gray-400">
-        <a
-          href={`/${locale}`}
-          className="hover:text-blue-600 dark:hover:text-blue-400"
-        >
-          {locale === 'ru' ? 'Главная' : 'Home'}
-        </a>
-        <span className="mx-2">/</span>
-        <a
-          href={`/${locale}/articles`}
-          className="hover:text-blue-600 dark:hover:text-blue-400"
-        >
-          {locale === 'ru' ? 'Статьи' : 'Articles'}
-        </a>
-        <span className="mx-2">/</span>
-        <span className="text-gray-900 dark:text-white">{title}</span>
-      </nav>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <article className="max-w-4xl mx-auto px-4 py-8">
+        {/* Хлебные крошки */}
+        <nav className="mb-5 text-sm text-gray-600 dark:text-gray-400 flex flex-wrap gap-1">
+          <a
+            href={`/${locale}`}
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            {locale === 'ru' ? 'Главная' : 'Home'}
+          </a>
+          <span className="opacity-60">/</span>
+          <a
+            href={`/${locale}/articles`}
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            {locale === 'ru' ? 'Статьи' : 'Articles'}
+          </a>
+          <span className="opacity-60">/</span>
+          <span className="text-gray-900 dark:text-white line-clamp-1">
+            {title}
+          </span>
+        </nav>
 
-      {/* Заголовок и мета-информация */}
-      <header className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-          {title}
-        </h1>
+        {/* Заголовок и мета-информация */}
+        <header className="mb-8 rounded-2xl bg-white/90 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-700/70 shadow-sm p-5 sm:p-6">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 leading-tight">
+            {title}
+          </h1>
 
-        {description && (
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-            {description}
-          </p>
-        )}
+          {description && (
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
+              {description}
+            </p>
+          )}
 
-        {/* Автор и дата */}
-        <div className="flex items-center gap-6 mb-4">
-          <ArticleAuthor author={article.author} locale={locale} />
+          {/* Автор, дата, просмотры */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            <ArticleAuthor author={article.author} locale={locale} />
 
-          {formattedDate && (
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              <time dateTime={article.publishedAt?.toISOString()}>
-                {formattedDate}
-              </time>
+            {formattedDate && (
+              <div>
+                <time dateTime={article.publishedAt?.toISOString()}>
+                  {formattedDate}
+                </time>
+              </div>
+            )}
+
+            <div>
+              {article.viewCount}{' '}
+              {locale === 'ru' ? 'просмотров' : 'views'}
+            </div>
+          </div>
+
+          {/* Теги */}
+          {article.articleTags.length > 0 && (
+            <div className="mt-4">
+              <ArticleTags
+                tags={article.articleTags.map((at) => at.tag)}
+                locale={locale}
+              />
             </div>
           )}
 
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            {article.viewCount} {locale === 'ru' ? 'просмотров' : 'views'}
-          </div>
-        </div>
-
-        {/* Теги */}
-        {article.articleTags.length > 0 && (
-          <ArticleTags tags={article.articleTags.map(at => at.tag)} locale={locale} />
-        )}
-      </header>
-
-      {/* Обложка */}
-      {coverImage && (
-        <div className="mb-8 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-900/60 border border-gray-200/70 dark:border-gray-700/70">
-          <div className="relative w-full h-56 sm:h-64 md:h-72">
-            <Image
-              src={coverImage}
-              alt={title}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 960px"
-              className="object-cover"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Контейнер с оглавлением и контентом */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
-        {/* Оглавление (десктоп) */}
-        {headings.length > 0 && (
-          <aside className="hidden lg:block lg:col-span-1">
-            <div className="sticky top-8">
-              <ArticleTableOfContents headings={headings} locale={locale} />
+          {/* Обложка */}
+          {coverImage && (
+            <div className="mt-6 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-900/60 border border-gray-200/70 dark:border-gray-700/70">
+              <div className="relative w-full h-56 sm:h-64 md:h-72">
+                <Image
+                  src={coverImage}
+                  alt={title}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 960px"
+                  className="object-cover"
+                />
+              </div>
             </div>
-          </aside>
+          )}
+        </header>
+
+        {/* Контент + оглавление */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+          {/* Оглавление (десктоп) */}
+          {headings.length > 0 && (
+            <aside className="hidden lg:block lg:col-span-1">
+              <div className="sticky top-8">
+                <ArticleTableOfContents headings={headings} locale={locale} />
+              </div>
+            </aside>
+          )}
+
+          {/* Основной контент */}
+          <div
+            className={
+              headings.length > 0 ? 'lg:col-span-3' : 'lg:col-span-4'
+            }
+          >
+            <div className="rounded-2xl bg-white/90 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-700/70 shadow-sm p-5 sm:p-7">
+              <ArticleContent content={content} />
+            </div>
+          </div>
+        </div>
+
+        {/* CTA блок */}
+        <ArticleCTA locale={locale} />
+
+        {/* Связанные промпты */}
+        {relatedPrompts.length > 0 && (
+          <div className="mb-12">
+            <RelatedPrompts prompts={relatedPrompts} locale={locale} />
+          </div>
         )}
 
-        {/* Основной контент */}
-        <div className={headings.length > 0 ? 'lg:col-span-3' : 'lg:col-span-4'}>
-          <ArticleContent content={content} />
-        </div>
-      </div>
+        {/* Связанные статьи */}
+        {relatedArticles.length > 0 && (
+          <div className="mb-12">
+            <RelatedArticles articles={relatedArticles} locale={locale} />
+          </div>
+        )}
 
-      {/* CTA блок */}
-      <ArticleCTA locale={locale} />
-
-      {/* Связанные промпты */}
-      {relatedPrompts.length > 0 && (
-        <div className="mb-12">
-          <RelatedPrompts prompts={relatedPrompts} locale={locale} />
+        {/* Поделиться */}
+        <div className="mt-10 border-t border-slate-200/80 dark:border-slate-700/80 pt-8">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <span>📤</span>
+            <span>
+              {locale === 'ru' ? 'Поделиться статьёй' : 'Share this article'}
+            </span>
+          </h3>
+          <ArticleShareBlock />
         </div>
-      )}
-
-      {/* Связанные статьи */}
-      {relatedArticles.length > 0 && (
-        <div className="mb-12">
-          <RelatedArticles articles={relatedArticles} locale={locale} />
-        </div>
-      )}
-
-      {/* Поделиться */}
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          {locale === 'ru' ? 'Поделиться статьей' : 'Share article'}
-        </h3>
-        <div className="flex gap-4">
-          <ShareButton
-            platform="twitter"
-            url={`${process.env.NEXT_PUBLIC_APP_HOST}/${locale}/articles/${article.slug}`}
-            title={title}
-          />
-          <ShareButton
-            platform="facebook"
-            url={`${process.env.NEXT_PUBLIC_APP_HOST}/${locale}/articles/${article.slug}`}
-            title={title}
-          />
-          <ShareButton
-            platform="telegram"
-            url={`${process.env.NEXT_PUBLIC_APP_HOST}/${locale}/articles/${article.slug}`}
-            title={title}
-          />
-        </div>
-      </div>
-    </article>
+      </article>
+    </div>
   );
 }
 
@@ -193,41 +197,5 @@ function extractHeadings(markdown: string): { level: number; text: string; id: s
   }
 
   return headings;
-}
-
-/**
- * Компонент кнопки "Поделиться"
- */
-function ShareButton({
-  platform,
-  url,
-  title
-}: {
-  platform: 'twitter' | 'facebook' | 'telegram';
-  url: string;
-  title: string;
-}) {
-  const shareUrls = {
-    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-    telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
-  };
-
-  const labels = {
-    twitter: 'Twitter',
-    facebook: 'Facebook',
-    telegram: 'Telegram'
-  };
-
-  return (
-    <a
-      href={shareUrls[platform]}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-    >
-      {labels[platform]}
-    </a>
-  );
 }
 
