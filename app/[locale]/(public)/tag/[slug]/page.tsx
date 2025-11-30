@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import InfinitePromptList from '@/components/InfinitePromptList';
 import type { Locale } from '@/i18n/index';
 import { YandexShareBlock } from './YandexShareBlock';
+import { RandomArticlesCarousel } from './RandomArticlesCarousel';
 
 interface TagPageProps {
   params: {
@@ -204,51 +205,8 @@ export default async function TagPage({ params }: TagPageProps) {
             </div>
           </div>
 
-          {/* Инструкция по использованию */}
-          <div className="bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 rounded-xl border border-violet-200 dark:border-violet-700/30 overflow-hidden">
-            <div className="p-6 md:p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl">💡</span>
-                <h3 className="text-xl font-bold text-violet-900 dark:text-violet-100">
-                  Как использовать промпты
-                </h3>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="flex gap-3 p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">1</div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white mb-1">Выберите шаблон</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Найдите подходящий промпт из списка ниже</div>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3 p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">2</div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white mb-1">Адаптируйте</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Скопируйте и настройте под свои задачи</div>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3 p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">3</div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white mb-1">Экспериментируйте</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Пробуйте разные параметры для лучших результатов</div>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3 p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-500 text-white flex items-center justify-center font-bold text-sm">4</div>
-                  <div>
-                    <div className="font-semibold text-gray-900 dark:text-white mb-1">Сохраняйте</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300">Добавляйте в избранное понравившиеся решения</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Карусель случайных статей */}
+          <RandomArticlesCarousel locale={locale} />
 
           {/* Блок "Поделиться" */}
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 p-6">
