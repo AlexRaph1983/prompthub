@@ -133,10 +133,10 @@ export function RandomArticlesCarousel({
                   <Link
                     key={article.id}
                     href={href}
-                    className="group min-w-[240px] max-w-[280px] sm:min-w-[260px] sm:max-w-[300px] snap-start rounded-xl bg-white dark:bg-slate-900/80 border border-gray-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md transition-all hover:border-blue-300 dark:hover:border-blue-500 flex-shrink-0"
+                    className="group min-w-[240px] max-w-[280px] sm:min-w-[260px] sm:max-w-[300px] snap-start rounded-xl bg-white dark:bg-slate-900/80 border border-gray-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md transition-all hover:border-blue-300 dark:hover:border-blue-500 flex-shrink-0 overflow-hidden"
                   >
                     {cover && (
-                      <div className="relative h-32 sm:h-36 w-full overflow-hidden">
+                      <div className="relative h-32 sm:h-36 w-full overflow-hidden rounded-t-xl">
                         <Image
                           src={cover}
                           alt={articleTitle}

@@ -24,7 +24,13 @@ export function ArticleContent({ content }: ArticleContentProps) {
               .toLowerCase()
               .replace(/[^\w\s-]/g, '')
               .replace(/\s+/g, '-');
-            return <h2 id={id} {...props} />;
+            return (
+              <h2
+                id={id}
+                {...props}
+                className={`scroll-mt-[96px] text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white mt-10 mb-4 pb-1 border-b border-slate-200 dark:border-slate-700 ${(props as any).className || ''}`}
+              />
+            );
           },
           h3: ({ node, ...props }) => {
             const text = String(props.children);
@@ -32,7 +38,13 @@ export function ArticleContent({ content }: ArticleContentProps) {
               .toLowerCase()
               .replace(/[^\w\s-]/g, '')
               .replace(/\s+/g, '-');
-            return <h3 id={id} {...props} />;
+            return (
+              <h3
+                id={id}
+                {...props}
+                className={`scroll-mt-[96px] text-xl md:text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-3 pl-3 py-1 border-l-4 border-violet-400 dark:border-violet-500 bg-violet-50/60 dark:bg-violet-900/20 rounded-r-lg ${(props as any).className || ''}`}
+              />
+            );
           },
           // Ссылки открываются в новом окне, если внешние
           a: ({ node, href, ...props }) => {
