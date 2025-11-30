@@ -18,7 +18,7 @@ export function ArticleCard({ article, locale }: ArticleCardProps) {
   const dateLocale = locale === 'ru' ? ru : enUS;
   
   const formattedDate = article.publishedAt
-    ? format(article.publishedAt, 'dd MMMM yyyy', { locale: dateLocale })
+    ? format(article.publishedAt, 'dd MMM yyyy', { locale: dateLocale })
     : null;
 
   const readingTime = estimateReadingTime(
@@ -26,36 +26,36 @@ export function ArticleCard({ article, locale }: ArticleCardProps) {
   );
 
   return (
-    <article className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
+    <article className="group bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600 transition-all">
       <a href={`/${locale}/articles/${article.slug}`} className="block">
         {/* Обложка */}
         {article.coverImage ? (
-          <div className="h-48 overflow-hidden">
+          <div className="h-40 sm:h-48 overflow-hidden">
             <img
               src={article.coverImage}
               alt={title}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         ) : (
-          <div className="h-48 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-            <div className="text-white text-6xl">📝</div>
+          <div className="h-40 sm:h-48 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+            <div className="text-white text-4xl sm:text-5xl">📝</div>
           </div>
         )}
 
         {/* Контент */}
-        <div className="p-6">
+        <div className="p-4 sm:p-5">
           {/* Теги */}
           {article.articleTags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-3">
+            <div className="flex flex-wrap gap-1.5 mb-3">
               {article.articleTags.slice(0, 3).map(at => (
                 <span
                   key={at.tag.id}
-                  className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
                   style={
                     at.tag.color
                       ? {
-                          backgroundColor: `${at.tag.color}20`,
+                          backgroundColor: `${at.tag.color}15`,
                           color: at.tag.color
                         }
                       : undefined
@@ -68,31 +68,34 @@ export function ArticleCard({ article, locale }: ArticleCardProps) {
           )}
 
           {/* Заголовок */}
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
             {title}
           </h2>
 
           {/* Описание */}
-          <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
             {description}
           </p>
 
           {/* Мета-информация */}
-          <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
+          <div className="flex items-center flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500 dark:text-gray-500">
             {formattedDate && (
-              <time dateTime={article.publishedAt?.toISOString()}>
+              <time dateTime={article.publishedAt?.toISOString()} className="flex items-center gap-1">
+                <span className="text-blue-600">📅</span>
                 {formattedDate}
               </time>
             )}
-            <span>•</span>
-            <span>
-              {readingTime} {locale === 'ru' ? 'мин чтения' : 'min read'}
+            <span className="hidden sm:inline">•</span>
+            <span className="flex items-center gap-1">
+              <span className="text-green-600">⏱️</span>
+              {readingTime} {locale === 'ru' ? 'мин' : 'min'}
             </span>
             {article.viewCount > 0 && (
               <>
-                <span>•</span>
-                <span>
-                  {article.viewCount} {locale === 'ru' ? 'просмотров' : 'views'}
+                <span className="hidden sm:inline">•</span>
+                <span className="flex items-center gap-1">
+                  <span className="text-purple-600">👁️</span>
+                  {article.viewCount}
                 </span>
               </>
             )}
@@ -100,15 +103,15 @@ export function ArticleCard({ article, locale }: ArticleCardProps) {
 
           {/* Автор */}
           {article.author.name && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">
+            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2">
               {article.author.image && (
                 <img
                   src={article.author.image}
                   alt={article.author.name}
-                  className="w-8 h-8 rounded-full"
+                  className="w-6 h-6 sm:w-7 sm:h-7 rounded-full"
                 />
               )}
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 {article.author.name}
               </span>
             </div>

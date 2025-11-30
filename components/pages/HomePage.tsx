@@ -52,6 +52,8 @@ export default function HomePage() {
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
   const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
+  const [randomArticles, setRandomArticles] = React.useState<any[]>([])
+  const [isLoadingArticles, setIsLoadingArticles] = React.useState(true)
 
   // Восстанавливаем позицию скролла при возврате на страницу
   React.useEffect(() => {
@@ -268,6 +270,30 @@ export default function HomePage() {
     return matchesSearch && matchesModel && matchesCategory && matchesLang
   }
 
+  // Загружаем случайные статьи для блока приветствия
+  React.useEffect(() => {
+    let ignore = false
+    const loadArticles = async () => {
+      try {
+        const response = await fetch('/api/articles/random?limit=3')
+        if (response.ok) {
+          const data = await response.json()
+          if (!ignore) {
+            setRandomArticles(data.articles || [])
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load articles:', error)
+      } finally {
+        if (!ignore) {
+          setIsLoadingArticles(false)
+        }
+      }
+    }
+    loadArticles()
+    return () => { ignore = true }
+  }, [])
+
   // Загружаем рекомендованные промпты
   React.useEffect(() => {
     let ignore = false
@@ -377,39 +403,84 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Дополнительный контент для SEO */}
-        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
-          <div className="prose prose-gray dark:prose-invert max-w-none">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        {/* Дополнительный контент для SEO с статьями */}
+        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-5 sm:p-6">
+          <div className="max-w-none">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3">
               Добро пожаловать в PromptHub
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-              PromptHub — это крупнейшая библиотека готовых решений и шаблонов для работы с искусственным интеллектом. 
-              Здесь вы найдете проверенные промпты для ChatGPT, Claude, Midjourney и других популярных ИИ-инструментов.
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+              PromptHub — крупнейшая библиотека готовых решений для работы с AI. 
+              Проверенные промпты для ChatGPT, Claude, Midjourney и других инструментов.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  🎯 Готовые решения
+            
+            {/* Полезные статьи */}
+            {!isLoadingArticles && randomArticles.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                  <span className="text-lg">📚</span>
+                  Полезные статьи
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Тысячи проверенных шаблонов для любых задач
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {randomArticles.map((article: any) => (
+                    <a
+                      key={article.id}
+                      href={`/${locale}/articles/${article.slug}`}
+                      className="group bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-start gap-2 mb-2">
+                        <span className="text-xl flex-shrink-0">✨</span>
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                          {locale === 'ru' ? article.titleRu : article.titleEn}
+                        </h4>
+                      </div>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2">
+                        {locale === 'ru' ? article.descriptionRu : article.descriptionEn}
+                      </p>
+                      <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 font-medium">
+                        <span>Читать</span>
+                        <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🎯</span>
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+                    Готовые решения
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                  Тысячи проверенных шаблонов
                 </p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  ⚡ Быстрый поиск
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Найдите нужное решение за секунды
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">⚡</span>
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+                    Быстрый поиск
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                  Найдите решение за секунды
                 </p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  🔧 Адаптация
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Легко настройте под свои потребности
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🔧</span>
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+                    Адаптация
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                  Настройте под свои задачи
                 </p>
               </div>
             </div>

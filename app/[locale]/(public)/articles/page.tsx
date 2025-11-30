@@ -38,60 +38,66 @@ export default async function ArticlesPage({ params, searchParams }: ArticlesPag
     : 'Useful guides, tips and practical examples of using AI tools';
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Заголовок раздела */}
       <header className="text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
           {title}
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+        <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           {subtitle}
         </p>
       </header>
 
       {/* SEO-контент */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div className="prose prose-gray dark:prose-invert max-w-none">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-5">
+        <div className="max-w-none">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-3">
             {locale === 'ru' ? 'О разделе статей' : 'About Articles Section'}
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
             {locale === 'ru'
-              ? 'В этом разделе вы найдете практические статьи, гайды и кейсы по работе с AI-инструментами. Мы делимся опытом создания эффективных промптов, рассказываем о лучших практиках и показываем реальные примеры применения нейросетей для решения бизнес-задач.'
-              : 'In this section you will find practical articles, guides and case studies on working with AI tools. We share experience in creating effective prompts, talk about best practices and show real examples of using neural networks to solve business problems.'}
+              ? 'Практические статьи, гайды и кейсы по работе с AI-инструментами. Опыт создания эффективных промптов, лучшие практики и реальные примеры применения нейросетей.'
+              : 'Practical articles, guides and case studies on working with AI tools. Experience in creating effective prompts, best practices and real examples of using neural networks.'}
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-              <div className="text-2xl mb-2">📚</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                {locale === 'ru' ? 'Гайды и обучение' : 'Guides & Tutorials'}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-4">
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 sm:p-4 border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">📚</span>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+                  {locale === 'ru' ? 'Гайды' : 'Guides'}
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 {locale === 'ru'
-                  ? 'Пошаговые инструкции по работе с различными AI-моделями'
-                  : 'Step-by-step instructions for working with various AI models'}
+                  ? 'Пошаговые инструкции по работе с AI-моделями'
+                  : 'Step-by-step instructions for AI models'}
               </p>
             </div>
-            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
-              <div className="text-2xl mb-2">💡</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                {locale === 'ru' ? 'Лучшие практики' : 'Best Practices'}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 sm:p-4 border border-green-200 dark:border-green-800">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">💡</span>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+                  {locale === 'ru' ? 'Практики' : 'Best Practices'}
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 {locale === 'ru'
-                  ? 'Проверенные методы и техники для достижения лучших результатов'
-                  : 'Proven methods and techniques to achieve the best results'}
+                  ? 'Проверенные методы и техники'
+                  : 'Proven methods and techniques'}
               </p>
             </div>
-            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
-              <div className="text-2xl mb-2">🎯</div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                {locale === 'ru' ? 'Реальные кейсы' : 'Real Cases'}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 sm:p-4 border border-purple-200 dark:border-purple-800">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xl">🎯</span>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+                  {locale === 'ru' ? 'Кейсы' : 'Real Cases'}
+                </h3>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 {locale === 'ru'
-                  ? 'Примеры применения промптов в реальных проектах и задачах'
-                  : 'Examples of using prompts in real projects and tasks'}
+                  ? 'Примеры применения в реальных проектах'
+                  : 'Examples in real projects'}
               </p>
             </div>
           </div>
@@ -128,21 +134,21 @@ export default async function ArticlesPage({ params, searchParams }: ArticlesPag
       )}
 
       {/* CTA блок */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-8 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-5 sm:p-6 md:p-8 text-white">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
             {locale === 'ru'
               ? 'Хотите делиться своим опытом?'
               : 'Want to share your experience?'}
           </h2>
-          <p className="text-lg mb-6 text-blue-100">
+          <p className="text-sm sm:text-base md:text-lg mb-4 sm:mb-6 text-blue-100">
             {locale === 'ru'
-              ? 'Присоединяйтесь к нашему сообществу и создавайте полезный контент вместе с нами.'
-              : 'Join our community and create useful content with us.'}
+              ? 'Присоединяйтесь к сообществу и создавайте полезный контент.'
+              : 'Join our community and create useful content.'}
           </p>
           <a
             href={`/${locale}/add`}
-            className="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+            className="inline-flex items-center justify-center px-5 py-2.5 sm:px-6 sm:py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium text-sm sm:text-base"
           >
             {locale === 'ru' ? 'Добавить промпт' : 'Add Prompt'}
           </a>
