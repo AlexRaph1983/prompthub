@@ -14,6 +14,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { usePromptStore } from '@/contexts/PromptStore'
 import { useRouter } from 'next/navigation'
 import { ViewsService } from '@/lib/services/viewsService'
+import { RelatedArticlesWidget } from '@/components/articles/RelatedArticlesWidget'
 
 interface PromptDetailsClientProps {
   promptId: string
@@ -668,6 +669,17 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
               <h3 className="font-semibold mb-4">{t('common.reviews')}</h3>
               <ReviewList promptId={promptId} key={`${myReview?.rating ?? ''}-${myReview?.comment ?? ''}`} />
             </Card>
+
+            {/* Виджет связанных статей */}
+            {prompt.tags && prompt.tags.length > 0 && (
+              <div className="mt-6">
+                <RelatedArticlesWidget 
+                  tags={prompt.tags} 
+                  locale={(prompt.lang === 'Russian' ? 'ru' : 'en') as any}
+                  limit={3}
+                />
+              </div>
+            )}
 
             {similar.length > 0 && (
               <Card className="shadow-md rounded-2xl p-6 mt-6">
