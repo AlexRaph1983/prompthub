@@ -31,8 +31,8 @@ export function ArticleTableOfContents({ headings, locale }: ArticleTableOfConte
   };
 
   return (
-    <nav className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">
+    <nav className="rounded-xl bg-white/90 dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-700/70 shadow-sm p-4 sm:p-5">
+      <h3 className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-3 uppercase tracking-wide">
         {title}
       </h3>
       <ul className="space-y-2">
