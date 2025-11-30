@@ -23,11 +23,23 @@ export function ArticleTableOfContents({ headings, locale }: ArticleTableOfConte
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      // Обновляем URL без перезагрузки страницы
-      window.history.pushState(null, '', `#${id}`);
-    }
+    if (!element) return;
+
+    // Учитываем фиксированную верхнюю панель навигации
+    const nav = document.querySelector<HTMLElement>('nav.sticky');
+    const headerHeight = nav?.offsetHeight ?? 80;
+    const extraOffset = 16; // небольшой зазор под панелью
+
+    const rect = element.getBoundingClientRect();
+    const targetY = rect.top + window.scrollY - headerHeight - extraOffset;
+
+    window.scrollTo({
+      top: Math.max(targetY, 0),
+      behavior: 'smooth',
+    });
+
+    // Обновляем URL без перезагрузки страницы
+    window.history.pushState(null, '', `#${id}`);
   };
 
   return (
