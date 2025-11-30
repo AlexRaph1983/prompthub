@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import * as Sheet from '@radix-ui/react-dialog';
-import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronRight, BookOpen } from 'lucide-react';
 import { getNavigationCategories } from '@/lib/categories';
 import { createCategoryUrl } from '@/lib/url';
 import type { Locale } from '@/i18n/index';
@@ -99,6 +99,30 @@ export default function CategoryDrawer({ locale, categories, currentCategory }: 
                     >
                       <span>{t('allCategories')}</span>
                     </Link>
+                  </li>
+
+                  {/* Статьи */}
+                  <li>
+                    <Link
+                      href={`/${locale}/articles`}
+                      onClick={handleLinkClick}
+                      className={`
+                        flex items-center gap-2 px-3 py-3 rounded-lg text-sm font-medium transition-colors
+                        ${pathname === `/${locale}/articles` || pathname.includes(`/${locale}/articles/`)
+                          ? 'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300'
+                          : 'text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+                        }
+                      `}
+                      aria-current={pathname === `/${locale}/articles` || pathname.includes(`/${locale}/articles/`) ? 'page' : undefined}
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      <span>{locale === 'ru' ? 'Статьи' : 'Articles'}</span>
+                    </Link>
+                  </li>
+
+                  {/* Разделитель */}
+                  <li className="my-2">
+                    <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600"></div>
                   </li>
 
                   {/* Категории */}

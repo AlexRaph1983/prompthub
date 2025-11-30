@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, ChevronRight, Home, Briefcase, Heart, GraduationCap, PenTool, Image, Video, MessageSquare, Code, Search, Palette, Music, Volume2, Box, Zap, TrendingUp, DollarSign, ChefHat } from 'lucide-react';
+import { ChevronDown, ChevronRight, Home, Briefcase, Heart, GraduationCap, PenTool, Image, Video, MessageSquare, Code, Search, Palette, Music, Volume2, Box, Zap, TrendingUp, DollarSign, ChefHat, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 import { getNavigationCategories } from '@/lib/categories';
 import { createCategoryUrl } from '@/lib/url';
@@ -108,6 +108,42 @@ export default function CategoryNav({ locale, categories, currentCategory }: Cat
                   <div className="w-2 h-2 bg-white rounded-full"></div>
                 )}
               </Link>
+            </li>
+
+            {/* Статьи */}
+            <li>
+              <Link
+                href={`/${locale}/articles`}
+                className={`
+                  group flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
+                  ${pathname === `/${locale}/articles` || pathname.includes(`/${locale}/articles/`)
+                    ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md'
+                    : 'text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:text-purple-700 dark:text-gray-300 dark:hover:bg-gradient-to-r dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 dark:hover:text-purple-300'
+                  }
+                `}
+                aria-current={pathname === `/${locale}/articles` || pathname.includes(`/${locale}/articles/`) ? 'page' : undefined}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`
+                    p-1 rounded-md transition-all duration-200
+                    ${pathname === `/${locale}/articles` || pathname.includes(`/${locale}/articles/`)
+                      ? 'bg-white/20'
+                      : 'bg-purple-100 group-hover:bg-purple-200 dark:bg-purple-900/30 dark:group-hover:bg-purple-800/40'
+                    }
+                  `}>
+                    <BookOpen className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="font-medium truncate">{locale === 'ru' ? 'Статьи' : 'Articles'}</span>
+                </div>
+                {(pathname === `/${locale}/articles` || pathname.includes(`/${locale}/articles/`)) && (
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                )}
+              </Link>
+            </li>
+
+            {/* Разделитель */}
+            <li className="my-2">
+              <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent dark:via-gray-600"></div>
             </li>
 
             {/* Категории */}
