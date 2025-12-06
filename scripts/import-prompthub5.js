@@ -35,18 +35,16 @@ async function createPromptAndSync(data) {
 
 // Маппинг категорий из JSON в slug категорий на сайте
 const categoryMapping = {
-  'Writing': 'marketing-writing', // Используем объединённую категорию
-  'Research': 'research',
-  'Business': 'business',
-  'SEO': 'seo',
-  'Marketing': 'marketing-writing', // Используем объединённую категорию
+  'Writing': 'writing',
+  'Marketing': 'marketing',
   'Music': 'music',
-  'Home': 'creative', // Используем Creative как альтернативу для Home
-  'Technical': 'code', // Используем Code как альтернативу для Technical
   'Design': 'design',
-  'Education': 'education',
   'Productivity': 'productivity',
-  'Creative': 'creative'
+  'Video': 'video',
+  'Audio': 'audio',
+  'Image': 'image',
+  '3D': '3d',
+  'Cooking': 'cooking'
 };
 
 /**
