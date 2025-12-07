@@ -13,6 +13,7 @@ import { ClientProviders } from '@/components/ClientProviders';
 import CookieConsent from '@/components/CookieConsent';
 import Footer from '@/components/Footer';
 import Script from 'next/script';
+import { ScrollRestoration } from '@/components/ScrollRestoration';
 export const dynamic = 'force-dynamic';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -93,6 +94,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <PromptProvider>
+              <ScrollRestoration />
               <Navigation />
               <div className="min-h-screen">
                 {children}

@@ -118,8 +118,9 @@ export default function InfinitePromptList({
         body: JSON.stringify({ type: 'open', promptId })
       })
     } catch {}
-    // Сбрасываем позицию скролла при переходе
-    window.scrollTo(0, 0)
+    // Сохраняем позицию скролла и ID промпта для восстановления при возврате
+    sessionStorage.setItem('scrollPosition', window.scrollY.toString())
+    sessionStorage.setItem('lastViewedPromptId', promptId)
     router.push(`/${locale}/prompt/${promptId}`)
   }
 
@@ -322,7 +323,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale, copyState }: Prompt
   const router = useRouter()
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200 overflow-hidden">
+    <Card className="hover:shadow-lg transition-shadow duration-200 overflow-hidden" data-prompt-id={prompt.id}>
       <CardContent className="p-6 flex flex-col h-full min-w-0">
         <div className="flex items-start justify-between mb-3 gap-2 min-w-0">
           <div className="flex-1 min-w-0">

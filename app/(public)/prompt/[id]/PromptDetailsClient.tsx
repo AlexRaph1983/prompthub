@@ -425,16 +425,8 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   }
 
   const handleGoBack = () => {
+    // Позиция скролла восстанавливается автоматически в InfinitePromptList
     router.back()
-    // Восстанавливаем позицию скролла после перехода
-    setTimeout(() => {
-      const savedScrollPosition = sessionStorage.getItem('scrollPosition')
-      if (savedScrollPosition) {
-        window.scrollTo(0, parseInt(savedScrollPosition, 10))
-        // Очищаем сохраненную позицию
-        sessionStorage.removeItem('scrollPosition')
-      }
-    }, 100) // Небольшая задержка для завершения навигации
   }
 
   const handleViewDetails = (promptId: string) => {
