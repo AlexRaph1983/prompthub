@@ -3,11 +3,25 @@
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Footer() {
   const t = useTranslations('footer')
   const params = useParams()
   const locale = params.locale as string || 'ru'
+
+  useEffect(() => {
+    // LiveInternet counter script
+    const img = document.getElementById('licntC9DE')
+    if (img) {
+      img.setAttribute('src', 
+        "https://counter.yadro.ru/hit?t45.5;r" + escape(document.referrer) +
+        ((typeof screen == "undefined") ? "" : ";s" + screen.width + "*" + screen.height + "*" +
+        (screen.colorDepth ? screen.colorDepth : screen.pixelDepth)) + ";u" + escape(document.URL) +
+        ";h" + escape(document.title.substring(0, 150)) + ";" + Math.random()
+      )
+    }
+  }, [])
 
   return (
     <footer className="bg-gray-900 text-gray-300 border-t border-gray-800">
@@ -92,6 +106,26 @@ export default function Footer() {
           <p className="text-xs text-gray-500">
             {t('compliance')}
           </p>
+        </div>
+
+        {/* LiveInternet counter */}
+        <div className="border-t border-gray-800 mt-4 pt-4 flex justify-center">
+          <a 
+            href="https://www.liveinternet.ru/click"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            <img 
+              id="licntC9DE" 
+              width="31" 
+              height="31" 
+              style={{ border: 0 }} 
+              title="LiveInternet"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+              alt=""
+            />
+          </a>
         </div>
       </div>
     </footer>
