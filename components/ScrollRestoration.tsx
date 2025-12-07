@@ -9,7 +9,7 @@ export function ScrollRestoration() {
   // Разрешаем восстановление скролла только на страницах со списком промптов
   // (чтобы не ломать другие разделы сайта)
   const isPromptListPath = useCallback((path: string) => {
-    // Ожидаемые пути: /ru/home, /ru/prompts, /ru/category/..., /ru/tag/...
+    // Ожидаемые пути: /ru/prompts, /ru/category/..., /ru/tag/...
     // но поддержим и вариант без префикса локали на всякий случай
     const segments = path.split('/').filter(Boolean) // '' '/ru/home' -> ['ru','home']
     if (segments.length === 0) return false
@@ -21,7 +21,10 @@ export function ScrollRestoration() {
       ? second
       : first
 
-    return section === 'home' || section === 'prompts' || section === 'category' || section === 'tag'
+    // ВАЖНО: 'home' здесь намеренно НЕ учитываем — для /home есть отдельная
+    // локальная логика восстановления скролла, чтобы не конфликтовать
+    // с более сложной структурой и виджетами на главной.
+    return section === 'prompts' || section === 'category' || section === 'tag'
   }, [])
   const attemptRef = useRef<number>(0)
   const restoredRef = useRef<boolean>(false)

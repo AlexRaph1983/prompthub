@@ -54,7 +54,65 @@ export default function HomePage() {
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
   const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
 
-  // Восстановление скролла обрабатывается глобально в ScrollRestoration компоненте
+  // Локальное восстановление скролла ТОЛЬКО для /home,
+  // чтобы не конфликтовать с глобальным ScrollRestoration.
+  React.useEffect(() => {
+    if (!mounted) return
+
+    const lastPromptId = sessionStorage.getItem('homeLastPromptId')
+    const savedPos = sessionStorage.getItem('homeScrollPosition')
+    if (!lastPromptId && !savedPos) return
+
+    let attempts = 0
+    const maxAttempts = 12
+    const interval = 80
+
+    const tryRestore = () => {
+      attempts += 1
+
+      let target: number | null = null
+
+      if (lastPromptId) {
+        const el = document.querySelector<HTMLElement>(`[data-prompt-id="${lastPromptId}"]`)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          target = Math.max(0, rect.top + window.scrollY - 100) // учёт хедера
+        }
+      }
+
+      if (target === null && savedPos) {
+        target = parseInt(savedPos, 10)
+      }
+
+      if (target !== null) {
+        window.scrollTo(0, target)
+        sessionStorage.removeItem('homeLastPromptId')
+        sessionStorage.removeItem('homeScrollPosition')
+        return true
+      }
+
+      if (attempts >= maxAttempts) {
+        // Не удалось восстановить — чистим, чтобы не мешало
+        sessionStorage.removeItem('homeLastPromptId')
+        sessionStorage.removeItem('homeScrollPosition')
+        return true
+      }
+
+      return false
+    }
+
+    // Пробуем несколько раз с интервалом — пока прогружается список
+    const id = window.setInterval(() => {
+      if (tryRestore()) {
+        clearInterval(id)
+      }
+    }, interval)
+
+    // Первая попытка без ожидания
+    tryRestore()
+
+    return () => clearInterval(id)
+  }, [mounted, state.prompts.length])
 
   // синхронизация строки поиска со стором
   React.useEffect(() => {
@@ -221,10 +279,10 @@ export default function HomePage() {
       trackClick(debouncedValue, searchResults.length, promptId)
     }
     
-    // Сохраняем текущую позицию скролла и ID промпта для возврата
+    // Сохраняем текущую позицию скролла и ID промпта для возврата ТОЛЬКО для /home
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
-    sessionStorage.setItem('scrollPosition', scrollPosition.toString())
-    sessionStorage.setItem('lastViewedPromptId', promptId)
+    sessionStorage.setItem('homeScrollPosition', scrollPosition.toString())
+    sessionStorage.setItem('homeLastPromptId', promptId)
     console.log('[HomePage] Saving scroll position:', scrollPosition, 'promptId:', promptId)
     router.push(`/${locale}/prompt/${promptId}`)
   }
