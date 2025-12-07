@@ -5,6 +5,24 @@ import { usePathname } from 'next/navigation'
 
 export function ScrollRestoration() {
   const pathname = usePathname()
+
+  // Разрешаем восстановление скролла только на страницах со списком промптов
+  // (чтобы не ломать другие разделы сайта)
+  const isPromptListPath = useCallback((path: string) => {
+    // Ожидаемые пути: /ru/home, /ru/prompts, /ru/category/..., /ru/tag/...
+    // но поддержим и вариант без префикса локали на всякий случай
+    const segments = path.split('/').filter(Boolean) // '' '/ru/home' -> ['ru','home']
+    if (segments.length === 0) return false
+    const first = segments[0]
+    const second = segments[1]
+
+    // Вариант с локалью: /{locale}/{section}
+    const section = segments.length > 1 && (first.length === 2 || first.length === 5)
+      ? second
+      : first
+
+    return section === 'home' || section === 'prompts' || section === 'category' || section === 'tag'
+  }, [])
   const attemptRef = useRef<number>(0)
   const restoredRef = useRef<boolean>(false)
 
@@ -94,7 +112,17 @@ export function ScrollRestoration() {
     const handlePopState = () => {
       console.log('[ScrollRestoration] popstate event')
       setTimeout(() => {
-        if (!window.location.pathname.includes('/prompt/')) {
+        const path = window.location.pathname
+
+        // Если это не страница со списком промптов — просто очищаем состояние,
+        // чтобы не тянуть пользователя вниз на других страницах
+        if (!isPromptListPath(path)) {
+          sessionStorage.removeItem('lastViewedPromptId')
+          sessionStorage.removeItem('scrollPosition')
+          return
+        }
+
+        if (!path.includes('/prompt/')) {
           scheduleScrollRestore()
         }
       }, 0)
@@ -107,17 +135,25 @@ export function ScrollRestoration() {
   // Проверяем при изменении pathname
   useEffect(() => {
     const isOnPromptPage = pathname.includes('/prompt/')
-    
-    if (!isOnPromptPage) {
-      const lastViewedPromptId = sessionStorage.getItem('lastViewedPromptId')
-      const savedScrollPosition = sessionStorage.getItem('scrollPosition')
-      
-      if (lastViewedPromptId || savedScrollPosition) {
-        console.log('[ScrollRestoration] pathname changed, scheduling restore for:', pathname)
-        scheduleScrollRestore()
-      }
+
+    if (isOnPromptPage) return
+
+    const lastViewedPromptId = sessionStorage.getItem('lastViewedPromptId')
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition')
+
+    if (!lastViewedPromptId && !savedScrollPosition) return
+
+    // Если пришли на не-поддерживаемую страницу, просто очищаем состояние
+    if (!isPromptListPath(pathname)) {
+      console.log('[ScrollRestoration] Non-list path, clearing saved scroll state for:', pathname)
+      sessionStorage.removeItem('lastViewedPromptId')
+      sessionStorage.removeItem('scrollPosition')
+      return
     }
-  }, [pathname, scheduleScrollRestore])
+
+    console.log('[ScrollRestoration] pathname changed, scheduling restore for:', pathname)
+    scheduleScrollRestore()
+  }, [pathname, scheduleScrollRestore, isPromptListPath])
 
   return null
 }
