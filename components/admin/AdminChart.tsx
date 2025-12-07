@@ -1,14 +1,22 @@
 'use client'
 
+import { useState } from 'react'
+
 interface AdminChartProps {
   title: string
   data: any[]
   type: 'userGrowth' | 'categories' | 'viewsCopies'
+  allTimeData?: any[]
+  monthlyBaseline?: {
+    views: number
+    copies: number
+  }
 }
 
-export function AdminChart({ title, data, type }: AdminChartProps) {
+export function AdminChart({ title, data, type, allTimeData, monthlyBaseline }: AdminChartProps) {
   // Защита от некорректных данных на верхнем уровне
   const safeData = Array.isArray(data) ? data : []
+  const [range, setRange] = useState<'month' | 'all'>('month')
   
   if (type === 'userGrowth') {
     if (safeData.length === 0) {
@@ -56,11 +64,28 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
 
   // НОВЫЙ ГРАФИК: Просмотры и копирования по нарастающей
   if (type === 'viewsCopies') {
+    const safeAllTime = Array.isArray(allTimeData) ? allTimeData : []
+    const isAllTime = range === 'all' && safeAllTime.length > 0
+
+    const chartData = isAllTime ? safeAllTime : safeData
+
+    const baselineViews = !isAllTime
+      ? Math.max(monthlyBaseline?.views || 0, 0)
+      : 0
+    const baselineCopies = !isAllTime
+      ? Math.max(monthlyBaseline?.copies || 0, 0)
+      : 0
+
     // Защита от пустых или некорректных данных
-    if (safeData.length === 0) {
+    if (!Array.isArray(chartData) || chartData.length === 0) {
       return (
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+            <div className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-1 py-0.5 text-xs text-gray-400">
+              Нет данных
+            </div>
+          </div>
           <div className="flex items-center justify-center h-64 text-gray-400">
             Нет данных за последние 30 дней
           </div>
@@ -69,25 +94,66 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
     }
 
     // Защита от деления на ноль
-    const dataLen = Math.max(safeData.length, 1)
+    const dataLen = Math.max(chartData.length, 1)
     const divisor = Math.max(dataLen - 1, 1)
     
-    const maxViews = Math.max(...safeData.map(d => d?.cumulativeViews || 0), 1)
-    const maxCopies = Math.max(...safeData.map(d => d?.cumulativeCopies || 0), 1)
+    const valuesForScale = chartData.map((d: any) => ({
+      views: baselineViews + (d?.cumulativeViews || 0),
+      copies: baselineCopies + (d?.cumulativeCopies || 0)
+    }))
+
+    const maxViews = Math.max(...valuesForScale.map(d => d.views), 1)
+    const maxCopies = Math.max(...valuesForScale.map(d => d.copies), 1)
     const maxValue = Math.max(maxViews, maxCopies, 1)
     
-    const lastDay = safeData[safeData.length - 1]
-    const totalViews = lastDay?.cumulativeViews || 0
-    const totalCopies = lastDay?.cumulativeCopies || 0
+    const lastDay = chartData[chartData.length - 1]
+    const totalViews = baselineViews + (lastDay?.cumulativeViews || 0)
+    const totalCopies = baselineCopies + (lastDay?.cumulativeCopies || 0)
     
     // Функция для безопасного вычисления координат
     const getX = (i: number) => (i / divisor) * 600
-    const getViewY = (d: any) => 200 - ((d?.cumulativeViews || 0) / maxValue) * 180
-    const getCopyY = (d: any) => 200 - ((d?.cumulativeCopies || 0) / maxValue) * 180
+    const getViewY = (d: any) =>
+      200 - ((baselineViews + (d?.cumulativeViews || 0)) / maxValue) * 180
+    const getCopyY = (d: any) =>
+      200 - ((baselineCopies + (d?.cumulativeCopies || 0)) / maxValue) * 180
+
+    const formatNumber = (value: number) => {
+      if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
+      if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`
+      return value.toLocaleString()
+    }
     
     return (
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
+        <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+          <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+          <div className="flex items-center gap-2 text-xs sm:text-sm">
+            <div className="inline-flex rounded-full border border-gray-200 bg-gray-50 p-0.5">
+              <button
+                type="button"
+                onClick={() => setRange('month')}
+                className={`px-2 py-1 rounded-full transition-colors ${
+                  range === 'month'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                Последний месяц
+              </button>
+              <button
+                type="button"
+                onClick={() => setRange('all')}
+                className={`px-2 py-1 rounded-full transition-colors ${
+                  range === 'all'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                С начала
+              </button>
+            </div>
+          </div>
+        </div>
         
         {/* Легенда и итоговые цифры */}
         <div className="flex justify-between items-center mb-4">
@@ -108,7 +174,14 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
         </div>
         
         {/* SVG график с двумя линиями */}
-        <div className="relative h-64 w-full">
+        <div className="relative h-64 w-full pl-8">
+          {/* Подписи оси Y */}
+          <div className="absolute inset-y-2 left-0 flex flex-col justify-between text-[10px] text-gray-400">
+            <span>{formatNumber(maxValue)}</span>
+            <span>{formatNumber(Math.round(maxValue * 0.5))}</span>
+            <span>{baselineViews || baselineCopies ? formatNumber(0) : '0'}</span>
+          </div>
+
           <svg className="w-full h-full" viewBox="0 0 600 200" preserveAspectRatio="none">
             {/* Горизонтальные линии сетки */}
             <line x1="0" y1="50" x2="600" y2="50" stroke="#e5e7eb" strokeWidth="1" />
@@ -117,21 +190,21 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
             
             {/* Область под линией просмотров */}
             <path
-              d={`M 0 200 ${safeData.map((d, i) => `L ${getX(i)} ${getViewY(d)}`).join(' ')} L 600 200 Z`}
+              d={`M 0 200 ${chartData.map((d: any, i: number) => `L ${getX(i)} ${getViewY(d)}`).join(' ')} L 600 200 Z`}
               fill="url(#purpleGradient)"
               opacity="0.3"
             />
             
             {/* Область под линией копирований */}
             <path
-              d={`M 0 200 ${safeData.map((d, i) => `L ${getX(i)} ${getCopyY(d)}`).join(' ')} L 600 200 Z`}
+              d={`M 0 200 ${chartData.map((d: any, i: number) => `L ${getX(i)} ${getCopyY(d)}`).join(' ')} L 600 200 Z`}
               fill="url(#greenGradient)"
               opacity="0.3"
             />
             
             {/* Линия просмотров */}
             <path
-              d={`M ${safeData.map((d, i) => `${getX(i)} ${getViewY(d)}`).join(' L ')}`}
+              d={`M ${chartData.map((d: any, i: number) => `${getX(i)} ${getViewY(d)}`).join(' L ')}`}
               fill="none"
               stroke="#8b5cf6"
               strokeWidth="3"
@@ -141,7 +214,7 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
             
             {/* Линия копирований */}
             <path
-              d={`M ${safeData.map((d, i) => `${getX(i)} ${getCopyY(d)}`).join(' L ')}`}
+              d={`M ${chartData.map((d: any, i: number) => `${getX(i)} ${getCopyY(d)}`).join(' L ')}`}
               fill="none"
               stroke="#10b981"
               strokeWidth="3"
@@ -150,8 +223,8 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
             />
             
             {/* Точки на линии просмотров */}
-            {safeData.filter((_, i) => i % 5 === 0 || i === safeData.length - 1).map((d, idx) => {
-              const originalIndex = safeData.indexOf(d)
+            {chartData.filter((_: any, i: number) => i % 5 === 0 || i === chartData.length - 1).map((d: any, idx: number) => {
+              const originalIndex = chartData.indexOf(d)
               return (
                 <circle
                   key={`view-${idx}`}
@@ -161,13 +234,19 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
                   fill="#8b5cf6"
                   stroke="white"
                   strokeWidth="2"
-                />
+                >
+                  <title>
+                    {`${d?.date || ''} • Просмотры: ${formatNumber(
+                      baselineViews + (d?.cumulativeViews || 0)
+                    )}`}
+                  </title>
+                </circle>
               )
             })}
             
             {/* Точки на линии копирований */}
-            {safeData.filter((_, i) => i % 5 === 0 || i === safeData.length - 1).map((d, idx) => {
-              const originalIndex = safeData.indexOf(d)
+            {chartData.filter((_: any, i: number) => i % 5 === 0 || i === chartData.length - 1).map((d: any, idx: number) => {
+              const originalIndex = chartData.indexOf(d)
               return (
                 <circle
                   key={`copy-${idx}`}
@@ -177,7 +256,13 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
                   fill="#10b981"
                   stroke="white"
                   strokeWidth="2"
-                />
+                >
+                  <title>
+                    {`${d?.date || ''} • Копирования: ${formatNumber(
+                      baselineCopies + (d?.cumulativeCopies || 0)
+                    )}`}
+                  </title>
+                </circle>
               )
             })}
             
@@ -196,7 +281,9 @@ export function AdminChart({ title, data, type }: AdminChartProps) {
           
           {/* Подписи осей */}
           <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-400 pt-2">
-            {safeData.filter((_, i) => i === 0 || i === Math.floor(safeData.length / 2) || i === safeData.length - 1).map((d, idx) => (
+            {chartData
+              .filter((_: any, i: number) => i === 0 || i === Math.floor(chartData.length / 2) || i === chartData.length - 1)
+              .map((d: any, idx: number) => (
               <span key={idx}>{d?.date?.slice?.(5) || ''}</span>
             ))}
           </div>

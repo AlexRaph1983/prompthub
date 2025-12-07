@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+type DailyStat = {
+  date: string
+  views: number
+  copies: number
+  cumulativeViews: number
+  cumulativeCopies: number
+}
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 Admin dashboard API called')
@@ -56,74 +64,98 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // === ЕЖЕДНЕВНАЯ СТАТИСТИКА ПРОСМОТРОВ И КОПИРОВАНИЙ (за 30 дней) ===
-    const thirtyDaysAgo = new Date()
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    thirtyDaysAgo.setHours(0, 0, 0, 0)
+    // === ЕЖЕДНЕВНАЯ СТАТИСТИКА ПРОСМОТРОВ И КОПИРОВАНИЙ (ALL-TIME + ПОСЛЕДНИЙ МЕСЯЦ) ===
 
-    // Получаем ежедневные просмотры из PromptViewEvent
-    const dailyViewsRaw = await prisma.promptViewEvent.groupBy({
+    // Получаем все просмотры (без ограничения по дате), агрегируем по дню
+    const allViewsRaw = await prisma.promptViewEvent.groupBy({
       by: ['createdAt'],
       where: {
-        createdAt: { gte: thirtyDaysAgo },
         isCounted: true
       },
       _count: { id: true }
     })
 
-    // Получаем ежедневные копирования из PromptInteraction
-    const dailyCopiesRaw = await prisma.promptInteraction.groupBy({
+    const allCopiesRaw = await prisma.promptInteraction.groupBy({
       by: ['createdAt'],
       where: {
-        createdAt: { gte: thirtyDaysAgo },
         type: 'copy'
       },
       _count: { id: true }
     })
 
-    // Агрегируем по дате (день)
-    const viewsByDate: Record<string, number> = {}
-    dailyViewsRaw.forEach((item) => {
+    const viewsByDateAll: Record<string, number> = {}
+    allViewsRaw.forEach((item) => {
       const dateKey = item.createdAt.toISOString().slice(0, 10)
-      viewsByDate[dateKey] = (viewsByDate[dateKey] || 0) + item._count.id
+      viewsByDateAll[dateKey] = (viewsByDateAll[dateKey] || 0) + item._count.id
     })
 
-    const copiesByDate: Record<string, number> = {}
-    dailyCopiesRaw.forEach((item) => {
+    const copiesByDateAll: Record<string, number> = {}
+    allCopiesRaw.forEach((item) => {
       const dateKey = item.createdAt.toISOString().slice(0, 10)
-      copiesByDate[dateKey] = (copiesByDate[dateKey] || 0) + item._count.id
+      copiesByDateAll[dateKey] = (copiesByDateAll[dateKey] || 0) + item._count.id
     })
 
-    // Создаём массив дней за последние 30 дней
-    const dailyStats: Array<{
-      date: string
-      views: number
-      copies: number
-      cumulativeViews: number
-      cumulativeCopies: number
-    }> = []
+    const allDateKeys = Array.from(
+      new Set([...Object.keys(viewsByDateAll), ...Object.keys(copiesByDateAll)])
+    ).sort()
 
-    let cumulativeViews = 0
-    let cumulativeCopies = 0
+    const allTimeDailyStats: DailyStat[] = []
 
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date()
-      d.setDate(d.getDate() - i)
-      const dateKey = d.toISOString().slice(0, 10)
-      
-      const dayViews = viewsByDate[dateKey] || 0
-      const dayCopies = copiesByDate[dateKey] || 0
-      
-      cumulativeViews += dayViews
-      cumulativeCopies += dayCopies
-      
-      dailyStats.push({
-        date: dateKey,
-        views: dayViews,
-        copies: dayCopies,
-        cumulativeViews,
-        cumulativeCopies
-      })
+    if (allDateKeys.length > 0) {
+      const startDate = new Date(allDateKeys[0])
+      startDate.setHours(0, 0, 0, 0)
+
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      let cumulativeViews = 0
+      let cumulativeCopies = 0
+
+      for (
+        const d = new Date(startDate);
+        d <= today;
+        d.setDate(d.getDate() + 1)
+      ) {
+        const dateKey = d.toISOString().slice(0, 10)
+
+        const dayViews = viewsByDateAll[dateKey] || 0
+        const dayCopies = copiesByDateAll[dateKey] || 0
+
+        cumulativeViews += dayViews
+        cumulativeCopies += dayCopies
+
+        allTimeDailyStats.push({
+          date: dateKey,
+          views: dayViews,
+          copies: dayCopies,
+          cumulativeViews,
+          cumulativeCopies
+        })
+      }
+    }
+
+    // Последние 30 дней как срез all-time (для уникальности источника правды)
+    const WINDOW_DAYS = 30
+    let last30DaysStats: DailyStat[] = []
+    let monthlyBaselineViews = 0
+    let monthlyBaselineCopies = 0
+
+    if (allTimeDailyStats.length > 0) {
+      const totalDays = allTimeDailyStats.length
+
+      if (totalDays <= WINDOW_DAYS) {
+        // Данных меньше месяца — просто используем всё без baseline
+        last30DaysStats = [...allTimeDailyStats]
+      } else {
+        last30DaysStats = allTimeDailyStats.slice(-WINDOW_DAYS)
+
+        const baselineIndex = totalDays - WINDOW_DAYS - 1
+        if (baselineIndex >= 0) {
+          const baselineDay = allTimeDailyStats[baselineIndex]
+          monthlyBaselineViews = baselineDay.cumulativeViews
+          monthlyBaselineCopies = baselineDay.cumulativeCopies
+        }
+      }
     }
 
     const stats = {
@@ -138,10 +170,21 @@ export async function GET(request: NextRequest) {
       views: totalViews._sum.views || 0,
       searches: totalSearches,
       copies: totalCopies,
-      dailyStats
+      // Обратная совместимость: dailyStats остаётся «последние 30 дней»
+      dailyStats: last30DaysStats,
+      // Новые поля для более продвинутых графиков
+      dailyStatsAllTime: allTimeDailyStats,
+      monthlyBaseline: {
+        views: monthlyBaselineViews,
+        copies: monthlyBaselineCopies
+      }
     }
 
-    console.log('📊 Dashboard stats:', stats)
+    console.log('📊 Dashboard stats:', {
+      ...stats,
+      dailyStatsLength: stats.dailyStats.length,
+      dailyStatsAllTimeLength: stats.dailyStatsAllTime.length
+    })
 
     return NextResponse.json({
       success: true,

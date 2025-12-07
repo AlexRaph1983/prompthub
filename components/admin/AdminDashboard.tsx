@@ -55,6 +55,17 @@ interface DashboardData {
       cumulativeViews: number
       cumulativeCopies: number
     }>
+    dailyStatsAllTime?: Array<{
+      date: string
+      views: number
+      copies: number
+      cumulativeViews: number
+      cumulativeCopies: number
+    }>
+    monthlyBaseline?: {
+      views: number
+      copies: number
+    }
   }
   topContent: {
     prompts: Array<{
@@ -89,6 +100,7 @@ export function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [viewsRange, setViewsRange] = useState<'month' | 'all'>('month')
 
   useEffect(() => {
     fetchDashboardData()
@@ -135,7 +147,9 @@ export function AdminDashboard() {
         charts: {
           userGrowth: [], // Пока не реализовано
           categoryStats: [],
-          dailyStats: result.data?.dailyStats || []
+          dailyStats: result.data?.dailyStats || [],
+          dailyStatsAllTime: result.data?.dailyStatsAllTime || [],
+          monthlyBaseline: result.data?.monthlyBaseline || { views: 0, copies: 0 }
         },
         topContent: {
           prompts: result.data?.prompts?.recent?.map((p: any) => ({
@@ -326,8 +340,10 @@ export function AdminDashboard() {
       <div className="grid grid-cols-1 gap-6">
         {/* Главный график - Просмотры и Копирования */}
         <AdminChart
-          title="📈 Рост просмотров и копирований (по нарастающей за 30 дней)"
+          title="📈 Рост просмотров и копирований"
           data={data.charts.dailyStats}
+          allTimeData={data.charts.dailyStatsAllTime}
+          monthlyBaseline={data.charts.monthlyBaseline}
           type="viewsCopies"
         />
       </div>
