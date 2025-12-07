@@ -58,7 +58,10 @@ export const PROMPT_MODELS = [
   "Suno", "AIVA",
   
   // Video Generation
-  "Runway Gen-2"
+  "Runway Gen-2",
+  
+  // Russian AI
+  "Яндекс Алиса"
 ] as const
 
 export const PROMPT_CATEGORIES = [

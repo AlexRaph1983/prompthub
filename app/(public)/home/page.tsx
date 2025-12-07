@@ -32,13 +32,13 @@ export default function Page() {
         Находите и публикуйте лучшие промпты для ChatGPT, Claude, Gemini и других. Подборки,
         рейтинги, мультиязычность. Открыто и бесплатно.
       </p>
-
+      
       {/* Профессиональный блок с каруселью статей вместо старого приветственного блока */}
       <RandomArticlesCarousel locale="ru" className="mb-10" />
-
+      
       <div className="text-center">
-        <a
-          href="/ru/home"
+        <a 
+          href="/ru/home" 
           className="inline-block bg-violet-600 hover:bg-violet-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
         >
           Перейти к каталогу промптов
@@ -46,4 +46,4 @@ export default function Page() {
       </div>
     </div>
   )
-}
+} 

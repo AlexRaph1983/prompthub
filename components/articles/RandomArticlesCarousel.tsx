@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useLocale } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getArticleCover } from '@/lib/articleCover';
@@ -27,18 +26,10 @@ const baseBlockClasses =
   'border border-blue-100/70 dark:border-slate-700/70 shadow-sm p-4 sm:p-6';
 
 export function RandomArticlesCarousel({
-  locale: explicitLocale,
+  locale: explicitLocale = 'ru',
   className = '',
 }: RandomArticlesCarouselProps) {
-  const intlLocale = (() => {
-    try {
-      return useLocale();
-    } catch {
-      return undefined;
-    }
-  })();
-
-  const locale = explicitLocale || intlLocale || 'ru';
+  const locale = explicitLocale;
 
   const [articles, setArticles] = React.useState<ArticlePreview[]>([]);
   const [loading, setLoading] = React.useState(true);
