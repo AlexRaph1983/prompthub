@@ -9,7 +9,7 @@ interface AdminStatsCardProps {
   change: number
   changeLabel: string
   icon: LucideIcon
-  color: 'blue' | 'green' | 'purple' | 'orange'
+  color: 'blue' | 'green' | 'purple' | 'orange' | 'emerald'
 }
 
 const colorClasses = {
@@ -32,6 +32,11 @@ const colorClasses = {
     icon: 'text-orange-600',
     bg: 'bg-orange-50',
     change: 'text-orange-600'
+  },
+  emerald: {
+    icon: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    change: 'text-emerald-600'
   }
 }
 
@@ -43,7 +48,7 @@ export function AdminStatsCard({
   icon: Icon, 
   color 
 }: AdminStatsCardProps) {
-  const colors = colorClasses[color]
+  const colors = colorClasses[color] ?? colorClasses.blue
   
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
