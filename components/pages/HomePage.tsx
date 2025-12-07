@@ -54,19 +54,7 @@ export default function HomePage() {
   const [isLoadingRecommendations, setIsLoadingRecommendations] = React.useState(false)
   const [copyStates, setCopyStates] = React.useState<Record<string, { isCopying: boolean; success: boolean }>>({})
 
-  // Восстанавливаем позицию скролла при возврате на страницу
-  React.useEffect(() => {
-    if (!mounted) return
-    
-    const savedScrollPosition = sessionStorage.getItem('scrollPosition')
-    if (savedScrollPosition) {
-      // Небольшая задержка для завершения рендеринга
-      setTimeout(() => {
-        window.scrollTo(0, parseInt(savedScrollPosition, 10))
-        sessionStorage.removeItem('scrollPosition')
-      }, 100)
-    }
-  }, [mounted])
+  // Восстановление скролла обрабатывается глобально в ScrollRestoration компоненте
 
   // синхронизация строки поиска со стором
   React.useEffect(() => {
@@ -233,9 +221,11 @@ export default function HomePage() {
       trackClick(debouncedValue, searchResults.length, promptId)
     }
     
-    // Сохраняем текущую позицию скролла для возврата
+    // Сохраняем текущую позицию скролла и ID промпта для возврата
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
     sessionStorage.setItem('scrollPosition', scrollPosition.toString())
+    sessionStorage.setItem('lastViewedPromptId', promptId)
+    console.log('[HomePage] Saving scroll position:', scrollPosition, 'promptId:', promptId)
     router.push(`/${locale}/prompt/${promptId}`)
   }
 
@@ -454,7 +444,10 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
   const views = typeof prompt.views === 'number' ? prompt.views : null
 
   return (
-    <Card className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 overflow-hidden ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}>
+    <Card 
+      className={`shadow-md rounded-2xl p-4 hover:shadow-lg transition flex flex-col gap-2 overflow-hidden ${prompt.isRecommended ? 'border-2 border-violet-300 bg-gradient-to-br from-violet-50 to-purple-50 shadow-violet-200' : 'bg-white'}`}
+      data-prompt-id={prompt.id}
+    >
       <div className="flex items-center gap-2 flex-wrap min-w-0">
         {prompt.isRecommended && (
           <div className="flex items-center gap-1 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm flex-shrink-0">
