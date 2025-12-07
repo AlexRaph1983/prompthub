@@ -1,7 +1,7 @@
 # Simple SSH Deployment Script
-$SERVER_IP = "REDACTED_IP"
+$SERVER_IP = "YOUR_SERVER_IP_HERE"
 $USERNAME = "root"
-$PASSWORD = "REDACTED_PASSWORD"
+$PASSWORD = "YOUR_PASSWORD_HERE"
 
 Write-Host "🚀 Starting deployment to $SERVER_IP..." -ForegroundColor Green
 

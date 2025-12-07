@@ -1,9 +1,9 @@
 # Инструкции для деплоя на сервер Orange Curium
 
 ## Сервер
-- IP: REDACTED_IP
+- IP: YOUR_SERVER_IP_HERE
 - Логин: root
-- Пароль: REDACTED_PASSWORD
+- Пароль: YOUR_PASSWORD_HERE
 
 ## Изменения для восстановления авторизации Google
 
@@ -17,7 +17,7 @@
 
 ```bash
 # Подключение к серверу
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # Переход в директорию проекта
 cd /root/prompthub

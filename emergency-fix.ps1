@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 # Fixed script without line ending issues
 $fixScript = 'cd /root/prompthub && echo "Starting emergency fix..." && pm2 kill && systemctl restart nginx && rm -rf node_modules .next && npm install --production && npm run build && API_KEY=$(openssl rand -base64 32) && export ADMIN_API_KEY=$API_KEY && export NEXTAUTH_SECRET=$API_KEY && export NODE_ENV=production && export PORT=3000 && pm2 start npm --name prompthub -- start && pm2 save && sleep 15 && pm2 list && netstat -tlnp | grep :3000 && curl -I http://localhost:3000 && echo "API_KEY: $API_KEY"'
@@ -55,7 +55,7 @@ API_KEY=$apiKey
     if (-not $verified) {
         Write-Host "⚠️ Testing direct server access..." -ForegroundColor Yellow
         try {
-            $directResponse = Invoke-WebRequest "http://REDACTED_IP:3000" -UseBasicParsing -TimeoutSec 10
+            $directResponse = Invoke-WebRequest "http://YOUR_SERVER_IP_HERE:3000" -UseBasicParsing -TimeoutSec 10
             Write-Host "✅ Direct server works - Status: $($directResponse.StatusCode)" -ForegroundColor Green
             Write-Host "❌ Domain/Nginx issue detected" -ForegroundColor Red
         } catch {

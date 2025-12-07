@@ -2,9 +2,9 @@
 
 ## 🔐 1. ПОДКЛЮЧЕНИЕ
 ```bash
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 ```
-**Пароль**: `REDACTED_PASSWORD`
+**Пароль**: `YOUR_PASSWORD_HERE`
 
 ---
 
@@ -66,10 +66,10 @@ if [ -f ".next/BUILD_ID" ]; then
     npx tsx scripts/add-promptmaster-prompts.ts --file prompts_prompthub4.json
     
     echo "🌍 Финальная проверка внешнего доступа:"
-    curl -s http://REDACTED_IP:3000 | head -2
+    curl -s http://YOUR_SERVER_IP_HERE:3000 | head -2
     
     echo "🎉 ДЕПЛОЙ УСПЕШНО ЗАВЕРШЕН!"
-    echo "✅ Сайт доступен: http://REDACTED_IP:3000"
+    echo "✅ Сайт доступен: http://YOUR_SERVER_IP_HERE:3000"
     
 else
     echo "❌ КРИТИЧЕСКАЯ ОШИБКА: Сборка провалилась!"

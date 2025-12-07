@@ -54,17 +54,17 @@ deployCommands.forEach((cmd, index) => {
   console.log(`${cmd.step}: ${cmd.description}`);
 });
 
-console.log('\n⚠️  ВНИМАНИЕ: Эти команды будут выполнены на сервере REDACTED_IP');
+console.log('\n⚠️  ВНИМАНИЕ: Эти команды будут выполнены на сервере YOUR_SERVER_IP_HERE');
 console.log('🔐 Для выполнения нужен SSH доступ к серверу');
 console.log('\n📝 Команды для выполнения:');
 
 deployCommands.forEach((cmd, index) => {
   console.log(`\n${cmd.step}:`);
-  console.log(`ssh root@REDACTED_IP "${cmd.command}"`);
+  console.log(`ssh root@YOUR_SERVER_IP_HERE "${cmd.command}"`);
 });
 
 console.log('\n🔍 ПРОВЕРКА РЕЗУЛЬТАТА:');
-console.log('curl http://REDACTED_IP:3000/api/prompts?limit=10');
+console.log('curl http://YOUR_SERVER_IP_HERE:3000/api/prompts?limit=10');
 console.log('pm2 status');
 console.log('pm2 logs prompthub --lines 20');
 

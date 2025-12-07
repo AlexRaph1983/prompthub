@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Безопасный деплой системы категорий на продакшен
-# Сервер: Orange Curium (REDACTED_IP)
+# Сервер: Orange Curium (YOUR_SERVER_IP_HERE)
 
 set -e  # Остановить при любой ошибке
 
@@ -9,46 +9,46 @@ echo "🚀 Начинаем безопасный деплой системы к�
 
 # 1. Подключение к серверу и получение последних изменений
 echo "📥 Получаем последние изменения с GitHub..."
-ssh root@REDACTED_IP "cd /root/prompthub && git fetch origin && git reset --hard origin/main"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && git fetch origin && git reset --hard origin/main"
 
 # 2. Установка зависимостей
 echo "📦 Устанавливаем зависимости..."
-ssh root@REDACTED_IP "cd /root/prompthub && npm ci"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npm ci"
 
 # 3. Генерация Prisma клиента
 echo "🗄️ Генерируем Prisma клиент..."
-ssh root@REDACTED_IP "cd /root/prompthub && npx prisma generate"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npx prisma generate"
 
 # 4. Применение миграций (БЕЗОПАСНО - только добавляет новые таблицы)
 echo "🔄 Применяем миграции..."
-ssh root@REDACTED_IP "cd /root/prompthub && npx prisma migrate deploy"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npx prisma migrate deploy"
 
 # 5. Заполнение категорий и тегов
 echo "🌱 Заполняем категории и теги..."
-ssh root@REDACTED_IP "cd /root/prompthub && node scripts/seed-categories.js"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && node scripts/seed-categories.js"
 
 # 6. Обновление счётчиков
 echo "📊 Обновляем счётчики..."
-ssh root@REDACTED_IP "cd /root/prompthub && node scripts/update-category-counts.js update"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && node scripts/update-category-counts.js update"
 
 # 7. Сборка проекта
 echo "🔨 Собираем проект..."
-ssh root@REDACTED_IP "cd /root/prompthub && npm run build"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npm run build"
 
 # 8. Перезапуск приложения
 echo "🔄 Перезапускаем приложение..."
-ssh root@REDACTED_IP "cd /root/prompthub && pm2 restart prompthub"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && pm2 restart prompthub"
 
 # 9. Проверка статуса
 echo "✅ Проверяем статус..."
-ssh root@REDACTED_IP "cd /root/prompthub && pm2 status"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && pm2 status"
 
 # 10. Проверка работы сайта
 echo "🌐 Проверяем работу сайта..."
-curl -f http://REDACTED_IP/ru/prompts || echo "⚠️ Предупреждение: не удалось проверить сайт"
+curl -f http://YOUR_SERVER_IP_HERE/ru/prompts || echo "⚠️ Предупреждение: не удалось проверить сайт"
 
 echo "🎉 Деплой завершён успешно!"
 echo "📋 Проверьте:"
-echo "   - http://REDACTED_IP/ru/prompts - главная страница с категориями"
-echo "   - http://REDACTED_IP/ru/category/legal - страница категории"
-echo "   - http://REDACTED_IP/ru/category/image - категория с подкатегориями"
+echo "   - http://YOUR_SERVER_IP_HERE/ru/prompts - главная страница с категориями"
+echo "   - http://YOUR_SERVER_IP_HERE/ru/category/legal - страница категории"
+echo "   - http://YOUR_SERVER_IP_HERE/ru/category/image - категория с подкатегориями"

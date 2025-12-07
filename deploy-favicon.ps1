@@ -2,9 +2,9 @@
 Write-Host "🚀 Деплой фавиконки на сервер Orange Curium..." -ForegroundColor Green
 
 # Параметры сервера
-$server = "REDACTED_IP"
+$server = "YOUR_SERVER_IP_HERE"
 $user = "root"
-$password = "REDACTED_PASSWORD"
+$password = "YOUR_PASSWORD_HERE"
 
 # Команда для выполнения на сервере
 $deployCommand = "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"

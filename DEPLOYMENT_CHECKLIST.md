@@ -30,7 +30,7 @@
 #### **4.1 Подключение к серверу**
 ```bash
 # SSH подключение
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # Переход в директорию проекта
 cd /root/prompthub

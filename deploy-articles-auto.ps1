@@ -1,9 +1,9 @@
 # Автоматический деплой раздела со статьями на продакшн
 # Использует plink для автоматической аутентификации
 
-$server = "REDACTED_IP"
+$server = "YOUR_SERVER_IP_HERE"
 $username = "root"
-$password = "REDACTED_PASSWORD"
+$password = "YOUR_PASSWORD_HERE"
 
 Write-Host "🚀 Запуск автоматического деплоя раздела статей..." -ForegroundColor Green
 Write-Host ""

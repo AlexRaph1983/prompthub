@@ -3,9 +3,9 @@ Write-Host "🚀 ДЕПЛОЙ СИСТЕМЫ КАТЕГОРИЙ С PLINK" -Foreg
 Write-Host "===================================" -ForegroundColor Green
 
 # Параметры подключения
-$server = "REDACTED_IP"
+$server = "YOUR_SERVER_IP_HERE"
 $user = "root"
-$password = "REDACTED_PASSWORD"
+$password = "YOUR_PASSWORD_HERE"
 
 Write-Host "`n1️⃣ Получение изменений с GitHub..." -ForegroundColor Yellow
 & .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && git fetch origin && git reset --hard origin/main"

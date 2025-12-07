@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 $fullFixScript = 'cd /root/prompthub && echo "=== COMPLETE FIX STARTING ===" && pm2 kill && systemctl restart nginx && rm -rf node_modules .next && npm install && npm run build && API_KEY=$(openssl rand -base64 32) && export ADMIN_API_KEY=$API_KEY && export NEXTAUTH_SECRET=$API_KEY && export NODE_ENV=production && export PORT=3000 && pm2 start npm --name prompthub -- start && pm2 save && sleep 20 && pm2 list && netstat -tlnp | grep :3000 && curl -sI http://localhost:3000 && echo "SUCCESS_KEY:$API_KEY"'
 
@@ -55,7 +55,7 @@ try {
         
         # Test direct server access
         try {
-            $directTest = Invoke-WebRequest "http://REDACTED_IP:3000" -UseBasicParsing -TimeoutSec 15
+            $directTest = Invoke-WebRequest "http://YOUR_SERVER_IP_HERE:3000" -UseBasicParsing -TimeoutSec 15
             Write-Host "✅ Direct server access OK: $($directTest.StatusCode)" -ForegroundColor Green
             Write-Host "❌ Issue is with domain/nginx proxy configuration" -ForegroundColor Red
         } catch {

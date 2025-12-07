@@ -25,7 +25,7 @@ redis-cli ping
 # Должен вернуть: PONG
 
 # На сервере
-ssh root@REDACTED_IP "redis-cli ping"
+ssh root@YOUR_SERVER_IP_HERE "redis-cli ping"
 ```
 
 ### 3. Деплой на production
@@ -45,7 +45,7 @@ bash scripts/deploy.sh
 #### A. Проверка логов
 ```bash
 # SSH на сервер
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # Проверить логи PM2
 pm2 logs prompthub --lines 50 | grep TRACK-VIEW
@@ -137,7 +137,7 @@ ORDER BY count DESC;
 #### Проверка Redis ключей
 ```bash
 # SSH на сервер
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # Проверить используемые токены
 redis-cli --scan --pattern "token:used:*" | head -5
@@ -246,7 +246,7 @@ VIEW_TOKEN_TTL=3600           # Секунды TTL токена после ис�
 ### Production (.env на сервере)
 ```bash
 # Проверить текущие значения
-ssh root@REDACTED_IP "cat /root/prompthub/.env | grep VIEW"
+ssh root@YOUR_SERVER_IP_HERE "cat /root/prompthub/.env | grep VIEW"
 
 # Убедиться, что установлены:
 VIEW_SALT=<сильный_случайный_секрет>

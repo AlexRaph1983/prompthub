@@ -3,9 +3,9 @@
 # Deploy script for Orange Curium server
 # Usage: ./deploy-orange-curium.sh
 
-SERVER="REDACTED_IP"
+SERVER="YOUR_SERVER_IP_HERE"
 USER="root"
-PASSWORD="REDACTED_PASSWORD"
+PASSWORD="YOUR_PASSWORD_HERE"
 BRANCH="main"
 PORT="3000"
 

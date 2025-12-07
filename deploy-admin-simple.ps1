@@ -1,6 +1,6 @@
 # Простой деплой админ-панели
-$server = "REDACTED_IP"
-$password = "REDACTED_PASSWORD"
+$server = "YOUR_SERVER_IP_HERE"
+$password = "YOUR_PASSWORD_HERE"
 
 Write-Host "🚀 Деплой админ-панели..." -ForegroundColor Green
 
@@ -33,8 +33,8 @@ if [ -f ".next/BUILD_ID" ]; then
     sleep 10
     pm2 status
     echo "🎉 DEPLOY SUCCESS!"
-    echo "Site: http://REDACTED_IP:3000"
-    echo "Admin: http://REDACTED_IP:3000/admin"
+    echo "Site: http://YOUR_SERVER_IP_HERE:3000"
+    echo "Admin: http://YOUR_SERVER_IP_HERE:3000/admin"
 else
     echo "❌ Build failed! Rolling back..."
     BACKUP=$(ls -td /root/prompthub_backup_* | head -1)
@@ -60,4 +60,4 @@ plink -ssh -pw $password root@$server "/root/deploy.sh"
 plink -ssh -pw $password root@$server "rm /root/deploy.sh"
 
 Remove-Item deploy.sh -Force
-Write-Host "✅ Done! Check: http://REDACTED_IP:3000/admin" -ForegroundColor Green
+Write-Host "✅ Done! Check: http://YOUR_SERVER_IP_HERE:3000/admin" -ForegroundColor Green

@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 $debugScript = 'cd /root/prompthub && echo "=== DEBUG INFO ===" && pm2 logs prompthub --lines 30 --nostream && echo "=== PM2 STATUS ===" && pm2 describe prompthub && echo "=== FIXING ===" && pm2 stop prompthub && cd /root/prompthub && API_KEY=$(openssl rand -base64 32) && cat > ecosystem.config.js << EOF
 module.exports = {

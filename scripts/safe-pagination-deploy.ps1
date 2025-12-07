@@ -1,8 +1,8 @@
 # Безопасный деплой пагинации БЕЗ миграций
 param(
-    [string]$ServerIP = "REDACTED_IP",
+    [string]$ServerIP = "YOUR_SERVER_IP_HERE",
     [string]$Username = "root",
-    [string]$Password = "REDACTED_PASSWORD"
+    [string]$Password = "YOUR_PASSWORD_HERE"
 )
 
 Write-Host "🚀 БЕЗОПАСНЫЙ ДЕПЛОЙ ПАГИНАЦИИ" -ForegroundColor Green

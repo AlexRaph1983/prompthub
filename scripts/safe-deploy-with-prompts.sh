@@ -44,5 +44,5 @@ pm2 start ecosystem.config.js || pm2 start npm --name "prompthub" -- start
 pm2 save
 
 echo "✅ Деплой завершен!"
-echo "🌐 Проверьте сайт: http://REDACTED_IP:3000"
-echo "📊 Проверьте API: http://REDACTED_IP:3000/api/prompts?limit=5"
+echo "🌐 Проверьте сайт: http://YOUR_SERVER_IP_HERE:3000"
+echo "📊 Проверьте API: http://YOUR_SERVER_IP_HERE:3000/api/prompts?limit=5"

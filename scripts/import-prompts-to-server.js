@@ -26,7 +26,7 @@ transformedPrompts.forEach((prompt, index) => {
 });
 
 console.log('\n🔧 Для импорта на сервер выполните:');
-console.log('1. Подключитесь к серверу: ssh root@REDACTED_IP');
+console.log('1. Подключитесь к серверу: ssh root@YOUR_SERVER_IP_HERE');
 console.log('2. Перейдите в директорию: cd /root/prompthub');
 console.log('3. Запустите скрипт импорта: npx tsx scripts/add-promptmaster-prompts.ts --file prompts_prompthub3.json');
 console.log('\n⚠️  ВНИМАНИЕ: Убедитесь, что файл prompts_prompthub3.json есть на сервере!');

@@ -3,13 +3,13 @@
 ## ✅ Деплой завершен успешно!
 
 **Дата:** 7 октября 2025  
-**Сервер:** Orange Curium (REDACTED_IP)  
+**Сервер:** Orange Curium (YOUR_SERVER_IP_HERE)  
 **Статус:** ✅ РАБОТАЕТ
 
 ## 📊 Результаты проверки
 
 ### ✅ Robots.txt
-- **URL:** http://REDACTED_IP/robots.txt
+- **URL:** http://YOUR_SERVER_IP_HERE/robots.txt
 - **Статус:** 200 OK
 - **Content-Type:** text/plain
 - **Кэширование:** 24 часа
@@ -21,7 +21,7 @@
   - ✅ Sitemap ссылки
 
 ### ✅ Sitemap.xml (Главный индекс)
-- **URL:** http://REDACTED_IP/sitemap.xml
+- **URL:** http://YOUR_SERVER_IP_HERE/sitemap.xml
 - **Статус:** 200 OK
 - **Content-Type:** application/xml
 - **Кэширование:** 1 час
@@ -111,16 +111,16 @@
 ## 📋 Тестовые URL
 
 ### Основные
-- **robots.txt:** http://REDACTED_IP/robots.txt
-- **sitemap.xml:** http://REDACTED_IP/sitemap.xml
+- **robots.txt:** http://YOUR_SERVER_IP_HERE/robots.txt
+- **sitemap.xml:** http://YOUR_SERVER_IP_HERE/sitemap.xml
 
 ### Дочерние карты
-- **Root:** http://REDACTED_IP/sitemaps/root.xml
-- **RU:** http://REDACTED_IP/sitemaps/ru.xml
-- **EN:** http://REDACTED_IP/sitemaps/en.xml
-- **Categories:** http://REDACTED_IP/sitemaps/categories.xml
-- **Tags:** http://REDACTED_IP/sitemaps/tags.xml
-- **Prompts:** http://REDACTED_IP/sitemaps/prompts-0001.xml
+- **Root:** http://YOUR_SERVER_IP_HERE/sitemaps/root.xml
+- **RU:** http://YOUR_SERVER_IP_HERE/sitemaps/ru.xml
+- **EN:** http://YOUR_SERVER_IP_HERE/sitemaps/en.xml
+- **Categories:** http://YOUR_SERVER_IP_HERE/sitemaps/categories.xml
+- **Tags:** http://YOUR_SERVER_IP_HERE/sitemaps/tags.xml
+- **Prompts:** http://YOUR_SERVER_IP_HERE/sitemaps/prompts-0001.xml
 
 ## 🎉 Заключение
 

@@ -1,9 +1,9 @@
 # Скрипт деплоя на продакшен сервер Orange Curium
 Write-Host "🚀 Начинаем деплой на продакшен..." -ForegroundColor Green
 
-$SERVER = "REDACTED_IP"
+$SERVER = "YOUR_SERVER_IP_HERE"
 $USER = "root"
-$PASSWORD = "REDACTED_PASSWORD"
+$PASSWORD = "YOUR_PASSWORD_HERE"
 $DEPLOY_COMMAND = "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
 
 Write-Host "📡 Подключаемся к серверу $SERVER..." -ForegroundColor Yellow

@@ -6,11 +6,11 @@ echo 📋 Выполняем команды на сервере:
 echo cd /root/prompthub ^&^& git fetch origin ^&^& git reset --hard origin/main ^&^& bash scripts/deploy.sh
 echo.
 
-echo 🔧 Подключение к серверу REDACTED_IP...
-echo Пароль: REDACTED_PASSWORD
+echo 🔧 Подключение к серверу YOUR_SERVER_IP_HERE...
+echo Пароль: YOUR_PASSWORD_HERE
 echo.
 
-ssh root@REDACTED_IP "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
 
 if %errorlevel% equ 0 (
     echo.
@@ -21,7 +21,7 @@ if %errorlevel% equ 0 (
     echo.
     echo ❌ Ошибка при деплое!
     echo 📝 Ручной деплой:
-    echo 1. Подключитесь к серверу: ssh root@REDACTED_IP
+    echo 1. Подключитесь к серверу: ssh root@YOUR_SERVER_IP_HERE
     echo 2. Выполните команду: cd /root/prompthub ^&^& git fetch origin ^&^& git reset --hard origin/main ^&^& bash scripts/deploy.sh
 )
 

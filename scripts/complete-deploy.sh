@@ -32,5 +32,5 @@ echo "8. Сохраняем конфигурацию..."
 pm2 save
 
 echo "✅ ДЕПЛОЙ ЗАВЕРШЕН!"
-echo "🌐 Сайт: http://REDACTED_IP:3000"
-echo "📊 API: http://REDACTED_IP:3000/api/prompts?limit=10"
+echo "🌐 Сайт: http://YOUR_SERVER_IP_HERE:3000"
+echo "📊 API: http://YOUR_SERVER_IP_HERE:3000/api/prompts?limit=10"

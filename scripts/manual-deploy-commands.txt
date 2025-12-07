@@ -1,13 +1,13 @@
 КОМАНДЫ ДЛЯ РУЧНОГО ДЕПЛОЯ НА ПРОДАКШЕНЕ
 =========================================
 
-СЕРВЕР: REDACTED_IP
+СЕРВЕР: YOUR_SERVER_IP_HERE
 ЛОГИН: root
-ПАРОЛЬ: REDACTED_PASSWORD
+ПАРОЛЬ: YOUR_PASSWORD_HERE
 
 1. ПОДКЛЮЧЕНИЕ К СЕРВЕРУ:
-   ssh root@REDACTED_IP
-   (введите пароль: REDACTED_PASSWORD)
+   ssh root@YOUR_SERVER_IP_HERE
+   (введите пароль: YOUR_PASSWORD_HERE)
 
 2. ПЕРЕХОД В ДИРЕКТОРИЮ ПРОЕКТА:
    cd /root/prompthub

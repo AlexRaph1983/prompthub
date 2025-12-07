@@ -75,11 +75,11 @@
 
 ## 🌐 **ДОСТУПНЫЕ АДРЕСА:**
 
-- **Основной сайт**: http://REDACTED_IP:3000
-- **Админ-панель**: http://REDACTED_IP:3000/admin
-- **Управление промптами**: http://REDACTED_IP:3000/admin/prompts
-- **Аналитика поиска**: http://REDACTED_IP:3000/admin/search-analytics
-- **Настройки системы**: http://REDACTED_IP:3000/admin/settings
+- **Основной сайт**: http://YOUR_SERVER_IP_HERE:3000
+- **Админ-панель**: http://YOUR_SERVER_IP_HERE:3000/admin
+- **Управление промптами**: http://YOUR_SERVER_IP_HERE:3000/admin/prompts
+- **Аналитика поиска**: http://YOUR_SERVER_IP_HERE:3000/admin/search-analytics
+- **Настройки системы**: http://YOUR_SERVER_IP_HERE:3000/admin/settings
 
 ## 🔧 **ТЕХНИЧЕСКАЯ ИНФОРМАЦИЯ:**
 
@@ -109,8 +109,8 @@
 ---
 
 **🔗 Ссылки:**
-- Сайт: http://REDACTED_IP:3000
-- Админ-панель: http://REDACTED_IP:3000/admin
-- API статуса: http://REDACTED_IP:3000/api/admin/check-status
+- Сайт: http://YOUR_SERVER_IP_HERE:3000
+- Админ-панель: http://YOUR_SERVER_IP_HERE:3000/admin
+- API статуса: http://YOUR_SERVER_IP_HERE:3000/api/admin/check-status
 
 **Админские ссылки теперь работают в меню пользователя!** 🚀

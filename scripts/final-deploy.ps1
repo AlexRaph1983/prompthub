@@ -2,9 +2,9 @@
 Write-Host "🚀 ФИНАЛЬНЫЙ ДЕПЛОЙ НА СЕРВЕР" -ForegroundColor Green
 Write-Host "============================" -ForegroundColor Green
 
-$ServerIP = "REDACTED_IP"
+$ServerIP = "YOUR_SERVER_IP_HERE"
 $Username = "root"
-$Password = "REDACTED_PASSWORD"
+$Password = "YOUR_PASSWORD_HERE"
 
 Write-Host "🔌 Устанавливаем SSH соединение..." -ForegroundColor Yellow
 $session = New-PSSession -HostName $ServerIP -UserName $Username -Password (ConvertTo-SecureString $Password -AsPlainText -Force)

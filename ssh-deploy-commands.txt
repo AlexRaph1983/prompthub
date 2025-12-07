@@ -34,5 +34,5 @@
 
 АЛЬТЕРНАТИВНЫЙ СПОСОБ:
 Можно скопировать файл temp-deploy.sh на сервер и выполнить:
-scp temp-deploy.sh root@REDACTED_IP:/tmp/
-ssh root@REDACTED_IP 'chmod +x /tmp/temp-deploy.sh && /tmp/temp-deploy.sh'
+scp temp-deploy.sh root@YOUR_SERVER_IP_HERE:/tmp/
+ssh root@YOUR_SERVER_IP_HERE 'chmod +x /tmp/temp-deploy.sh && /tmp/temp-deploy.sh'

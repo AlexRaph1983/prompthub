@@ -23,7 +23,7 @@ try {
     }
     
     Write-Host "Executing restore..." -ForegroundColor Yellow
-    $result = & $plink -ssh -pw 'REDACTED_PASSWORD' -batch 'root@REDACTED_IP' $deployCommand
+    $result = & $plink -ssh -pw 'YOUR_PASSWORD_HERE' -batch 'root@YOUR_SERVER_IP_HERE' $deployCommand
     Write-Host "Deploy command executed" -ForegroundColor Green
     
 } catch {

@@ -4,9 +4,9 @@ echo "🚀 АВТОМАТИЧЕСКИЙ ДЕПЛОЙ НА ПРОДАКШЕН"
 echo "===================================="
 
 # Параметры сервера
-SERVER_IP="REDACTED_IP"
+SERVER_IP="YOUR_SERVER_IP_HERE"
 SERVER_USER="root"
-SERVER_PASS="REDACTED_PASSWORD"
+SERVER_PASS="YOUR_PASSWORD_HERE"
 
 echo "📡 Подключаемся к серверу $SERVER_IP..."
 

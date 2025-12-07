@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 try {
     if (-not (Get-Command plink -ErrorAction SilentlyContinue)) {
@@ -49,7 +49,7 @@ try {
         
         # Check if server is running locally
         try {
-            $directTest = Invoke-WebRequest "http://REDACTED_IP:3000" -UseBasicParsing -TimeoutSec 15
+            $directTest = Invoke-WebRequest "http://YOUR_SERVER_IP_HERE:3000" -UseBasicParsing -TimeoutSec 15
             Write-Host "✅ Direct server access works: $($directTest.StatusCode)" -ForegroundColor Green
             Write-Host "❌ Issue is with domain/nginx proxy" -ForegroundColor Red
         } catch {

@@ -1,6 +1,6 @@
-$server = "REDACTED_IP"
+$server = "YOUR_SERVER_IP_HERE"
 $username = "root"
-$password = "REDACTED_PASSWORD"
+$password = "YOUR_PASSWORD_HERE"
 
 Write-Host "Starting deployment..." -ForegroundColor Green
 

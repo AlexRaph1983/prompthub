@@ -1,7 +1,7 @@
 param(
-    [string]$Server = 'REDACTED_IP',
+    [string]$Server = 'YOUR_SERVER_IP_HERE',
     [string]$User = 'root',
-    [string]$Password = 'REDACTED_PASSWORD'
+    [string]$Password = 'YOUR_PASSWORD_HERE'
 )
 
 $ErrorActionPreference = 'Stop'

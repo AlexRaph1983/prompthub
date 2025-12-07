@@ -1,17 +1,17 @@
 # 🚀 Деплой на сервер Orange Curium
 
 ## 📋 Информация о сервере
-- **IP адрес**: REDACTED_IP
+- **IP адрес**: YOUR_SERVER_IP_HERE
 - **Логин**: root
-- **Пароль**: REDACTED_PASSWORD
+- **Пароль**: YOUR_PASSWORD_HERE
 - **Порт приложения**: 3000
 
 ## 🔧 Подготовка сервера
 
 ### 1. Подключение к серверу
 ```bash
-ssh root@REDACTED_IP
-# Введите пароль: REDACTED_PASSWORD
+ssh root@YOUR_SERVER_IP_HERE
+# Введите пароль: YOUR_PASSWORD_HERE
 ```
 
 ### 2. Установка необходимого ПО
@@ -51,7 +51,7 @@ nano .env
 Добавьте следующие переменные:
 ```env
 # NextAuth
-NEXTAUTH_URL=http://REDACTED_IP:3000
+NEXTAUTH_URL=http://YOUR_SERVER_IP_HERE:3000
 NEXTAUTH_SECRET=your-secret-key-here
 
 # Database (настройте под вашу БД)
@@ -108,14 +108,14 @@ pm2 logs prompthub
 curl http://localhost:3000
 
 # Проверка извне
-curl http://REDACTED_IP:3000
+curl http://YOUR_SERVER_IP_HERE:3000
 ```
 
 ## 🔄 Обновление приложения
 
 ```bash
 # Подключение к серверу
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # Переход в директорию проекта
 cd /root/prompthub

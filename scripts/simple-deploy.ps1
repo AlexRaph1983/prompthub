@@ -1,8 +1,8 @@
 # Простой деплой на сервер
 param(
-    [string]$ServerIP = "REDACTED_IP",
+    [string]$ServerIP = "YOUR_SERVER_IP_HERE",
     [string]$Username = "root",
-    [string]$Password = "REDACTED_PASSWORD"
+    [string]$Password = "YOUR_PASSWORD_HERE"
 )
 
 Write-Host "🚀 ПРОСТОЙ ДЕПЛОЙ НА СЕРВЕР" -ForegroundColor Green

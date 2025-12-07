@@ -22,7 +22,7 @@ for ($test = 1; $test -le 30; $test++) {
         if ($test -eq 30) {
             Write-Host "⚠️ Final attempt - testing direct server..." -ForegroundColor Yellow
             try {
-                $direct = Invoke-WebRequest "http://REDACTED_IP:3000" -UseBasicParsing -TimeoutSec 20
+                $direct = Invoke-WebRequest "http://YOUR_SERVER_IP_HERE:3000" -UseBasicParsing -TimeoutSec 20
                 Write-Host "✅ Direct server access works: $($direct.StatusCode)" -ForegroundColor Green
                 Write-Host "❌ Issue may be with domain/nginx configuration" -ForegroundColor Red
             } catch {

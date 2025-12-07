@@ -26,14 +26,14 @@ ADMIN_EMAIL=yegorovaleksandr@gmail.com
 ```
 
 ### ✅ **Доступные адреса:**
-- **Основной сайт**: http://REDACTED_IP:3000
-- **Админ-панель**: http://REDACTED_IP:3000/admin
-- **API проверки статуса**: http://REDACTED_IP:3000/api/admin/check-status
+- **Основной сайт**: http://YOUR_SERVER_IP_HERE:3000
+- **Админ-панель**: http://YOUR_SERVER_IP_HERE:3000/admin
+- **API проверки статуса**: http://YOUR_SERVER_IP_HERE:3000/api/admin/check-status
 
 ## 🔐 **КАК ПРОВЕРИТЬ:**
 
 ### **1. Войдите на сайт:**
-1. Откройте http://REDACTED_IP:3000
+1. Откройте http://YOUR_SERVER_IP_HERE:3000
 2. Нажмите **"Войти"** → **Google OAuth**
 3. Войдите с email: `yegorovaleksandr@gmail.com`
 
@@ -92,6 +92,6 @@ ADMIN_EMAIL=yegorovaleksandr@gmail.com
 ---
 
 **🔗 Проверьте сейчас:**
-- Сайт: http://REDACTED_IP:3000
+- Сайт: http://YOUR_SERVER_IP_HERE:3000
 - Войдите с `yegorovaleksandr@gmail.com`
 - Откройте меню пользователя - должны увидеть админские ссылки! 🎉

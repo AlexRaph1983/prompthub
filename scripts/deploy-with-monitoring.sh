@@ -28,8 +28,8 @@ warning() {
 # Проверка подключения к серверу
 check_connection() {
     log "Проверяем подключение к серверу..."
-    if ! ping -c 1 REDACTED_IP > /dev/null 2>&1; then
-        error "Не удается подключиться к серверу REDACTED_IP"
+    if ! ping -c 1 YOUR_SERVER_IP_HERE > /dev/null 2>&1; then
+        error "Не удается подключиться к серверу YOUR_SERVER_IP_HERE"
     fi
     log "Подключение к серверу успешно"
 }
@@ -39,7 +39,7 @@ run_on_server() {
     local command="$1"
     log "Выполняем: $command"
     
-    ssh root@REDACTED_IP "$command" || {
+    ssh root@YOUR_SERVER_IP_HERE "$command" || {
         error "Ошибка выполнения команды: $command"
     }
 }
@@ -110,14 +110,14 @@ health_check() {
     
     # Проверка API
     log "Проверяем API endpoints..."
-    if curl -f http://REDACTED_IP/api/health > /dev/null 2>&1; then
+    if curl -f http://YOUR_SERVER_IP_HERE/api/health > /dev/null 2>&1; then
         log "API health check пройден"
     else
         warning "API health check не пройден"
     fi
     
     # Проверка метрик
-    if curl -f http://REDACTED_IP/api/admin/search-metrics > /dev/null 2>&1; then
+    if curl -f http://YOUR_SERVER_IP_HERE/api/admin/search-metrics > /dev/null 2>&1; then
         log "Метрики доступны"
     else
         warning "Метрики недоступны"
@@ -129,9 +129,9 @@ setup_monitoring() {
     log "Настраиваем мониторинг..."
     
     # Копируем конфигурацию мониторинга
-    scp monitoring/prometheus.yml root@REDACTED_IP:/root/
-    scp monitoring/alert_rules.yml root@REDACTED_IP:/root/
-    scp monitoring/grafana-dashboard.json root@REDACTED_IP:/root/
+    scp monitoring/prometheus.yml root@YOUR_SERVER_IP_HERE:/root/
+    scp monitoring/alert_rules.yml root@YOUR_SERVER_IP_HERE:/root/
+    scp monitoring/grafana-dashboard.json root@YOUR_SERVER_IP_HERE:/root/
     
     log "Конфигурация мониторинга скопирована"
 }
@@ -192,9 +192,9 @@ main() {
     run_tests
     
     log "✅ Деплой завершен успешно!"
-    log "🌐 Сайт доступен по адресу: http://REDACTED_IP"
-    log "📊 Админ-панель: http://REDACTED_IP/admin"
-    log "📈 Метрики: http://REDACTED_IP/api/admin/search-metrics"
+    log "🌐 Сайт доступен по адресу: http://YOUR_SERVER_IP_HERE"
+    log "📊 Админ-панель: http://YOUR_SERVER_IP_HERE/admin"
+    log "📈 Метрики: http://YOUR_SERVER_IP_HERE/api/admin/search-metrics"
 }
 
 # Обработка ошибок

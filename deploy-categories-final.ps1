@@ -1,5 +1,5 @@
 # Финальный безопасный деплой системы категорий
-# Сервер: Orange Curium (REDACTED_IP)
+# Сервер: Orange Curium (YOUR_SERVER_IP_HERE)
 
 param(
     [switch]$SkipBackup = $false,
@@ -24,13 +24,13 @@ function Invoke-ServerCommand {
     }
     
     Write-Host "🔄 Выполняем: $Command" -ForegroundColor Yellow
-    ssh root@REDACTED_IP "$Command"
+    ssh root@YOUR_SERVER_IP_HERE "$Command"
 }
 
 # 1. Проверка подключения к серверу
 Write-Host "`n1️⃣ Проверка подключения к серверу..." -ForegroundColor Cyan
 try {
-    ssh root@REDACTED_IP "echo 'Подключение успешно'"
+    ssh root@YOUR_SERVER_IP_HERE "echo 'Подключение успешно'"
     Write-Host "✅ Подключение к серверу работает" -ForegroundColor Green
 } catch {
     Write-Host "❌ Не удалось подключиться к серверу!" -ForegroundColor Red
@@ -98,10 +98,10 @@ Invoke-ServerCommand "cd /root/prompthub && pm2 status"
 Write-Host "`n1️⃣4️⃣ Проверка работы сайта..." -ForegroundColor Cyan
 
 $testUrls = @(
-    "http://REDACTED_IP/ru/prompts",
-    "http://REDACTED_IP/ru/category/legal", 
-    "http://REDACTED_IP/ru/category/image",
-    "http://REDACTED_IP/en/prompts"
+    "http://YOUR_SERVER_IP_HERE/ru/prompts",
+    "http://YOUR_SERVER_IP_HERE/ru/category/legal", 
+    "http://YOUR_SERVER_IP_HERE/ru/category/image",
+    "http://YOUR_SERVER_IP_HERE/en/prompts"
 )
 
 foreach ($url in $testUrls) {
@@ -125,16 +125,16 @@ Write-Host "`n🎉 ДЕПЛОЙ ЗАВЕРШЁН УСПЕШНО!" -ForegroundCol
 Write-Host "=====================================" -ForegroundColor Green
 
 Write-Host "`n📋 Проверьте следующие URL:" -ForegroundColor Cyan
-Write-Host "   🏠 Главная: http://REDACTED_IP/ru/prompts" -ForegroundColor White
-Write-Host "   ⚖️ Юристы: http://REDACTED_IP/ru/category/legal" -ForegroundColor White  
-Write-Host "   🏥 Врачи: http://REDACTED_IP/ru/category/health" -ForegroundColor White
-Write-Host "   📚 Обучение: http://REDACTED_IP/ru/category/education" -ForegroundColor White
-Write-Host "   📸 Фото: http://REDACTED_IP/ru/category/image" -ForegroundColor White
-Write-Host "   🎬 Видео: http://REDACTED_IP/ru/category/video" -ForegroundColor White
+Write-Host "   🏠 Главная: http://YOUR_SERVER_IP_HERE/ru/prompts" -ForegroundColor White
+Write-Host "   ⚖️ Юристы: http://YOUR_SERVER_IP_HERE/ru/category/legal" -ForegroundColor White  
+Write-Host "   🏥 Врачи: http://YOUR_SERVER_IP_HERE/ru/category/health" -ForegroundColor White
+Write-Host "   📚 Обучение: http://YOUR_SERVER_IP_HERE/ru/category/education" -ForegroundColor White
+Write-Host "   📸 Фото: http://YOUR_SERVER_IP_HERE/ru/category/image" -ForegroundColor White
+Write-Host "   🎬 Видео: http://YOUR_SERVER_IP_HERE/ru/category/video" -ForegroundColor White
 
 Write-Host "`n🔧 Полезные команды для мониторинга:" -ForegroundColor Cyan
-Write-Host "   ssh root@REDACTED_IP 'cd /root/prompthub && pm2 logs'" -ForegroundColor White
-Write-Host "   ssh root@REDACTED_IP 'cd /root/prompthub && pm2 status'" -ForegroundColor White
-Write-Host "   ssh root@REDACTED_IP 'cd /root/prompthub && node scripts/check-production-data.js'" -ForegroundColor White
+Write-Host "   ssh root@YOUR_SERVER_IP_HERE 'cd /root/prompthub && pm2 logs'" -ForegroundColor White
+Write-Host "   ssh root@YOUR_SERVER_IP_HERE 'cd /root/prompthub && pm2 status'" -ForegroundColor White
+Write-Host "   ssh root@YOUR_SERVER_IP_HERE 'cd /root/prompthub && node scripts/check-production-data.js'" -ForegroundColor White
 
 Write-Host "`n✅ Система категорий успешно развёрнута!" -ForegroundColor Green

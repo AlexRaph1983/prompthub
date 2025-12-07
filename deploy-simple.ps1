@@ -4,42 +4,42 @@ Write-Host "=========================" -ForegroundColor Green
 
 # 1. Получение изменений
 Write-Host "`n1️⃣ Получение изменений с GitHub..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && git fetch origin && git reset --hard origin/main"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && git fetch origin && git reset --hard origin/main"
 
 # 2. Установка зависимостей
 Write-Host "`n2️⃣ Установка зависимостей..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && npm ci"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npm ci"
 
 # 3. Генерация Prisma
 Write-Host "`n3️⃣ Генерация Prisma клиента..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && npx prisma generate"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npx prisma generate"
 
 # 4. Миграции
 Write-Host "`n4️⃣ Применение миграций..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && npx prisma migrate deploy"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npx prisma migrate deploy"
 
 # 5. Заполнение данных
 Write-Host "`n5️⃣ Заполнение категорий..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && node scripts/seed-categories.js"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && node scripts/seed-categories.js"
 
 # 6. Обновление счётчиков
 Write-Host "`n6️⃣ Обновление счётчиков..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && node scripts/update-category-counts.js update"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && node scripts/update-category-counts.js update"
 
 # 7. Сборка
 Write-Host "`n7️⃣ Сборка проекта..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && npm run build"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && npm run build"
 
 # 8. Перезапуск
 Write-Host "`n8️⃣ Перезапуск приложения..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && pm2 restart prompthub"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && pm2 restart prompthub"
 
 # 9. Проверка
 Write-Host "`n9️⃣ Проверка статуса..." -ForegroundColor Yellow
-ssh root@REDACTED_IP "cd /root/prompthub && pm2 status"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && pm2 status"
 
 Write-Host "`n🎉 ДЕПЛОЙ ЗАВЕРШЁН!" -ForegroundColor Green
 Write-Host "`n📋 Проверьте:" -ForegroundColor Cyan
-Write-Host "   http://REDACTED_IP/ru/prompts" -ForegroundColor White
-Write-Host "   http://REDACTED_IP/ru/category/legal" -ForegroundColor White
-Write-Host "   http://REDACTED_IP/ru/category/image" -ForegroundColor White
+Write-Host "   http://YOUR_SERVER_IP_HERE/ru/prompts" -ForegroundColor White
+Write-Host "   http://YOUR_SERVER_IP_HERE/ru/category/legal" -ForegroundColor White
+Write-Host "   http://YOUR_SERVER_IP_HERE/ru/category/image" -ForegroundColor White

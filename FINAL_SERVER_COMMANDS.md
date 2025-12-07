@@ -52,8 +52,8 @@ curl http://localhost:3000/api/prompts?limit=5
 
 ## ✅ ОЖИДАЕМЫЙ РЕЗУЛЬТАТ
 - ✅ Статус PM2: **online** (не errored)
-- ✅ Сайт доступен: http://REDACTED_IP:3000
-- ✅ API работает: http://REDACTED_IP:3000/api/prompts
+- ✅ Сайт доступен: http://YOUR_SERVER_IP_HERE:3000
+- ✅ API работает: http://YOUR_SERVER_IP_HERE:3000/api/prompts
 - ✅ Новые промпты импортированы
 - ✅ Логи без ошибок компиляции
 

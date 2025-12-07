@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 $fixFileScript = @'
 cd /root/prompthub
@@ -106,7 +106,7 @@ try {
             if ($i -eq 20) {
                 Write-Host "Final check..." -ForegroundColor Red
                 try {
-                    $direct = Invoke-WebRequest "http://REDACTED_IP:3000" -UseBasicParsing -TimeoutSec 15
+                    $direct = Invoke-WebRequest "http://YOUR_SERVER_IP_HERE:3000" -UseBasicParsing -TimeoutSec 15
                     Write-Host "Direct access works: $($direct.StatusCode)" -ForegroundColor Green
                 } catch {
                     Write-Host "No response from server" -ForegroundColor Red

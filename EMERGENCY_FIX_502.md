@@ -7,8 +7,8 @@
 
 ### 1. Подключитесь к серверу
 ```bash
-ssh root@REDACTED_IP
-# Пароль: REDACTED_PASSWORD
+ssh root@YOUR_SERVER_IP_HERE
+# Пароль: YOUR_PASSWORD_HERE
 ```
 
 ### 2. Проверьте статус приложения
@@ -46,8 +46,8 @@ curl http://localhost:3000
 
 ## 🎯 Ожидаемый результат
 - Статус: online
-- Сайт: http://REDACTED_IP:3000 работает
-- API: http://REDACTED_IP:3000/api/prompts работает
+- Сайт: http://YOUR_SERVER_IP_HERE:3000 работает
+- API: http://YOUR_SERVER_IP_HERE:3000/api/prompts работает
 
 ## 🆘 Если не помогает
 ```bash

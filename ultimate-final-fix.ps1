@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 $script = 'cd /root/prompthub && pm2 delete all && API_KEY=$(openssl rand -base64 32) && NEXT_SECRET=$(openssl rand -base64 32) && cat > ecosystem.config.js << EOF
 module.exports = {

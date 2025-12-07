@@ -2,9 +2,9 @@
 Write-Host "🚀 Безопасный деплой на сервер с импортом промптов..." -ForegroundColor Green
 
 # Информация о сервере
-$serverIP = "REDACTED_IP"
+$serverIP = "YOUR_SERVER_IP_HERE"
 $serverUser = "root"
-$serverPassword = "REDACTED_PASSWORD"
+$serverPassword = "YOUR_PASSWORD_HERE"
 
 Write-Host "`n📋 Информация о сервере:" -ForegroundColor Yellow
 Write-Host "IP: $serverIP" -ForegroundColor White

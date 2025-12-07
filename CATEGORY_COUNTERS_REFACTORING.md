@@ -228,7 +228,7 @@ curl -X POST https://prompt-hub.site/api/admin/recount-categories \
 
 **Вариант B:** Через скрипт на сервере
 ```bash
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 cd /root/prompthub
 node scripts/update-category-counts.js update
 ```
@@ -294,7 +294,7 @@ node scripts/update-category-counts.js stats
 
 ```bash
 # На сервере
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 cd /root/prompthub
 node scripts/update-category-counts.js update
 ```

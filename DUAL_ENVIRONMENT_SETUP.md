@@ -30,8 +30,8 @@
 ```
 http://localhost:3000/api/auth/callback/google
 http://localhost:3000
-http://REDACTED_IP:3000/api/auth/callback/google
-http://REDACTED_IP:3000
+http://YOUR_SERVER_IP_HERE:3000/api/auth/callback/google
+http://YOUR_SERVER_IP_HERE:3000
 ```
 
 **Сохраните** и скопируйте:
@@ -82,7 +82,7 @@ npm run dev
 
 ```bash
 # Подключитесь к серверу
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # Перейдите в папку проекта
 cd /root/prompthub
@@ -96,7 +96,7 @@ nano .env.local
 ```bash
 # ПРОДАКШЕН СРЕДА (.env.local на сервере)
 # NextAuth Configuration
-NEXTAUTH_URL=http://REDACTED_IP:3000
+NEXTAUTH_URL=http://YOUR_SERVER_IP_HERE:3000
 NEXTAUTH_SECRET=D7Seqs48GNrIx519i7S8WqyQBoAwLiImJkegciWv/nU=
 
 # Google OAuth (ТЕ ЖЕ САМЫЕ credentials)
@@ -119,7 +119,7 @@ AUTH_FORCE_TEST=0
 pm2 restart all
 ```
 
-**Тестируйте**: http://REDACTED_IP:3000
+**Тестируйте**: http://YOUR_SERVER_IP_HERE:3000
 
 ---
 
@@ -131,8 +131,8 @@ pm2 restart all
 - **База данных**: SQLite (dev.db)
 
 ### ✅ **Продакшен:**
-- **URL**: http://REDACTED_IP:3000
-- **Админ-панель**: http://REDACTED_IP:3000/admin
+- **URL**: http://YOUR_SERVER_IP_HERE:3000
+- **Админ-панель**: http://YOUR_SERVER_IP_HERE:3000/admin
 - **База данных**: SQLite (prod.db)
 
 ### ✅ **Одинаковая авторизация:**
@@ -169,8 +169,8 @@ pm2 restart all
 3. Откройте http://localhost:3000
 
 ### **Для продакшена:**
-1. Обновите `.env.local` на сервере с `NEXTAUTH_URL=http://REDACTED_IP:3000`
+1. Обновите `.env.local` на сервере с `NEXTAUTH_URL=http://YOUR_SERVER_IP_HERE:3000`
 2. Перезапустите `pm2 restart all`
-3. Откройте http://REDACTED_IP:3000
+3. Откройте http://YOUR_SERVER_IP_HERE:3000
 
 **Готово! Теперь у вас единая система авторизации для обеих сред!** 🎉

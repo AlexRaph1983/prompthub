@@ -1,9 +1,9 @@
 # Простой деплой с Plink
 Write-Host "🚀 ДЕПЛОЙ СИСТЕМЫ КАТЕГОРИЙ" -ForegroundColor Green
 
-$server = "REDACTED_IP"
+$server = "YOUR_SERVER_IP_HERE"
 $user = "root"
-$password = "REDACTED_PASSWORD"
+$password = "YOUR_PASSWORD_HERE"
 
 Write-Host "`n1️⃣ Получение изменений..." -ForegroundColor Yellow
 & .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && git fetch origin && git reset --hard origin/main"

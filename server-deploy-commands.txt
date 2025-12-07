@@ -56,8 +56,8 @@ if [ -f ".next/BUILD_ID" ]; then
     echo ""
     
     echo "🎉 DEPLOYMENT SUCCESSFUL!"
-    echo "✅ Site: http://REDACTED_IP:3000"
-    echo "✅ Admin Panel: http://REDACTED_IP:3000/admin"
+    echo "✅ Site: http://YOUR_SERVER_IP_HERE:3000"
+    echo "✅ Admin Panel: http://YOUR_SERVER_IP_HERE:3000/admin"
     echo ""
     echo "📋 NEXT STEPS:"
     echo "1. Edit .env.local file:"
@@ -86,5 +86,5 @@ echo "PM2 Status:"
 pm2 status
 echo ""
 echo "External access test:"
-curl -s -o /dev/null -w "HTTP %{http_code} - " http://REDACTED_IP:3000 && echo "Site working"
-curl -s -o /dev/null -w "HTTP %{http_code} - " http://REDACTED_IP:3000/admin && echo "Admin panel accessible"
+curl -s -o /dev/null -w "HTTP %{http_code} - " http://YOUR_SERVER_IP_HERE:3000 && echo "Site working"
+curl -s -o /dev/null -w "HTTP %{http_code} - " http://YOUR_SERVER_IP_HERE:3000/admin && echo "Admin panel accessible"

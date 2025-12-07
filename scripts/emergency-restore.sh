@@ -61,4 +61,4 @@ fi
 
 echo "9. Финальная проверка..."
 pm2 status
-echo "Сайт должен быть доступен по адресу: http://REDACTED_IP:3000"
+echo "Сайт должен быть доступен по адресу: http://YOUR_SERVER_IP_HERE:3000"

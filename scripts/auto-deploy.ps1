@@ -1,8 +1,8 @@
 # Автоматический деплой с использованием plink (PuTTY Link)
 param(
-    [string]$ServerIP = "REDACTED_IP",
+    [string]$ServerIP = "YOUR_SERVER_IP_HERE",
     [string]$Username = "root",
-    [string]$Password = "REDACTED_PASSWORD"
+    [string]$Password = "YOUR_PASSWORD_HERE"
 )
 
 Write-Host "🚀 АВТОМАТИЧЕСКИЙ ДЕПЛОЙ НА СЕРВЕР" -ForegroundColor Green

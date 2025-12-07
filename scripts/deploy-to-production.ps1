@@ -5,9 +5,9 @@ Write-Host "🚀 БЕЗОПАСНЫЙ ДЕПЛОЙ НА ПРОДАКШЕН" -For
 Write-Host "=================================" -ForegroundColor Green
 
 # Параметры сервера
-$SERVER_IP = "REDACTED_IP"
+$SERVER_IP = "YOUR_SERVER_IP_HERE"
 $SERVER_USER = "root"
-$SERVER_PASS = "REDACTED_PASSWORD"
+$SERVER_PASS = "YOUR_PASSWORD_HERE"
 
 Write-Host "📡 Подключаемся к серверу $SERVER_IP..." -ForegroundColor Yellow
 

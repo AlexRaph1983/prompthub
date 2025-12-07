@@ -1,8 +1,8 @@
 # Deploy sitemap using PuTTY plink
 param(
-    [string]$Server = "REDACTED_IP",
+    [string]$Server = "YOUR_SERVER_IP_HERE",
     [string]$User = "root", 
-    [string]$Password = "REDACTED_PASSWORD"
+    [string]$Password = "YOUR_PASSWORD_HERE"
 )
 
 Write-Host "🚀 Deploying SEO Sitemap via PuTTY plink..." -ForegroundColor Green

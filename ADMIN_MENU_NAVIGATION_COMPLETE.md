@@ -50,17 +50,17 @@ if (session.user.email === adminEmail) {
 - **Все админские ссылки** работают
 
 ### **🎯 Доступные адреса:**
-- **Основной сайт**: http://REDACTED_IP:3000
-- **Админ-панель**: http://REDACTED_IP:3000/admin
-- **Управление промптами**: http://REDACTED_IP:3000/admin/prompts
-- **Аналитика поиска**: http://REDACTED_IP:3000/admin/search-analytics
+- **Основной сайт**: http://YOUR_SERVER_IP_HERE:3000
+- **Админ-панель**: http://YOUR_SERVER_IP_HERE:3000/admin
+- **Управление промптами**: http://YOUR_SERVER_IP_HERE:3000/admin/prompts
+- **Аналитика поиска**: http://YOUR_SERVER_IP_HERE:3000/admin/search-analytics
 
 ## 🔐 **КАК ПОЛЬЗОВАТЬСЯ:**
 
 ### **1. Настройте админский email:**
 ```bash
 # На сервере
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 cd /root/prompthub
 nano .env.local
 
@@ -72,7 +72,7 @@ pm2 restart all
 ```
 
 ### **2. Войдите на сайт:**
-1. Откройте http://REDACTED_IP:3000
+1. Откройте http://YOUR_SERVER_IP_HERE:3000
 2. Нажмите **"Войти"** → **Google OAuth**
 3. Войдите с вашим Gmail (который указан в ADMIN_EMAIL)
 
@@ -127,6 +127,6 @@ pm2 restart all
 ---
 
 **🔗 Ссылки:**
-- Сайт: http://REDACTED_IP:3000
-- Админ-панель: http://REDACTED_IP:3000/admin
-- API статуса: http://REDACTED_IP:3000/api/admin/check-status
+- Сайт: http://YOUR_SERVER_IP_HERE:3000
+- Админ-панель: http://YOUR_SERVER_IP_HERE:3000/admin
+- API статуса: http://YOUR_SERVER_IP_HERE:3000/api/admin/check-status

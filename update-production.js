@@ -21,8 +21,8 @@ commands.forEach((cmd, i) => {
 });
 
 console.log('\n🔧 Выполните эти команды на сервере:');
-console.log('ssh root@REDACTED_IP');
-console.log('(пароль: REDACTED_PASSWORD)');
+console.log('ssh root@YOUR_SERVER_IP_HERE');
+console.log('(пароль: YOUR_PASSWORD_HERE)');
 console.log('\nЗатем выполните команды выше по порядку.');
 
 console.log('\n⏳ После обновления подождите 30 секунд и проверьте:');

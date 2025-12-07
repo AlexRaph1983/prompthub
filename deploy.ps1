@@ -1,5 +1,5 @@
 param(
-  [string]$Server = 'REDACTED_IP',
+  [string]$Server = 'YOUR_SERVER_IP_HERE',
   [string]$User = 'root',
   [string]$Branch = 'main',
   [int]$Port = 3000

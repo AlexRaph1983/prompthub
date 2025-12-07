@@ -1,6 +1,6 @@
-$Server = 'REDACTED_IP'
+$Server = 'YOUR_SERVER_IP_HERE'
 $User = 'root'
-$Password = 'REDACTED_PASSWORD'
+$Password = 'YOUR_PASSWORD_HERE'
 
 $cmd = 'cd /root/prompthub && pm2 stop all && pm2 delete all && API_KEY=$(openssl rand -base64 32) && export ADMIN_API_KEY=$API_KEY && export NEXTAUTH_SECRET=$API_KEY && pm2 start npm --name prompthub -- start && pm2 save && sleep 10 && curl -I http://localhost:3000 && echo "KEY:$API_KEY"'
 

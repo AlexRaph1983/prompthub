@@ -1,6 +1,6 @@
 # Автоматический деплой админ-панели на сервер
-$server = "REDACTED_IP"
-$password = "REDACTED_PASSWORD"
+$server = "YOUR_SERVER_IP_HERE"
+$password = "YOUR_PASSWORD_HERE"
 
 Write-Host "🚀 Начинаем деплой админ-панели..." -ForegroundColor Green
 
@@ -53,8 +53,8 @@ if [ -f ".next/BUILD_ID" ]; then
     echo ""
     
     echo "🎉 ДЕПЛОЙ ЗАВЕРШЕН УСПЕШНО!"
-    echo "✅ Сайт: http://REDACTED_IP:3000"
-    echo "✅ Админ-панель: http://REDACTED_IP:3000/admin"
+    echo "✅ Сайт: http://YOUR_SERVER_IP_HERE:3000"
+    echo "✅ Админ-панель: http://YOUR_SERVER_IP_HERE:3000/admin"
 else
     echo "❌ Сборка провалилась! Откатываемся..."
     LATEST_BACKUP=`$(ls -td /root/prompthub_backup_* | head -1)
@@ -82,4 +82,4 @@ Write-Host "🔧 Выполняем деплой на сервере..." -Foregr
 Remove-Item temp_deploy.sh -Force
 
 Write-Host "✅ Деплой завершен!" -ForegroundColor Green
-Write-Host "🌐 Проверьте: http://REDACTED_IP:3000/admin" -ForegroundColor Cyan
+Write-Host "🌐 Проверьте: http://YOUR_SERVER_IP_HERE:3000/admin" -ForegroundColor Cyan

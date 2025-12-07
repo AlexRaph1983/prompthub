@@ -36,13 +36,13 @@ git push origin main
 ### 2. Подключение к серверу
 
 **Сервер:** Orange Curium  
-**IP:** REDACTED_IP  
+**IP:** YOUR_SERVER_IP_HERE  
 **Логин:** root  
-**Пароль:** REDACTED_PASSWORD
+**Пароль:** YOUR_PASSWORD_HERE
 
 ```bash
-ssh root@REDACTED_IP
-# Пароль: REDACTED_PASSWORD
+ssh root@YOUR_SERVER_IP_HERE
+# Пароль: YOUR_PASSWORD_HERE
 ```
 
 ### 3. Деплой кода

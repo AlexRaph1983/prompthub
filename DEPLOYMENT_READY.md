@@ -28,14 +28,14 @@
 
 ## 🔐 ДЕПЛОЙ НА СЕРВЕР
 
-### Сервер: **REDACTED_IP**
+### Сервер: **YOUR_SERVER_IP_HERE**
 ### Логин: **root**
-### Пароль: **REDACTED_PASSWORD**
+### Пароль: **YOUR_PASSWORD_HERE**
 
 ### 📋 КОМАНДЫ ДЛЯ ВЫПОЛНЕНИЯ:
 
 ```bash
-ssh root@REDACTED_IP
+ssh root@YOUR_SERVER_IP_HERE
 
 # После подключения выполнить:
 cd /root/prompthub
@@ -54,7 +54,7 @@ echo "✅ Deployment completed!"
 ## 🎯 ОЖИДАЕМЫЙ РЕЗУЛЬТАТ:
 
 После деплоя сайт должен быть доступен по адресу:
-**http://REDACTED_IP**
+**http://YOUR_SERVER_IP_HERE**
 
 ### Что должно работать:
 - ✅ Главная страница с промптами
@@ -78,7 +78,7 @@ echo "✅ Deployment completed!"
 Скопируйте и выполните эту команду для быстрого деплоя:
 
 ```bash
-ssh root@REDACTED_IP "cd /root/prompthub && git fetch origin && git reset --hard origin/main && npm install && npm run build && pm2 stop prompthub || true && pm2 delete prompthub || true && pm2 start ecosystem.config.js && pm2 save && systemctl restart nginx && echo 'Deployment completed!'"
+ssh root@YOUR_SERVER_IP_HERE "cd /root/prompthub && git fetch origin && git reset --hard origin/main && npm install && npm run build && pm2 stop prompthub || true && pm2 delete prompthub || true && pm2 start ecosystem.config.js && pm2 save && systemctl restart nginx && echo 'Deployment completed!'"
 ```
 
-**Пароль:** `REDACTED_PASSWORD`
+**Пароль:** `YOUR_PASSWORD_HERE`

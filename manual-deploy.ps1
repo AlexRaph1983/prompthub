@@ -1,8 +1,8 @@
 # Manual SSH Deployment Script
 # Подключение к серверу и выполнение команд деплоя
 
-$SERVER_IP = "REDACTED_IP"
-$PASSWORD = "REDACTED_PASSWORD"
+$SERVER_IP = "YOUR_SERVER_IP_HERE"
+$PASSWORD = "YOUR_PASSWORD_HERE"
 
 Write-Host "🔑 Connecting to server and deploying..." -ForegroundColor Green
 
@@ -25,7 +25,7 @@ pm2 save
 echo "🌐 Restarting Nginx..."
 systemctl restart nginx
 echo "✅ Deployment completed successfully!"
-echo "🌍 Site should be available at: http://REDACTED_IP"
+echo "🌍 Site should be available at: http://YOUR_SERVER_IP_HERE"
 "@
 
 # Сохраняем скрипт во временный файл
@@ -73,4 +73,4 @@ try {
 }
 
 Write-Host ""
-Write-Host "🌐 After deployment, check: http://REDACTED_IP" -ForegroundColor Green
+Write-Host "🌐 After deployment, check: http://YOUR_SERVER_IP_HERE" -ForegroundColor Green

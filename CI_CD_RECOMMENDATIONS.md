@@ -331,7 +331,7 @@ pm2 set pm2-slack:slack_url https://hooks.slack.com/your-webhook
 
 ### **GitHub Secrets**
 ```bash
-PROD_HOST=REDACTED_IP
+PROD_HOST=YOUR_SERVER_IP_HERE
 PROD_USER=root
 PROD_PASSWORD=*** (зашифровано)
 SLACK_WEBHOOK=*** (зашифровано)

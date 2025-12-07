@@ -1,8 +1,8 @@
 #!/usr/bin/expect -f
 set timeout 300
-set password "REDACTED_PASSWORD"
+set password "YOUR_PASSWORD_HERE"
 
-spawn ssh -o StrictHostKeyChecking=no root@REDACTED_IP
+spawn ssh -o StrictHostKeyChecking=no root@YOUR_SERVER_IP_HERE
 
 expect "password:"
 send "$password\r"
