@@ -396,13 +396,27 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
     submitRating(pendingRating)
   }, [isAuthenticated, pendingRating, ratingData?.canRate, ratingData?.myRating, submitRating])
 
-  const handleCopyPrompt = async (promptText: string) => {
+  const handleCopyPrompt = async (promptText: string, copyPromptId?: string) => {
     setIsCopying(true)
     try {
       await navigator.clipboard.writeText(promptText)
       setCopySuccess(true)
       // Скрываем уведомление через 2 секунды
       setTimeout(() => setCopySuccess(false), 2000)
+      
+      // Отслеживаем событие копирования
+      const targetPromptId = copyPromptId || promptId
+      try {
+        await fetch('/api/interactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ promptId: targetPromptId, type: 'copy' })
+        })
+      } catch (err) {
+        // Non-fatal, продолжаем работу
+        console.warn('Failed to track copy event:', err)
+      }
     } catch (err) {
       console.error('Failed to copy prompt:', err)
     } finally {
@@ -745,7 +759,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
                               className="bg-violet-600 text-white hover:bg-violet-700 rounded-xl w-full sm:flex-1"
                               onClick={(e) => {
                                 e.stopPropagation()
-                                handleCopyPrompt(p.prompt)
+                                handleCopyPrompt(p.prompt, p.id)
                               }}
                             >
                               <Copy className="w-4 h-4 mr-1" />

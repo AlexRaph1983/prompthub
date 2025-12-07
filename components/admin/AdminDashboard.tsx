@@ -9,7 +9,8 @@ import {
   TrendingUp,
   TrendingDown,
   Activity,
-  Clock
+  Clock,
+  Copy
 } from 'lucide-react'
 import { AdminStatsCard } from './AdminStatsCard'
 import { AdminChart } from './AdminChart'
@@ -21,6 +22,7 @@ interface DashboardData {
     totalPrompts: number
     totalViews: number
     totalSearches: number
+    totalCopies: number
     today: {
       users: number
       prompts: number
@@ -45,6 +47,13 @@ interface DashboardData {
       count: number
       averageViews: number
       averageRating: number
+    }>
+    dailyStats: Array<{
+      date: string
+      views: number
+      copies: number
+      cumulativeViews: number
+      cumulativeCopies: number
     }>
   }
   topContent: {
@@ -109,6 +118,7 @@ export function AdminDashboard() {
           totalPrompts: result.data?.prompts?.total || 0,
           totalViews: result.data?.views || 0,
           totalSearches: result.data?.searches || 0,
+          totalCopies: result.data?.copies || 0,
           today: {
             users: 0, // Пока не реализовано
             prompts: 0,
@@ -124,7 +134,8 @@ export function AdminDashboard() {
         },
         charts: {
           userGrowth: [], // Пока не реализовано
-          categoryStats: []
+          categoryStats: [],
+          dailyStats: result.data?.dailyStats || []
         },
         topContent: {
           prompts: result.data?.prompts?.recent?.map((p: any) => ({
@@ -231,12 +242,12 @@ export function AdminDashboard() {
       color: 'purple'
     },
     {
-      title: 'Поисковых запросов',
-      value: data.overview.totalSearches.toLocaleString(),
-      change: data.overview.today.searches,
+      title: 'Всего копирований',
+      value: data.overview.totalCopies.toLocaleString(),
+      change: 0,
       changeLabel: 'сегодня',
-      icon: Search,
-      color: 'orange'
+      icon: Copy,
+      color: 'emerald'
     }
   ]
 
@@ -312,6 +323,15 @@ export function AdminDashboard() {
       </div>
 
       {/* Графики */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* Главный график - Просмотры и Копирования */}
+        <AdminChart
+          title="📈 Рост просмотров и копирований (по нарастающей за 30 дней)"
+          data={data.charts.dailyStats}
+          type="viewsCopies"
+        />
+      </div>
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AdminChart
           title="Рост пользователей"
