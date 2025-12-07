@@ -1,21 +1,25 @@
-# Simple Deployment Script
-$server = $env:DEPLOY_SERVER_IP
-$username = $env:DEPLOY_SSH_USER
-$password = $env:DEPLOY_SSH_PASS
+# Quick deploy script - uses credentials from deploy-credentials.ps1
+# Usage: 
+#   1. . .\deploy-credentials.ps1   (load credentials)
+#   2. .\deploy-now.ps1              (run deploy)
 
-Write-Host "Deploying to $server..." -ForegroundColor Green
+$ErrorActionPreference = "Stop"
 
-$commands = "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh && echo 'Done'"
-
-Write-Host "Commands: $commands" -ForegroundColor Yellow
-
-if (Get-Command plink -ErrorAction SilentlyContinue) {
-    Write-Host "Executing via plink..." -ForegroundColor Cyan
-    & plink -ssh -batch -pw $password $username@$server $commands
-    Write-Host "Deployment completed!" -ForegroundColor Green
-} else {
-    Write-Host "plink not found. Manual connection required:" -ForegroundColor Red
-    Write-Host "ssh $username@$server" -ForegroundColor White
+if (-not $env:DEPLOY_PASSWORD -or -not $env:DEPLOY_SERVER) {
+    Write-Host "ERROR: Credentials not loaded!" -ForegroundColor Red
+    Write-Host "Run first: . .\deploy-credentials.ps1" -ForegroundColor Yellow
+    exit 1
 }
 
-Write-Host "Check: http://$server" -ForegroundColor Green
+Write-Host "Deploying to $env:DEPLOY_SERVER..." -ForegroundColor Cyan
+
+$plinkPath = "D:\PromptHub\plink.exe"
+$deployCmd = "cd /root/prompthub && git fetch origin && git reset --hard origin/main && bash scripts/deploy.sh"
+
+& $plinkPath -ssh -batch -pw $env:DEPLOY_PASSWORD "$env:DEPLOY_USER@$env:DEPLOY_SERVER" $deployCmd
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "Deploy completed successfully!" -ForegroundColor Green
+} else {
+    Write-Host "Deploy failed!" -ForegroundColor Red
+}
