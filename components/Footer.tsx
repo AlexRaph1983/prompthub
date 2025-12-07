@@ -96,6 +96,25 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+            {/* LiveInternet counter */}
+            <div className="mt-4">
+              <a 
+                href="https://www.liveinternet.ru/click"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
+              >
+                <img 
+                  id="licntC9DE" 
+                  width="31" 
+                  height="31" 
+                  style={{ border: 0 }} 
+                  title="LiveInternet"
+                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
+                  alt=""
+                />
+              </a>
+            </div>
           </div>
         </div>
 
@@ -106,26 +125,6 @@ export default function Footer() {
           <p className="text-xs text-gray-500">
             {t('compliance')}
           </p>
-        </div>
-
-        {/* LiveInternet counter */}
-        <div className="border-t border-gray-800 mt-4 pt-4 flex justify-center">
-          <a 
-            href="https://www.liveinternet.ru/click"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block"
-          >
-            <img 
-              id="licntC9DE" 
-              width="31" 
-              height="31" 
-              style={{ border: 0 }} 
-              title="LiveInternet"
-              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAEALAAAAAABAAEAAAIBTAA7"
-              alt=""
-            />
-          </a>
         </div>
       </div>
     </footer>
