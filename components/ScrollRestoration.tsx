@@ -19,25 +19,33 @@ export function ScrollRestoration() {
     const prevPath = prevPathRef.current
     prevPathRef.current = pathname
     
+    const lastViewedPromptId = sessionStorage.getItem('lastViewedPromptId')
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition')
+    
+    console.log('[ScrollRestoration] pathname changed:', { prevPath, pathname, lastViewedPromptId, savedScrollPosition })
+    
     // Если перешли СО страницы промпта на другую страницу
     const wasOnPromptPage = prevPath.includes('/prompt/')
     const isOnPromptPage = pathname.includes('/prompt/')
     
     if (wasOnPromptPage && !isOnPromptPage) {
-      const lastViewedPromptId = sessionStorage.getItem('lastViewedPromptId')
-      const savedScrollPosition = sessionStorage.getItem('scrollPosition')
+      console.log('[ScrollRestoration] Detected navigation from prompt page, attempting scroll restore')
       
       if (lastViewedPromptId || savedScrollPosition) {
         attemptRef.current = 0
         
         const tryRestoreScroll = () => {
           attemptRef.current++
+          console.log(`[ScrollRestoration] Attempt ${attemptRef.current}`)
           
           if (lastViewedPromptId) {
             const promptElement = document.querySelector(`[data-prompt-id="${lastViewedPromptId}"]`)
+            console.log('[ScrollRestoration] Looking for element:', lastViewedPromptId, 'Found:', !!promptElement)
+            
             if (promptElement) {
               const elementPosition = promptElement.getBoundingClientRect().top + window.scrollY
               const offsetPosition = Math.max(0, elementPosition - 100)
+              console.log('[ScrollRestoration] Scrolling to:', offsetPosition)
               window.scrollTo({ top: offsetPosition, behavior: 'instant' })
               sessionStorage.removeItem('lastViewedPromptId')
               sessionStorage.removeItem('scrollPosition')
@@ -47,6 +55,7 @@ export function ScrollRestoration() {
           
           // Fallback на сохранённую позицию после нескольких попыток
           if (attemptRef.current >= 3 && savedScrollPosition) {
+            console.log('[ScrollRestoration] Fallback to saved position:', savedScrollPosition)
             window.scrollTo({ top: parseInt(savedScrollPosition, 10), behavior: 'instant' })
             sessionStorage.removeItem('lastViewedPromptId')
             sessionStorage.removeItem('scrollPosition')

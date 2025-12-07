@@ -119,8 +119,10 @@ export default function InfinitePromptList({
       })
     } catch {}
     // Сохраняем позицию скролла и ID промпта для восстановления при возврате
-    sessionStorage.setItem('scrollPosition', window.scrollY.toString())
+    const scrollY = window.scrollY
+    sessionStorage.setItem('scrollPosition', scrollY.toString())
     sessionStorage.setItem('lastViewedPromptId', promptId)
+    console.log('[InfinitePromptList] Saving scroll position:', scrollY, 'promptId:', promptId)
     router.push(`/${locale}/prompt/${promptId}`)
   }
 
