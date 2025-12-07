@@ -1,21 +1,69 @@
-# Deploy prompts from prompts_prompthub5.json to Orange Curium server
-$server = "REDACTED_IP"
-$user = "root"
-$password = "REDACTED_PASSWORD"
+# Безопасный deployment скрипт
+# Credentials должны быть установлены через environment variables:
+#   $env:DEPLOY_SERVER - IP сервера
+#   $env:DEPLOY_USER - имя пользователя (по умолчанию root)
+#   $env:DEPLOY_PASSWORD - пароль
+# Или можно передать параметрами при запуске
 
-Write-Host "DEPLOY PROMPTS PROMPTHUB5" -ForegroundColor Green
-Write-Host "========================" -ForegroundColor Green
+param(
+    [string]$Server = $env:DEPLOY_SERVER,
+    [string]$User = $(if ($env:DEPLOY_USER) { $env:DEPLOY_USER } else { "root" }),
+    [string]$Password = $env:DEPLOY_PASSWORD
+)
 
-Write-Host "`n1. Getting changes from GitHub..." -ForegroundColor Yellow
-& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && git fetch origin && git reset --hard origin/main"
+$ErrorActionPreference = "Stop"
 
-Write-Host "`n2. Importing prompts..." -ForegroundColor Yellow
-& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && node scripts/import-prompthub5.js"
+# Проверка credentials
+if (-not $Server) {
+    Write-Error "ERROR: Server IP not set. Set `$env:DEPLOY_SERVER or pass -Server parameter"
+    exit 1
+}
 
-Write-Host "`n3. Deploying application..." -ForegroundColor Yellow
-& .\plink.exe -ssh -pw $password $user@$server "cd /root/prompthub && bash scripts/deploy.sh"
+if (-not $Password) {
+    Write-Error "ERROR: Password not set. Set `$env:DEPLOY_PASSWORD or pass -Password parameter"
+    exit 1
+}
 
-Write-Host "`n4. Checking status..." -ForegroundColor Yellow
-& .\plink.exe -ssh -pw $password $user@$server "pm2 status"
+# Путь к plink
+$plink = ".\plink.exe"
+if (-not (Test-Path $plink)) {
+    $plink = "plink.exe"
+}
 
-Write-Host "`nDEPLOY COMPLETE!" -ForegroundColor Green
+function Run-RemoteCommand {
+    param([string]$Command, [string]$Description)
+    
+    Write-Host "`n[$Description]" -ForegroundColor Cyan
+    Write-Host "Executing: $Command" -ForegroundColor Gray
+    
+    $result = echo y | & $plink -ssh -pw $Password "${User}@${Server}" $Command 2>&1
+    $exitCode = $LASTEXITCODE
+    
+    if ($exitCode -ne 0) {
+        Write-Host "FAILED! Exit code: $exitCode" -ForegroundColor Red
+        Write-Host "Output: $result" -ForegroundColor Red
+        throw "Command failed: $Description (exit code: $exitCode)"
+    }
+    
+    Write-Host "SUCCESS" -ForegroundColor Green
+    return $result
+}
+
+try {
+    Write-Host "=== Starting Deployment ===" -ForegroundColor Yellow
+    Write-Host "Server: $Server" -ForegroundColor White
+    Write-Host "User: $User" -ForegroundColor White
+    
+    # Step 1: Git fetch and reset
+    Run-RemoteCommand "cd /root/prompthub && git fetch origin && git reset --hard origin/main" "Git: Fetch and reset to origin/main"
+    
+    # Step 2: Deploy
+    Run-RemoteCommand "cd /root/prompthub && bash scripts/deploy.sh" "Running deploy script"
+    
+    Write-Host "`n=== Deployment completed successfully! ===" -ForegroundColor Green
+    
+} catch {
+    Write-Host "`n=== DEPLOYMENT FAILED ===" -ForegroundColor Red
+    Write-Host "Error: $_" -ForegroundColor Red
+    exit 1
+}

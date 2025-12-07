@@ -36,3 +36,11 @@ Thumbs.db
 
 # Git installer
 git-installer.exe
+
+# Deployment credentials - NEVER commit these!
+deploy-credentials.ps1
+.deploy-env
+*.credentials
+
+# Legacy deployment scripts with hardcoded credentials
+# These should be removed from repo and history cleaned
