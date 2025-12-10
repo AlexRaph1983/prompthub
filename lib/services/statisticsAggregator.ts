@@ -234,12 +234,33 @@ class StatisticsAggregator {
   async getAllTimeSeries(options: {
     includeTodaySnapshot?: boolean
     logPrefix?: string
+    fallbackDays?: number
   } = {}): Promise<AggregatedDay[]> {
     await this.ensureTable()
     await this.backfillUntilYesterday(options.logPrefix)
 
     const todayKey = this.dateKey(new Date())
     let series = await this.fetchStored()
+
+    // Если нет сохранённых рядов (новая база или сброс), восстановим окно за fallbackDays
+    if (series.length === 0) {
+      const fallbackDays = Math.max(options.fallbackDays || 30, 1)
+      const today = this.startOfDay(new Date())
+      const start = this.addDays(today, -(fallbackDays - 1))
+
+      for (
+        let cursor = start;
+        cursor <= today;
+        cursor = this.addDays(cursor, 1)
+      ) {
+        const snapshot = await this.aggregateDay(cursor, {
+          // Сохраняем, чтобы дальше не пересчитывать одно и то же
+          persist: true,
+          logPrefix: options.logPrefix
+        })
+        series.push(snapshot)
+      }
+    }
 
     if (options.includeTodaySnapshot && !series.some((d) => d.date === todayKey)) {
       const snapshot = await this.aggregateDay(new Date(), {

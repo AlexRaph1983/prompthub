@@ -44,7 +44,8 @@ async function buildDashboardStats(logPrefix: string) {
 
   const allTimeDailyStats = await statisticsAggregator.getAllTimeSeries({
     includeTodaySnapshot: true,
-    logPrefix
+    logPrefix,
+    fallbackDays: 30
   })
 
   // Рабочее окно: последние 7 дней
