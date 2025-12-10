@@ -62,7 +62,7 @@ interface DashboardData {
       cumulativeViews: number
       cumulativeCopies: number
     }>
-    monthlyBaseline?: {
+    windowBaseline?: {
       views: number
       copies: number
     }
@@ -100,11 +100,63 @@ export function AdminDashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [viewsRange, setViewsRange] = useState<'month' | 'all'>('month')
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
     fetchDashboardData()
   }, [])
+
+  const transformDashboardData = (result: any): DashboardData => ({
+    overview: {
+      totalUsers: result.data?.users?.total || 0,
+      totalPrompts: result.data?.prompts?.total || 0,
+      totalViews: result.data?.views || 0,
+      totalSearches: result.data?.searches || 0,
+      totalCopies: result.data?.copies || 0,
+      today: {
+        users: 0, // Пока не реализовано
+        prompts: 0,
+        views: 0,
+        searches: 0
+      },
+      week: {
+        users: 0, // Пока не реализовано
+        prompts: 0,
+        views: 0,
+        searches: 0
+      }
+    },
+    charts: {
+      userGrowth: [], // Пока не реализовано
+      categoryStats: [],
+      dailyStats: result.data?.dailyStats || [],
+      dailyStatsAllTime: result.data?.dailyStatsAllTime || [],
+      windowBaseline: result.data?.windowBaseline || { views: 0, copies: 0 }
+    },
+    topContent: {
+      prompts: result.data?.prompts?.recent?.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        views: p.views || 0,
+        rating: p.averageRating || 0,
+        ratingsCount: p.totalRatings || 0,
+        author: p.author?.name || 'Unknown',
+        createdAt: p.createdAt
+      })) || [],
+      searchQueries: []
+    },
+    recentActivity: {
+      prompts: result.data?.prompts?.recent?.map((p: any) => ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        views: p.views || 0,
+        rating: p.averageRating || 0,
+        author: p.author?.name || 'Unknown',
+        createdAt: p.createdAt
+      })) || []
+    }
+  })
 
   const fetchDashboardData = async () => {
     try {
@@ -123,59 +175,7 @@ export function AdminDashboard() {
       const result = await response.json()
       console.log('📊 API Response:', result)
       
-      // Преобразуем данные в ожидаемый формат
-      const transformedData: DashboardData = {
-        overview: {
-          totalUsers: result.data?.users?.total || 0,
-          totalPrompts: result.data?.prompts?.total || 0,
-          totalViews: result.data?.views || 0,
-          totalSearches: result.data?.searches || 0,
-          totalCopies: result.data?.copies || 0,
-          today: {
-            users: 0, // Пока не реализовано
-            prompts: 0,
-            views: 0,
-            searches: 0
-          },
-          week: {
-            users: 0, // Пока не реализовано
-            prompts: 0,
-            views: 0,
-            searches: 0
-          }
-        },
-        charts: {
-          userGrowth: [], // Пока не реализовано
-          categoryStats: [],
-          dailyStats: result.data?.dailyStats || [],
-          dailyStatsAllTime: result.data?.dailyStatsAllTime || [],
-          monthlyBaseline: result.data?.monthlyBaseline || { views: 0, copies: 0 }
-        },
-        topContent: {
-          prompts: result.data?.prompts?.recent?.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            views: p.views || 0,
-            rating: p.averageRating || 0,
-            ratingsCount: p.totalRatings || 0,
-            author: p.author?.name || 'Unknown',
-            createdAt: p.createdAt
-          })) || [],
-          searchQueries: []
-        },
-        recentActivity: {
-          prompts: result.data?.prompts?.recent?.map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            description: p.description,
-            views: p.views || 0,
-            rating: p.averageRating || 0,
-            author: p.author?.name || 'Unknown',
-            createdAt: p.createdAt
-          })) || []
-        }
-      }
-      
+      const transformedData = transformDashboardData(result)
       console.log('✅ Transformed data:', transformedData)
       setData(transformedData)
     } catch (err) {
@@ -183,6 +183,28 @@ export function AdminDashboard() {
       setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const refreshDashboardData = async () => {
+    try {
+      setRefreshing(true)
+      setError(null)
+      const response = await fetch('/api/admin/dashboard', { method: 'POST' })
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => '')
+        throw new Error(errorText || 'Failed to refresh dashboard')
+      }
+
+      const result = await response.json()
+      const transformedData = transformDashboardData(result)
+      setData(transformedData)
+    } catch (err) {
+      console.error('❌ Dashboard refresh error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setRefreshing(false)
     }
   }
 
@@ -273,10 +295,15 @@ export function AdminDashboard() {
           <Clock className="w-4 h-4" />
           <span>Обновлено: {new Date().toLocaleTimeString('ru-RU')}</span>
           <button
-            onClick={fetchDashboardData}
-            className="ml-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            onClick={refreshDashboardData}
+            disabled={refreshing}
+            className={`ml-2 px-3 py-1 rounded transition-colors ${
+              refreshing
+                ? 'bg-blue-300 text-white cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
           >
-            Обновить
+            {refreshing ? 'Обновление…' : 'Обновить'}
           </button>
         </div>
       </div>
@@ -343,7 +370,7 @@ export function AdminDashboard() {
           title="📈 Рост просмотров и копирований"
           data={data.charts.dailyStats}
           allTimeData={data.charts.dailyStatsAllTime}
-          monthlyBaseline={data.charts.monthlyBaseline}
+          monthlyBaseline={data.charts.windowBaseline}
           type="viewsCopies"
         />
       </div>
