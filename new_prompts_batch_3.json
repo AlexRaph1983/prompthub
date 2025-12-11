@@ -1,0 +1,388 @@
+{
+  "version": "1.0",
+  "submitted_by": {
+    "username": "PromptMaster",
+    "user_id": "",
+    "profile_url": ""
+  },
+  "taxonomy": {
+    "languages": ["English", "Русский", "Español", "Deutsch"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Custom", "Paid"],
+    "categories": ["Chat", "Code", "SEO", "Design", "Legal", "Education", "Image", "Video", "Music", "Audio", "3D", "Animation", "Business", "Marketing", "Writing", "Translation", "Research", "Analysis", "Creative", "Productivity", "Gaming", "Health", "Finance", "Cooking"],
+    "models": ["GPT-5", "OpenAI Sora", "Claude Opus 4.1", "Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Google Veo 3", "Llama 3.1", "Mistral Large", "DeepSeek", "Suno", "AIVA", "Runway Gen-2"]
+  },
+  "items": [
+    {
+      "title": "Генератор структуры диссертации",
+      "summary": "Создает профессиональную структуру диссертации с главами и подглавами.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Education",
+      "license": "CC-BY",
+      "tags": ["диссертация", "научная работа", "структура"],
+      "prompt_text": "Создай подробную структуру диссертации по теме {тема}. Укажи главы, подглавы, цели исследования, гипотезу, объект и предмет исследования.",
+      "variables": [
+        {"name": "тема", "type": "string", "required": true, "description": "Тема диссертации", "example": "цифровая экономика"}
+      ]
+    },
+    {
+      "title": "Структура дипломной работы",
+      "summary": "Формирует логичную структуру диплома.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Education",
+      "license": "CC-BY",
+      "tags": ["диплом", "учеба", "образование"],
+      "prompt_text": "Сформируй структуру дипломной работы по теме {тема}. Разделы: введение, теоретический блок, практическая часть, заключение.",
+      "variables": [
+        {"name": "тема", "type": "string", "required": true, "example": "маркетинг услуг"}
+      ]
+    },
+    {
+      "title": "Пояснение английской грамматики",
+      "summary": "Профессионально объясняет грамматическое правило английского.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Education",
+      "license": "CC0",
+      "tags": ["английский", "грамматика"],
+      "prompt_text": "Объясни правило английского языка: {правило}. Дай простые примеры, частые ошибки и как их избежать.",
+      "variables": [
+        {"name": "правило", "type": "string", "required": true, "example": "Present Perfect"}
+      ]
+    },
+    {
+      "title": "Создание Lofi Hip-Hop композиции",
+      "summary": "Генерирует полную музыкальную схему lofi трека.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
+      "license": "CC-BY",
+      "tags": ["lofi", "music", "hiphop"],
+      "prompt_text": "Create a full lofi hip-hop track structure. Include BPM (70–90), instruments, atmosphere, texture, vinyl noise, chord progression, and mood: {mood}.",
+      "variables": [
+        {"name": "mood", "type": "string", "required": true, "example": "calm and nostalgic"}
+      ]
+    },
+    {
+      "title": "План карьерного развития",
+      "summary": "Создает персональный карьерный план на основе целей пользователя.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Business",
+      "license": "CC-BY",
+      "tags": ["карьера", "рост", "профессия"],
+      "prompt_text": "Создай карьерный план для человека, который хочет стать {цель}. Укажи навыки, шаги, сроки и инструменты развития.",
+      "variables": [
+        {"name": "цель", "type": "string", "required": true, "example": "продуктовым менеджером"}
+      ]
+    },
+    {
+      "title": "Создание текстовой литературной игры",
+      "summary": "Генерирует механику, сюжет и ветвления для интерактивной игры.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Gaming",
+      "license": "CC-BY",
+      "tags": ["игра", "литература", "сюжет"],
+      "prompt_text": "Создай концепт литературной игры по теме {тема}. Укажи сюжет, персонажей, ветвления, систему выборов и финалы.",
+      "variables": [
+        {"name": "тема", "type": "string", "required": true, "example": "путешествие во времени"}
+      ]
+    },
+    {
+      "title": "Промпт для оживления фото",
+      "summary": "Создает фотореалистичный описательный запрос для анимации фото.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["photo animation", "image", "video"],
+      "prompt_text": "Generate a cinematic photo animation. The image shows {описание}. Add subtle breathing motion, blinking, natural lighting, and smooth micro-movements.",
+      "variables": [
+        {"name": "описание", "type": "string", "required": true, "example": "a person in a natural setting"}
+      ]
+    },
+    {
+      "title": "Промпт для предметной фотосъемки",
+      "summary": "Создает точный технический запрос для съёмки товара.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Image",
+      "license": "CC-BY",
+      "tags": ["фотосъемка", "товар", "предметка"],
+      "prompt_text": "Создай описание для предметной съемки товара {товар}. Укажи фон, свет, ракурсы, стиль, атмосферу, дополнительные элементы.",
+      "variables": [
+        {"name": "товар", "type": "string", "required": true, "example": "умные часы"}
+      ]
+    },
+    {
+      "title": "Промпт для создания описания товара",
+      "summary": "Генерирует продающий текст для товара.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Marketing",
+      "license": "CC-BY",
+      "tags": ["товар", "описание", "маркетинг"],
+      "prompt_text": "Создай продающее описание товара {товар}. Включи преимущества, выгоды, боли клиента и стиль: {стиль}.",
+      "variables": [
+        {"name": "товар", "type": "string", "required": true, "example": "беспроводные наушники"},
+        {"name": "стиль", "type": "string", "required": false, "example": "эмоциональный"}
+      ]
+    },
+    {
+      "title": "Генератор сюрреалистических образов",
+      "summary": "Создаёт концепт сюрреалистической сцены.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["сюрреализм", "арт", "концепт"],
+      "prompt_text": "Создай сюрреалистическую сцену по теме {тема}. Опиши атмосферу, символику, цвет, композицию и эмоциональный эффект.",
+      "variables": [
+        {"name": "тема", "type": "string", "required": true, "example": "сон в туманном городе"}
+      ]
+    },
+    {
+      "title": "Психологический разбор ситуации",
+      "summary": "Профессионально объясняет причины поведения человека.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Analysis",
+      "license": "CC-BY",
+      "tags": ["психология", "анализ", "поведение"],
+      "prompt_text": "Проанализируй психологическую ситуацию: {ситуация}. Определи причины, механизмы, эмоции и возможные решения.",
+      "variables": [
+        {"name": "ситуация", "type": "string", "required": true, "example": "человек избегает конфликтов"}
+      ]
+    },
+    {
+      "title": "Создание профессионального резюме",
+      "summary": "Формирует резюме под вакансию.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Business",
+      "license": "CC-BY",
+      "tags": ["резюме", "карьера"],
+      "prompt_text": "Создай профессиональное резюме для специалиста {специальность} с опытом {опыт}. Укажи навыки, достижения и сильные стороны.",
+      "variables": [
+        {"name": "специальность", "type": "string", "required": true},
+        {"name": "опыт", "type": "string", "required": false}
+      ]
+    },
+    {
+      "title": "Индивидуальный план тренировки",
+      "summary": "Генерирует программу тренировок.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Health",
+      "license": "CC-BY",
+      "tags": ["спорт", "тренировка"],
+      "prompt_text": "Создай тренировочный план для цели {цель}, уровень — {уровень}, ограничения — {ограничения}.",
+      "variables": [
+        {"name": "цель", "type": "string", "required": true},
+        {"name": "уровень", "type": "string", "required": false},
+        {"name": "ограничения", "type": "string", "required": false}
+      ]
+    },
+    {
+      "title": "Индивидуальная программа ухода за телом",
+      "summary": "Генерирует персональный план ухода.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Health",
+      "license": "CC-BY",
+      "tags": ["косметология", "уход"],
+      "prompt_text": "Создай программу ухода за телом для типа кожи: {тип}. Цель: {цель}. Формат — утро/вечер.",
+      "variables": [
+        {"name": "тип", "type": "string", "required": true},
+        {"name": "цель", "type": "string", "required": false}
+      ]
+    },
+    {
+      "title": "Промпт для профессиональной предметной фотосъемки",
+      "summary": "Уточнённая постановка света, композиции и стиля.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Image",
+      "license": "CC-BY",
+      "tags": ["product photography", "studio"],
+      "prompt_text": "Create a high-end product photography scene for {product}. Use soft diffused lighting, solid background, reflective highlights, and cinematic macro details.",
+      "variables": [
+        {"name": "product", "type": "string", "required": true, "example": "luxury watch"}
+      ]
+    },
+    {
+      "title": "Сценарий предметной фотосессии",
+      "summary": "Полное описание процесса съёмки предметки.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Design",
+      "license": "CC-BY",
+      "tags": ["фотосессия", "предметная съемка"],
+      "prompt_text": "Составь сценарий предметной фотосессии для объекта {объект}: свет, композиция, реквизит, фон, ракурсы.",
+      "variables": [{"name": "объект", "type": "string", "required": true}]
+    },
+    {
+      "title": "Проектное задание для школьника",
+      "summary": "Создает проект о Китайской стене для 5 класса.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Education",
+      "license": "CC-BY",
+      "tags": ["школа", "проект"],
+      "prompt_text": "Создай школьный проект (5 класс) на тему Великая Китайская стена. Включи историю, факты, иллюстрации, интересные детали."
+    },
+    {
+      "title": "Сказка с подсчетом слов при- и пре-",
+      "summary": "Создает сказку и автоматически считает слова с приставками.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["сказка", "дети", "приставки"],
+      "prompt_text": "Придумай сказку на тему {тема}, используй как можно больше слов с приставками при- и пре-. В конце покажи количество слов с каждой приставкой.",
+      "variables": [{"name": "тема", "type": "string", "required": true}]
+    },
+    {
+      "title": "Оценка необоротных активов",
+      "summary": "Создаёт структурированный расчёт и анализ НП.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Finance",
+      "license": "CC-BY-SA",
+      "tags": ["финансы", "оценка"],
+      "prompt_text": "Сделай оценку необоротных активов организации: {организация}. Укажи методы оценки, риски, стоимость.",
+      "variables": [
+        {"name": "организация", "type": "string", "required": true, "example": "ООО Ромашка"}
+      ]
+    },
+    {
+      "title": "Создание образа Снегурочки",
+      "summary": "Создает визуальное и сюжетное описание для сказочного персонажа.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["снегурочка", "сказка"],
+      "prompt_text": "Создай образ Снегурочки в стиле {стиль}. Укажи внешность, характер, окружение, сюжетные элементы.",
+      "variables": [{"name": "стиль", "type": "string", "required": true, "example": "современный"}]
+    },
+    {
+      "title": "Художественное описание пляжной сцены",
+      "summary": "Этичное, не NSFW описание пляжной атмосферы.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["пляж", "атмосфера"],
+      "prompt_text": "Опиши художественную пляжную сцену с девушкой в купальнике. Фокус на атмосфере, пейзаже, свете и настроении. Без сексуализации."
+    },
+    {
+      "title": "Профессиональный Code Review",
+      "summary": "Делает подробный аудит кода.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Code",
+      "license": "CC-BY",
+      "tags": ["code", "review"],
+      "prompt_text": "Provide a professional code review. Input code: {code}. Analyze structure, logic, readability, performance, and give improvements.",
+      "variables": [{"name": "code", "type": "string", "required": true}]
+    },
+    {
+      "title": "Генератор кода по ТЗ",
+      "summary": "Создаёт код по спецификации.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Code",
+      "license": "CC-BY",
+      "tags": ["code", "generate"],
+      "prompt_text": "Generate clean code in {language} based on this technical specification: {spec}.",
+      "variables": [
+        {"name": "language", "type": "string", "required": true, "example": "TypeScript"},
+        {"name": "spec", "type": "string", "required": true, "example": "create a REST API endpoint"}
+      ]
+    },
+    {
+      "title": "Видео-съёмка предметки",
+      "summary": "Создаёт техническую постановку ролика.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["video", "product"],
+      "prompt_text": "Create a cinematic product video featuring {product}. Include rotating shots, macro details, soft lighting and clean minimalist background.",
+      "variables": [
+        {"name": "product", "type": "string", "required": true, "example": "smartphone"}
+      ]
+    },
+    {
+      "title": "Составление нормативного документа",
+      "summary": "Формирует нормативный акт по теме.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Legal",
+      "license": "CC-BY-SA",
+      "tags": ["нормативно", "право"],
+      "prompt_text": "Составь нормативный документ по теме {тема}. Укажи определения, обязанности, права, порядок действий.",
+      "variables": [{"name": "тема", "type": "string", "required": true, "example": "защита персональных данных"}]
+    },
+    {
+      "title": "Психологический совет",
+      "summary": "Дает рекомендации по улучшению состояния.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Health",
+      "license": "CC-BY",
+      "tags": ["психология", "совет"],
+      "prompt_text": "Дай психологическую рекомендацию человеку в ситуации: {ситуация}. Описывай мягко и поддерживающе.",
+      "variables": [
+        {"name": "ситуация", "type": "string", "required": true, "example": "стресс на работе"}
+      ]
+    },
+    {
+      "title": "Улучшение переписки",
+      "summary": "Улучшает сообщения в деловом стиле.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Chat",
+      "license": "CC-BY",
+      "tags": ["чат", "деловое общение"],
+      "prompt_text": "Перепиши сообщение в деловом тоне: {текст}. Сохрани смысл, сделай вежливее.",
+      "variables": [{"name": "текст", "type": "string", "required": true}]
+    },
+    {
+      "title": "Создание анимации портрета",
+      "summary": "Анимация лица с реалистичными микродвижениями.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["portrait", "animation"],
+      "prompt_text": "Animate a portrait photo. Add natural blinking, subtle head motion, breathing, realistic facial micro-expressions."
+    },
+    {
+      "title": "Сюрреалистическое видео для Sora",
+      "summary": "Генерирует видео-сцену в стиле сюрреализма.",
+      "language": "English",
+      "model": "OpenAI Sora",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["surreal", "video"],
+      "prompt_text": "Create a surreal video scene themed {theme}. Include dreamlike transitions, symbolic objects, floating elements and cinematic lighting.",
+      "variables": [{"name": "theme", "type": "string", "required": true, "example": "floating city in clouds"}]
+    },
+    {
+      "title": "Анализ карьерных возможностей",
+      "summary": "Делает анализ подходящих профессий.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Analysis",
+      "license": "CC-BY",
+      "tags": ["карьера", "профессии"],
+      "prompt_text": "Составь анализ подходящих профессий для человека с навыками: {навыки}. Укажи варианты роста и рекомендованный путь.",
+      "variables": [{"name": "навыки", "type": "string", "required": true, "example": "программирование, дизайн"}]
+    }
+  ]
+}
+
