@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import crypto from 'crypto'
+import { incrementPromptStats } from '@/lib/services/dailyStatsService'
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,6 +27,11 @@ export async function POST(req: NextRequest) {
         weight: typeof weight === 'number' && isFinite(weight) ? weight : 1,
       },
     })
+
+    if (String(type).toLowerCase() === 'copy') {
+      await incrementPromptStats({ promptId, type: 'copy' })
+    }
+
     return NextResponse.json({ ok: true })
   } catch (e) {
     // non-fatal

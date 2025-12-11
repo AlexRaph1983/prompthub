@@ -69,11 +69,18 @@ export function AdminChart({ title, data, type, allTimeData, monthlyBaseline }: 
 
     const chartData = isAllTime ? safeAllTime : safeData
 
+    const fallbackBaselineViews = chartData.length
+      ? Math.max((chartData[0]?.cumulativeViews || 0) - (chartData[0]?.views || 0), 0)
+      : 0
+    const fallbackBaselineCopies = chartData.length
+      ? Math.max((chartData[0]?.cumulativeCopies || 0) - (chartData[0]?.copies || 0), 0)
+      : 0
+
     const baselineViews = !isAllTime
-      ? Math.max(monthlyBaseline?.views || 0, 0)
+      ? Math.max(monthlyBaseline?.views ?? fallbackBaselineViews, fallbackBaselineViews, 0)
       : 0
     const baselineCopies = !isAllTime
-      ? Math.max(monthlyBaseline?.copies || 0, 0)
+      ? Math.max(monthlyBaseline?.copies ?? fallbackBaselineCopies, fallbackBaselineCopies, 0)
       : 0
 
     // Защита от пустых или некорректных данных
@@ -98,8 +105,8 @@ export function AdminChart({ title, data, type, allTimeData, monthlyBaseline }: 
     const divisor = Math.max(dataLen - 1, 1)
     
     const valuesForScale = chartData.map((d: any) => ({
-      views: baselineViews + (d?.cumulativeViews || 0),
-      copies: baselineCopies + (d?.cumulativeCopies || 0)
+      views: Math.max((d?.cumulativeViews || 0) - baselineViews, 0),
+      copies: Math.max((d?.cumulativeCopies || 0) - baselineCopies, 0)
     }))
 
     const maxViews = Math.max(...valuesForScale.map(d => d.views), 1)
@@ -107,15 +114,15 @@ export function AdminChart({ title, data, type, allTimeData, monthlyBaseline }: 
     const maxValue = Math.max(maxViews, maxCopies, 1)
     
     const lastDay = chartData[chartData.length - 1]
-    const totalViews = baselineViews + (lastDay?.cumulativeViews || 0)
-    const totalCopies = baselineCopies + (lastDay?.cumulativeCopies || 0)
+    const totalViews = Math.max((lastDay?.cumulativeViews || 0) - baselineViews, 0)
+    const totalCopies = Math.max((lastDay?.cumulativeCopies || 0) - baselineCopies, 0)
     
     // Функция для безопасного вычисления координат
     const getX = (i: number) => (i / divisor) * 600
     const getViewY = (d: any) =>
-      200 - ((baselineViews + (d?.cumulativeViews || 0)) / maxValue) * 180
+      200 - (Math.max((d?.cumulativeViews || 0) - baselineViews, 0) / maxValue) * 180
     const getCopyY = (d: any) =>
-      200 - ((baselineCopies + (d?.cumulativeCopies || 0)) / maxValue) * 180
+      200 - (Math.max((d?.cumulativeCopies || 0) - baselineCopies, 0) / maxValue) * 180
 
     const formatNumber = (value: number) => {
       if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
@@ -237,7 +244,7 @@ export function AdminChart({ title, data, type, allTimeData, monthlyBaseline }: 
                 >
                   <title>
                     {`${d?.date || ''} • Просмотры: ${formatNumber(
-                      baselineViews + (d?.cumulativeViews || 0)
+                      Math.max((d?.cumulativeViews || 0) - baselineViews, 0)
                     )}`}
                   </title>
                 </circle>
@@ -259,7 +266,7 @@ export function AdminChart({ title, data, type, allTimeData, monthlyBaseline }: 
                 >
                   <title>
                     {`${d?.date || ''} • Копирования: ${formatNumber(
-                      baselineCopies + (d?.cumulativeCopies || 0)
+                      Math.max((d?.cumulativeCopies || 0) - baselineCopies, 0)
                     )}`}
                   </title>
                 </circle>

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { onViewsUpdated } from '@/lib/viewsIntegration'
 import { AntifraudEngine, AntifraudContext } from '@/lib/antifraud'
+import { incrementPromptStats } from '@/lib/services/dailyStatsService'
 
 const requestSchema = z.object({
   cardId: z.string().min(1),
@@ -192,6 +193,9 @@ export async function POST(req: NextRequest) {
     Promise.resolve(onViewsUpdated(cardId, updated.views)).catch(error => {
       console.error(`[TRACK-VIEW:${requestId}] Views integration failed:`, error)
     })
+
+    // Записываем ежедневную статистику
+    await incrementPromptStats({ promptId: cardId, type: 'view' })
 
     return NextResponse.json({
       counted: true,

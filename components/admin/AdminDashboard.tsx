@@ -17,6 +17,7 @@ import { AdminChart } from './AdminChart'
 import { AdminRecentActivity } from './AdminRecentActivity'
 
 interface DashboardData {
+  lastUpdated: string | null
   overview: {
     totalUsers: number
     totalPrompts: number
@@ -49,6 +50,13 @@ interface DashboardData {
       averageRating: number
     }>
     dailyStats: Array<{
+      date: string
+      views: number
+      copies: number
+      cumulativeViews: number
+      cumulativeCopies: number
+    }>
+    dailyStatsLastWeek?: Array<{
       date: string
       views: number
       copies: number
@@ -107,6 +115,7 @@ export function AdminDashboard() {
   }, [])
 
   const transformDashboardData = (result: any): DashboardData => ({
+    lastUpdated: result.data?.lastUpdated || result.data?.timestamp || null,
     overview: {
       totalUsers: result.data?.users?.total || 0,
       totalPrompts: result.data?.prompts?.total || 0,
@@ -130,6 +139,7 @@ export function AdminDashboard() {
       userGrowth: [], // Пока не реализовано
       categoryStats: [],
       dailyStats: result.data?.dailyStats || [],
+      dailyStatsLastWeek: result.data?.dailyStatsLastWeek || [],
       dailyStatsAllTime: result.data?.dailyStatsAllTime || [],
       windowBaseline: result.data?.windowBaseline || { views: 0, copies: 0 }
     },
@@ -293,7 +303,12 @@ export function AdminDashboard() {
         <h1 className="text-2xl font-bold text-gray-900">Дашборд</h1>
         <div className="flex items-center space-x-2 text-sm text-gray-500">
           <Clock className="w-4 h-4" />
-          <span>Обновлено: {new Date().toLocaleTimeString('ru-RU')}</span>
+          <span>
+            Обновлено:{' '}
+            {data.lastUpdated
+              ? new Date(data.lastUpdated).toLocaleTimeString('ru-RU')
+              : '—'}
+          </span>
           <button
             onClick={refreshDashboardData}
             disabled={refreshing}

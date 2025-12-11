@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { statisticsAggregator } from '@/lib/services/statisticsAggregator'
+import { getDailySeries, rebuildAllDailyStats } from '@/lib/services/dailyStatsService'
 
 type DailyStat = {
   date: string
@@ -10,16 +10,10 @@ type DailyStat = {
   cumulativeCopies: number
 }
 
-async function buildDashboardStats(logPrefix: string) {
+async function buildDashboardStats() {
   const totalUsers = await prisma.user.count()
   const totalPrompts = await prisma.prompt.count()
-  const totalViews = await prisma.prompt.aggregate({
-    _sum: { views: true }
-  })
   const totalSearches = await prisma.searchQuery.count()
-  const totalCopies = await prisma.promptInteraction.count({
-    where: { type: 'copy' }
-  })
 
   const recentPrompts = await prisma.prompt.findMany({
     take: 5,
@@ -42,34 +36,23 @@ async function buildDashboardStats(logPrefix: string) {
     }
   })
 
-  const allTimeDailyStats = await statisticsAggregator.getAllTimeSeries({
-    includeTodaySnapshot: true,
-    logPrefix,
-    fallbackDays: 30
-  })
+  const [monthStats, allStats, weekStats] = await Promise.all([
+    getDailySeries('month'),
+    getDailySeries('all'),
+    getDailySeries('last7')
+  ])
 
-  // Рабочее окно: последние 7 дней
-  const WINDOW_DAYS = 7
-  let lastWindowStats: DailyStat[] = []
-  let windowBaselineViews = 0
-  let windowBaselineCopies = 0
+  const totalViews = monthStats.totals.views
+  const totalCopies = monthStats.totals.copies
 
-  if (allTimeDailyStats.length > 0) {
-    const totalDays = allTimeDailyStats.length
+  const lastMonthStats: DailyStat[] = monthStats.series
+  const lastWeekStats: DailyStat[] = weekStats.series
+  const allTimeDailyStats: DailyStat[] = allStats.series
 
-    if (totalDays <= WINDOW_DAYS) {
-      lastWindowStats = [...allTimeDailyStats]
-    } else {
-      lastWindowStats = allTimeDailyStats.slice(-WINDOW_DAYS)
-
-      const baselineIndex = totalDays - WINDOW_DAYS - 1
-      if (baselineIndex >= 0) {
-        const baselineDay = allTimeDailyStats[baselineIndex]
-        windowBaselineViews = baselineDay.cumulativeViews
-        windowBaselineCopies = baselineDay.cumulativeCopies
-      }
-    }
-  }
+  const lastUpdatedDate =
+    monthStats.lastUpdated ||
+    allStats.lastUpdated ||
+    null
 
   const stats = {
     users: {
@@ -80,15 +63,17 @@ async function buildDashboardStats(logPrefix: string) {
       total: totalPrompts,
       recent: recentPrompts
     },
-    views: totalViews._sum.views || 0,
+    views: totalViews || 0,
     searches: totalSearches,
     copies: totalCopies,
-    dailyStats: lastWindowStats,
+    dailyStats: lastMonthStats,
+    dailyStatsLastWeek: lastWeekStats,
     dailyStatsAllTime: allTimeDailyStats,
     windowBaseline: {
-      views: windowBaselineViews,
-      copies: windowBaselineCopies
-    }
+      views: monthStats.baseline.views,
+      copies: monthStats.baseline.copies
+    },
+    lastUpdated: lastUpdatedDate ? new Date(lastUpdatedDate).toISOString() : null
   }
 
   console.log('📊 Dashboard stats:', {
@@ -105,7 +90,7 @@ export async function GET(request: NextRequest) {
     console.log('🔍 Admin dashboard API called')
 
     // TODO: вернуть проверку прав admin
-    const stats = await buildDashboardStats('[admin-dashboard]')
+    const stats = await buildDashboardStats()
 
     return NextResponse.json({ success: true, data: stats })
   } catch (error) {
@@ -122,10 +107,9 @@ export async function POST(_request: NextRequest) {
     console.log('♻️ Admin dashboard refresh triggered')
 
     // TODO: вернуть проверку прав admin
-    await statisticsAggregator.backfillUntilYesterday('[admin-dashboard-refresh]')
-    await statisticsAggregator.aggregateDay(new Date(), { logPrefix: '[admin-dashboard-refresh]' })
+    await rebuildAllDailyStats({ includeToday: true })
 
-    const stats = await buildDashboardStats('[admin-dashboard-refresh]')
+    const stats = await buildDashboardStats()
 
     return NextResponse.json({ success: true, data: stats })
   } catch (error) {
