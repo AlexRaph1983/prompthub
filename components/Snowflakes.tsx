@@ -17,8 +17,8 @@ export function Snowflakes() {
   const [styles, setStyles] = useState<string>('')
 
   useEffect(() => {
-    // Создаём 50 снежинок с разными параметрами
-    const flakes: Snowflake[] = Array.from({ length: 50 }, (_, i) => ({
+    // Создаём 60 снежинок с разными параметрами
+    const flakes: Snowflake[] = Array.from({ length: 60 }, (_, i) => ({
       id: i,
       left: Math.random() * 100, // Позиция по горизонтали (0-100%)
       delay: Math.random() * 5, // Задержка начала анимации (0-5s)
@@ -56,7 +56,7 @@ export function Snowflakes() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none z-30 overflow-hidden">
         {snowflakes.map((flake) => (
           <div
             key={flake.id}
@@ -66,7 +66,9 @@ export function Snowflakes() {
               fontSize: `${flake.size}px`,
               opacity: flake.opacity,
               animation: `snowfall-${flake.id} ${flake.duration}s linear ${flake.delay}s infinite`,
-              top: '-10px'
+              top: '-10px',
+              color: 'rgba(255,255,255,0.85)',
+              textShadow: '0 0 6px rgba(255,255,255,0.5), 0 0 12px rgba(200,220,255,0.4)'
             }}
           >
             ❄
