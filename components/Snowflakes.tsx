@@ -15,7 +15,7 @@ interface Snowflake {
 }
 
 export function Snowflakes() {
-  const { enabled } = useSnow()
+  const { enabled, hydrated } = useSnow()
   const [snowflakes, setSnowflakes] = useState<Snowflake[]>([])
   const [styles, setStyles] = useState<string>('')
   const [parallax, setParallax] = useState(0)
@@ -78,7 +78,8 @@ export function Snowflakes() {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
-  if (!enabled) return null
+  // Избегаем рассинхрона SSR/CSR: пока не знаем состояние (до hydration) — не рисуем
+  if (!hydrated || !enabled) return null
 
   return (
     <>

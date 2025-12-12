@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 
 type SnowContextValue = {
   enabled: boolean
+  hydrated: boolean
   toggle: () => void
 }
 
@@ -13,6 +14,7 @@ const STORAGE_KEY = 'prompt-hub:snow-enabled'
 
 export function SnowProvider({ children }: { children: React.ReactNode }) {
   const [enabled, setEnabled] = useState(true)
+  const [hydrated, setHydrated] = useState(false)
 
   // Инициализация из localStorage
   useEffect(() => {
@@ -24,6 +26,7 @@ export function SnowProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // noop
     }
+    setHydrated(true)
   }, [])
 
   const toggle = useCallback(() => {
@@ -39,7 +42,7 @@ export function SnowProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <SnowContext.Provider value={{ enabled, toggle }}>
+    <SnowContext.Provider value={{ enabled, hydrated, toggle }}>
       {children}
     </SnowContext.Provider>
   )
