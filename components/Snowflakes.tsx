@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSnow } from '@/contexts/SnowContext'
 
 interface Snowflake {
   id: number
@@ -10,23 +11,37 @@ interface Snowflake {
   size: number
   opacity: number
   drift: number
+  color: string
 }
 
 export function Snowflakes() {
+  const { enabled } = useSnow()
   const [snowflakes, setSnowflakes] = useState<Snowflake[]>([])
   const [styles, setStyles] = useState<string>('')
+  const [parallax, setParallax] = useState(0)
 
   useEffect(() => {
-    // Создаём 60 снежинок с разными параметрами
-    const flakes: Snowflake[] = Array.from({ length: 60 }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100, // Позиция по горизонтали (0-100%)
-      delay: Math.random() * 5, // Задержка начала анимации (0-5s)
-      duration: 15 + Math.random() * 10, // Длительность падения (15-25s) - медленно
-      size: 4 + Math.random() * 6, // Размер снежинки (4-10px)
-      opacity: 0.3 + Math.random() * 0.5, // Прозрачность (0.3-0.8)
-      drift: (Math.random() - 0.5) * 30 // Дрейф влево/вправо (-15px до +15px)
-    }))
+    const palette = ['#cfe8ff', '#b7d7ff', '#e6f4ff']
+
+    // Создаём 70 снежинок с разными параметрами
+    const flakes: Snowflake[] = Array.from({ length: 70 }, (_, i) => {
+      const size = 4 + Math.random() * 6 // Размер снежинки (4-10px)
+      // Чем меньше размер, тем медленнее падает (имитация глубины/парралакса)
+      const base = 12 + Math.random() * 6 // 12-18
+      const factor = 10 / size // до ~2.5 для мелких
+      const duration = base * factor + 8 // ~20-45s для мелких, быстрее для крупных
+
+      return {
+        id: i,
+        left: Math.random() * 100, // Позиция по горизонтали (0-100%)
+        delay: Math.random() * 5, // Задержка начала анимации (0-5s)
+        size,
+        duration,
+        opacity: 0.3 + Math.random() * 0.5, // Прозрачность (0.3-0.8)
+        drift: (Math.random() - 0.5) * 40, // Дрейф влево/вправо (-20px до +20px)
+        color: palette[Math.floor(Math.random() * palette.length)]
+      }
+    })
     setSnowflakes(flakes)
 
     // Генерируем CSS для анимаций
@@ -53,10 +68,25 @@ export function Snowflakes() {
     setStyles(css)
   }, [])
 
+  // Эффект параллакса — лёгкий сдвиг при скролле
+  useEffect(() => {
+    const handler = () => {
+      setParallax(window.scrollY * 0.05) // 5% от скролла
+    }
+    handler()
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
+
+  if (!enabled) return null
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
-      <div className="fixed inset-0 pointer-events-none z-30 overflow-hidden">
+      <div
+        className="fixed inset-0 pointer-events-none z-20 overflow-hidden"
+        style={{ transform: `translateY(${parallax}px)`, willChange: 'transform' }}
+      >
         {snowflakes.map((flake) => (
           <div
             key={flake.id}
@@ -67,8 +97,9 @@ export function Snowflakes() {
               opacity: flake.opacity,
               animation: `snowfall-${flake.id} ${flake.duration}s linear ${flake.delay}s infinite`,
               top: '-10px',
-              color: 'rgba(255,255,255,0.85)',
-              textShadow: '0 0 6px rgba(255,255,255,0.5), 0 0 12px rgba(200,220,255,0.4)'
+              color: flake.color,
+              textShadow: '0 0 6px rgba(150,190,255,0.6), 0 0 12px rgba(140,180,255,0.35)',
+              filter: 'drop-shadow(0 0 4px rgba(140,180,255,0.5))'
             }}
           >
             ❄

@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useAdmin } from '@/hooks/useAdmin'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useSnow } from '@/contexts/SnowContext'
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -26,6 +27,7 @@ export function Navigation() {
   const { session, isAuthenticated, isLoading, signIn, signOut } = useAuth()
   const { isAdmin, role, permissions } = useAdmin()
   const { toggleModal } = usePromptStore()
+  const { enabled: snowEnabled, toggle: toggleSnow } = useSnow()
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname() || '/'
   const [, seg] = pathname.split('/')
@@ -58,13 +60,17 @@ export function Navigation() {
           <div className="flex items-center gap-4">
             <Link href={`/${currentLocale}`} className="group inline-flex items-center gap-2" aria-label="PromptHub home">
               <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">{t('appName')}</span>
-              <span
-                aria-label="Новогоднее настроение"
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-lg leading-none shadow-sm ring-1 ring-amber-200"
-              >
-                🎅
-              </span>
             </Link>
+            <button
+              type="button"
+              onClick={toggleSnow}
+              aria-pressed={snowEnabled}
+              aria-label={snowEnabled ? 'Выключить снег' : 'Включить снег'}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-amber-200 text-xl leading-none shadow-sm ring-1 ring-amber-300 hover:bg-amber-300 transition"
+              title={snowEnabled ? 'Выключить снег' : 'Включить снег'}
+            >
+              🎅
+            </button>
 
             <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
               <Link href={`/${currentLocale}/home`} className="inline-flex items-center gap-2">
