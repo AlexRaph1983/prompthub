@@ -58,7 +58,12 @@ export function Navigation() {
           <div className="flex items-center gap-4">
             <Link href={`/${currentLocale}`} className="group inline-flex items-center gap-2" aria-label="PromptHub home">
               <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">{t('appName')}</span>
-              <Badge className="uppercase text-[10px] tracking-wide bg-amber-500 text-white shadow-sm">beta</Badge>
+              <span
+                aria-label="Новогоднее настроение"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-100 text-lg leading-none shadow-sm ring-1 ring-amber-200"
+              >
+                🎅
+              </span>
             </Link>
 
             <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
