@@ -66,10 +66,14 @@ export function Navigation() {
               onClick={toggleSnow}
               aria-pressed={snowEnabled}
               aria-label={snowEnabled ? 'Выключить снег' : 'Включить снег'}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-amber-200 text-xl leading-none shadow-sm ring-1 ring-amber-300 hover:bg-amber-300 transition"
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-full text-2xl leading-none shadow-sm ring-1 transition ${
+                snowEnabled
+                  ? 'bg-sky-100 ring-sky-200 hover:bg-sky-200'
+                  : 'bg-slate-100 ring-slate-200 opacity-60 grayscale hover:opacity-80'
+              }`}
               title={snowEnabled ? 'Выключить снег' : 'Включить снег'}
             >
-              🎅
+              🧑‍🎄
             </button>
 
             <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">

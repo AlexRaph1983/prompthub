@@ -53,4 +53,3 @@ export function useSnow() {
   if (!ctx) throw new Error('useSnow must be used within SnowProvider')
   return ctx
 }
-

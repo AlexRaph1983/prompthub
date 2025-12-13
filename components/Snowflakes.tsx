@@ -18,13 +18,18 @@ export function Snowflakes() {
   const { enabled, hydrated } = useSnow()
   const [snowflakes, setSnowflakes] = useState<Snowflake[]>([])
   const [styles, setStyles] = useState<string>('')
-  const [parallax, setParallax] = useState(0)
 
   useEffect(() => {
     const palette = ['#cfe8ff', '#b7d7ff', '#e6f4ff']
+    const isMobile =
+      typeof window !== 'undefined' &&
+      (window.matchMedia?.('(pointer: coarse)').matches ||
+        window.matchMedia?.('(max-width: 768px)').matches)
 
-    // Создаём 70 снежинок с разными параметрами
-    const flakes: Snowflake[] = Array.from({ length: 70 }, (_, i) => {
+    // На мобильных меньше снежинок, чтобы не лагало при скролле
+    const count = isMobile ? 40 : 70
+
+    const flakes: Snowflake[] = Array.from({ length: count }, (_, i) => {
       const size = 4 + Math.random() * 6 // Размер снежинки (4-10px)
       // Чем меньше размер, тем медленнее падает (имитация глубины/парралакса)
       const base = 12 + Math.random() * 6 // 12-18
@@ -48,34 +53,24 @@ export function Snowflakes() {
     const css = flakes.map((flake) => `
       @keyframes snowfall-${flake.id} {
         0% {
-          transform: translateY(0) translateX(0) rotate(0deg);
+          transform: translate3d(0, 0, 0) rotate(0deg);
         }
         25% {
-          transform: translateY(25vh) translateX(${flake.drift * 0.25}px) rotate(90deg);
+          transform: translate3d(${flake.drift * 0.25}px, 25vh, 0) rotate(90deg);
         }
         50% {
-          transform: translateY(50vh) translateX(${flake.drift * 0.5}px) rotate(180deg);
+          transform: translate3d(${flake.drift * 0.5}px, 50vh, 0) rotate(180deg);
         }
         75% {
-          transform: translateY(75vh) translateX(${flake.drift * 0.75}px) rotate(270deg);
+          transform: translate3d(${flake.drift * 0.75}px, 75vh, 0) rotate(270deg);
         }
         100% {
-          transform: translateY(100vh) translateX(${flake.drift}px) rotate(360deg);
+          transform: translate3d(${flake.drift}px, 100vh, 0) rotate(360deg);
         }
       }
     `).join('\n')
 
     setStyles(css)
-  }, [])
-
-  // Эффект параллакса — лёгкий сдвиг при скролле
-  useEffect(() => {
-    const handler = () => {
-      setParallax(window.scrollY * 0.05) // 5% от скролла
-    }
-    handler()
-    window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
   }, [])
 
   // Избегаем рассинхрона SSR/CSR: пока не знаем состояние (до hydration) — не рисуем
@@ -84,10 +79,8 @@ export function Snowflakes() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
-      <div
-        className="fixed inset-0 pointer-events-none z-20 overflow-hidden"
-        style={{ transform: `translateY(${parallax}px)`, willChange: 'transform' }}
-      >
+      {/* Снег за блоками: ниже контента, выше фона */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         {snowflakes.map((flake) => (
           <div
             key={flake.id}
@@ -99,8 +92,7 @@ export function Snowflakes() {
               animation: `snowfall-${flake.id} ${flake.duration}s linear ${flake.delay}s infinite`,
               top: '-10px',
               color: flake.color,
-              textShadow: '0 0 6px rgba(150,190,255,0.6), 0 0 12px rgba(140,180,255,0.35)',
-              filter: 'drop-shadow(0 0 4px rgba(140,180,255,0.5))'
+              willChange: 'transform'
             }}
           >
             ❄
