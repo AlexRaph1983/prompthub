@@ -462,7 +462,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   
   if (isLoadingPrompt) {
     return (
-      <main className="bg-gray-50 min-h-screen pb-12">
+      <main className="bg-transparent min-h-screen pb-12">
         <div className="mx-auto max-w-4xl px-4 py-8">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600 mx-auto mb-4"></div>
@@ -475,7 +475,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   
   if (!prompt) {
     return (
-      <main className="bg-gray-50 min-h-screen pb-12">
+      <main className="bg-transparent min-h-screen pb-12">
         <div className="mx-auto max-w-4xl px-4 py-8">
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">{t('common.notFound')}</p>
@@ -490,7 +490,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   }
 
   return (
-    <main className="bg-gray-50 min-h-screen pb-12">
+    <main className="bg-transparent min-h-screen pb-12">
       <div className="mx-auto max-w-4xl px-4 py-8">
         <Button 
           onClick={handleGoBack} 

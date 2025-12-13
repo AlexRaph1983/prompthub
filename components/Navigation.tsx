@@ -56,10 +56,10 @@ export function Navigation() {
   return (
     <nav className="bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between min-h-16">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-y-2 py-2 sm:min-h-16 sm:py-0">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link href={`/${currentLocale}`} className="group inline-flex items-center gap-2" aria-label="PromptHub home">
-              <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">{t('appName')}</span>
+              <span className="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">{t('appName')}</span>
             </Link>
             <button
               type="button"
@@ -68,12 +68,12 @@ export function Navigation() {
               aria-label={snowEnabled ? 'Выключить снег' : 'Включить снег'}
               className={`inline-flex h-10 w-10 items-center justify-center rounded-full text-2xl leading-none shadow-sm ring-1 transition ${
                 snowEnabled
-                  ? 'bg-sky-100 ring-sky-200 hover:bg-sky-200'
+                  ? 'bg-emerald-100 ring-emerald-200 hover:bg-emerald-200'
                   : 'bg-slate-100 ring-slate-200 opacity-60 grayscale hover:opacity-80'
               }`}
               title={snowEnabled ? 'Выключить снег' : 'Включить снег'}
             >
-              🧑‍🎄
+              🎄
             </button>
 
             <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">

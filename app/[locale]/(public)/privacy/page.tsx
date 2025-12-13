@@ -22,7 +22,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
   const t = await getTranslations('privacy');
 
   return (
-    <main className="bg-gray-50 min-h-screen py-12">
+    <main className="bg-transparent min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-8">{t('title')}</h1>

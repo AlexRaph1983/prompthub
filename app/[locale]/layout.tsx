@@ -97,15 +97,22 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <AuthProvider>
             <PromptProvider>
               <SnowProvider>
+                {/* Глобальный фон (за снегом и контентом) */}
+                <div aria-hidden className="fixed inset-0 z-0 bg-gray-50 dark:bg-gray-900" />
+
+                {/* Снег должен быть поверх фона, но за блоками */}
                 <Snowflakes />
-                <ScrollRestoration />
-                <Navigation />
-                <div className="min-h-screen relative z-10">
-                  {children}
+
+                <div className="relative z-10">
+                  <ScrollRestoration />
+                  <Navigation />
+                  <div className="min-h-screen">
+                    {children}
+                  </div>
+                  <Footer />
+                  <AddPromptModal />
+                  <CookieConsent />
                 </div>
-                <Footer />
-                <AddPromptModal />
-                <CookieConsent />
               </SnowProvider>
             </PromptProvider>
           </AuthProvider>

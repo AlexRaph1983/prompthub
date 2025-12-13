@@ -10,7 +10,9 @@ type SnowContextValue = {
 
 const SnowContext = createContext<SnowContextValue | undefined>(undefined)
 
-const STORAGE_KEY = 'prompt-hub:snow-enabled'
+// Версионируем ключ, чтобы вернуть "по умолчанию включено" всем,
+// кто ранее выключал снег в старой версии.
+const STORAGE_KEY = 'prompt-hub:snow-enabled:v2'
 
 export function SnowProvider({ children }: { children: React.ReactNode }) {
   const [enabled, setEnabled] = useState(true)

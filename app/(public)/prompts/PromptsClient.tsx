@@ -147,7 +147,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
 
 
   return (
-    <main className="bg-gray-50 min-h-screen pb-12">
+    <main className="bg-transparent min-h-screen pb-12">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">

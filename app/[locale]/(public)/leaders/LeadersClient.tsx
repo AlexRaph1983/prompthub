@@ -28,7 +28,7 @@ export default function LeadersClient({ users, locale }: LeadersClientProps) {
   }
 
   return (
-    <main className="bg-gray-50 min-h-screen pb-12">
+    <main className="bg-transparent min-h-screen pb-12">
       <div className="mx-auto max-w-5xl px-4 py-8">
         <h1 className="text-3xl font-semibold mb-6">{t('title')}</h1>
         <p className="text-gray-600 mb-6">{t('subtitle')}</p>

@@ -15,7 +15,9 @@ export default async function PublicLayout({ children, params }: PublicLayoutPro
   const { locale } = params;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    // Фон страницы задаём глобально (в app/[locale]/layout.tsx) под слоем снега.
+    // Здесь фон должен быть прозрачным, иначе он перекрывает снег целиком.
+    <div className="min-h-screen bg-transparent">
       {/* Мобильная навигация */}
       <div className="lg:hidden p-4">
         <CategoryDrawerServer locale={locale} />

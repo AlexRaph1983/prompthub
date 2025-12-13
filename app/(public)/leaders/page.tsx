@@ -40,7 +40,7 @@ export default function LeadersPage() {
 
   if (loading) {
     return (
-      <main className="bg-gray-50 min-h-screen pb-12">
+      <main className="bg-transparent min-h-screen pb-12">
         <div className="mx-auto max-w-5xl px-4 py-8">
           <h1 className="text-3xl font-semibold mb-6">Рейтинг авторов</h1>
           <Card className="p-4">
@@ -56,7 +56,7 @@ export default function LeadersPage() {
 
   if (error) {
     return (
-      <main className="bg-gray-50 min-h-screen pb-12">
+      <main className="bg-transparent min-h-screen pb-12">
         <div className="mx-auto max-w-5xl px-4 py-8">
           <h1 className="text-3xl font-semibold mb-6">Рейтинг авторов</h1>
           <Card className="p-4">
@@ -76,7 +76,7 @@ export default function LeadersPage() {
   }
 
   return (
-    <main className="bg-gray-50 min-h-screen pb-12">
+    <main className="bg-transparent min-h-screen pb-12">
       <div className="mx-auto max-w-5xl px-4 py-8">
         <h1 className="text-3xl font-semibold mb-6">Рейтинг авторов</h1>
         <p className="text-gray-600 mb-6">Топ авторов по репутации и качеству промптов</p>
