@@ -1,0 +1,252 @@
+{
+  "version": "1.0",
+  "submitted_by": {
+    "username": "HitMaker",
+    "user_id": "",
+    "profile_url": ""
+  },
+  "taxonomy": {
+    "languages": ["Русский", "English"],
+    "licenses": ["CC-BY"],
+    "categories": ["Анализ", "Творчество", "Бизнес", "Письмо", "Юриспруденция", "Музыка", "Анимация", "Дизайн", "Маркетинг", "Продуктивность"],
+    "models": ["GPT-5", "Claude Opus 4.1", "Suno", "Runway Gen-2"]
+  },
+  "items": [
+    {
+      "title": "Профессиональный анализ карьерных возможностей",
+      "summary": "Глубокий анализ карьерных возможностей с учетом навыков, рынка труда и личных целей.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Анализ",
+      "license": "CC-BY",
+      "tags": ["карьера", "анализ", "профориентация"],
+      "prompt_text": "Role & Context: Ты карьерный консультант с опытом анализа рынка труда.\nGoal: Провести анализ карьерных возможностей пользователя.\nInput: {навыки}, {опыт}, {интересы}, {регион}.\nResearch: Определи востребованные профессии, уровень конкуренции, требования.\nProcess:\n1. Проанализируй входные данные.\n2. Сопоставь с трендами рынка.\n3. Выдели 3–5 подходящих направлений.\n4. Опиши плюсы, минусы и перспективы.\nConstraints: Понятный язык, без обещаний гарантированного дохода.\nQuality Check: Логичность, реалистичность.\nOutput Format: Структурированный список направлений с пояснениями.",
+      "variables": [
+        {"name": "навыки", "type": "string", "required": true, "description": "Ключевые навыки пользователя", "example": "аналитика, Excel, коммуникации"},
+        {"name": "опыт", "type": "string", "required": true, "description": "Профессиональный опыт", "example": "3 года в продажах"},
+        {"name": "интересы", "type": "string", "required": false, "description": "Интересы", "example": "IT, образование"},
+        {"name": "регион", "type": "string", "required": true, "description": "Регион проживания", "example": "Россия"}
+      ],
+      "usage_instructions": "Замените переменные в фигурных скобках на свои данные перед использованием промпта.",
+      "examples": [
+        "навыки: аналитика данных, Python; опыт: 5 лет в IT; интересы: AI, ML; регион: Москва"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Как понять, чем я хочу заниматься",
+      "summary": "Помогает разобраться, чем вы хотите заниматься, через вопросы и анализ.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Творчество",
+      "license": "CC-BY",
+      "tags": ["самоопределение", "цели", "интересы"],
+      "prompt_text": "Role & Context: Ты коуч по самоопределению.\nGoal: Помочь понять, чем пользователь хочет заниматься.\nInput: {текущая_ситуация}, {интересы}, {ограничения}.\nProcess:\n1. Проанализируй текущую ситуацию.\n2. Задай уточняющие вопросы.\n3. Предложи 3 гипотезы направлений.\n4. Дай упражнения для проверки.\nConstraints: Поддерживающий тон.\nOutput Format: Анализ + список направлений + вопросы.",
+      "variables": [
+        {"name": "текущая_ситуация", "type": "string", "required": true, "description": "Текущая ситуация пользователя", "example": "Работаю менеджером, но хочу сменить сферу"},
+        {"name": "интересы", "type": "string", "required": true, "description": "Интересы", "example": "IT, дизайн, спорт"},
+        {"name": "ограничения", "type": "string", "required": false, "description": "Ограничения", "example": "Возраст, образование, финансы"}
+      ],
+      "usage_instructions": "Опишите свою текущую ситуацию, интересы и ограничения для получения персонализированных рекомендаций.",
+      "examples": [
+        "текущая_ситуация: Учусь на 3 курсе университета; интересы: программирование, дизайн; ограничения: мало времени"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание резюме под вакансию",
+      "summary": "Профессиональное резюме под конкретную вакансию.",
+      "language": "Русский",
+      "model": "Claude Opus 4.1",
+      "category": "Бизнес",
+      "license": "CC-BY",
+      "tags": ["резюме", "карьера", "работа"],
+      "prompt_text": "Role & Context: Ты HR-эксперт.\nGoal: Составить сильное резюме.\nInput: {опыт}, {вакансия}.\nProcess:\n1. Проанализируй требования вакансии.\n2. Адаптируй опыт.\n3. Сформируй достижения.\nConstraints: Без ложных данных.\nOutput Format: Готовое резюме.",
+      "variables": [
+        {"name": "опыт", "type": "string", "required": true, "description": "Профессиональный опыт", "example": "5 лет в маркетинге, опыт управления командой"},
+        {"name": "вакансия", "type": "string", "required": true, "description": "Описание вакансии", "example": "Маркетолог в IT-компанию"}
+      ],
+      "usage_instructions": "Укажите свой опыт и описание вакансии для получения адаптированного резюме.",
+      "examples": [
+        "опыт: 3 года в продажах, опыт ведения соцсетей; вакансия: SMM-менеджер в розничную сеть"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Как писать мемуары: пошаговый план",
+      "summary": "Подробный план и структура для написания мемуаров.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Письмо",
+      "license": "CC-BY",
+      "tags": ["мемуары", "автобиография", "план"],
+      "prompt_text": "Role & Context: Ты литературный редактор.\nGoal: Помочь написать мемуары.\nInput: {период_жизни}, {ключевые_события}.\nProcess:\n1. Определи фокус.\n2. Построй хронологию.\n3. Предложи структуру глав.\n4. Дай советы по стилю.\nOutput Format: План + рекомендации.",
+      "variables": [
+        {"name": "период_жизни", "type": "string", "required": true, "description": "Период жизни для мемуаров", "example": "Студенческие годы в 90-х"},
+        {"name": "ключевые_события", "type": "string", "required": true, "description": "Ключевые события", "example": "Переезд в другой город, первая любовь, успех в карьере"}
+      ],
+      "usage_instructions": "Опишите период жизни и ключевые события для получения структурированного плана.",
+      "examples": [
+        "период_жизни: Детство в маленьком городе; ключевые_события: Первая школа, семейные традиции, первые друзья"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Юридический разбор ситуации по статье 159",
+      "summary": "Общий информационный разбор, как доказать невиновность по ст. 159 без юридических советов.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Юриспруденция",
+      "license": "CC-BY",
+      "tags": ["мошенничество", "защита", "закон"],
+      "prompt_text": "Role & Context: Ты юридический аналитик.\nGoal: Дать общий информационный обзор.\nInput: {описание_ситуации}.\nProcess:\n1. Опиши состав статьи.\n2. Перечисли типовые линии защиты.\n3. Укажи, когда нужен адвокат.\nConstraints: Не давать персональных юридических советов.\nOutput Format: Информационный обзор.",
+      "variables": [
+        {"name": "описание_ситуации", "type": "string", "required": true, "description": "Описание ситуации", "example": "Обвинение в мошенничестве при покупке автомобиля"}
+      ],
+      "usage_instructions": "Опишите ситуацию для получения общего информационного обзора.",
+      "examples": [
+        "описание_ситуации: Подозрение в получении денег под ложным предлогом"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Prompt для SUNO: генерация трека",
+      "summary": "Профессиональный промпт для генерации музыки в SUNO.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Музыка",
+      "license": "CC-BY",
+      "tags": ["suno", "музыка", "генерация"],
+      "prompt_text": "Role & Context: You are a professional AI music producer.\nGoal: Generate a high-quality track in SUNO.\nInput: {genre}, {mood}, {tempo}.\nProcess:\n1. Define genre and tempo.\n2. Describe mood and structure.\n3. Add vocal/instrument details.\nConstraints: Clear structure, no vague terms.\nOutput Format: Ready-to-use SUNO prompt.",
+      "variables": [
+        {"name": "genre", "type": "string", "required": true, "description": "Музыкальный жанр", "example": "electronic, hip-hop, rock"},
+        {"name": "mood", "type": "string", "required": true, "description": "Настроение", "example": "energetic, melancholic, upbeat"},
+        {"name": "tempo", "type": "string", "required": false, "description": "Темп", "example": "120 BPM, fast, slow"}
+      ],
+      "usage_instructions": "Specify genre, mood, and optionally tempo for your music generation prompt.",
+      "examples": [
+        "genre: electronic; mood: upbeat; tempo: 128 BPM"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Анимация портретного фото с микродвижениями",
+      "summary": "Промпт для оживления портретного фото с морганием и дыханием.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Анимация",
+      "license": "CC-BY",
+      "tags": ["анимация", "портрет", "микро-движения"],
+      "prompt_text": "Role & Context: You are a digital animation director.\nGoal: Animate a portrait photo realistically.\nInput: {photo_description}.\nProcess:\n1. Add natural blinking.\n2. Subtle head motion.\n3. Breathing and micro-expressions.\nConstraints: No distortion, realistic motion.\nOutput Format: Video generation prompt.",
+      "variables": [
+        {"name": "photo_description", "type": "string", "required": true, "description": "Описание фотографии", "example": "Portrait of a young woman with long brown hair, smiling"}
+      ],
+      "usage_instructions": "Describe your portrait photo for realistic animation generation.",
+      "examples": [
+        "photo_description: Close-up portrait of a businessman in suit, serious expression"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание логотипа для бизнеса",
+      "summary": "Стратегический промпт для разработки логотипа.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Дизайн",
+      "license": "CC-BY",
+      "tags": ["логотип", "брендинг", "дизайн"],
+      "prompt_text": "Role & Context: Ты бренд-дизайнер.\nGoal: Разработать концепцию логотипа.\nInput: {ниша}, {ценности}, {аудитория}.\nProcess:\n1. Анализ ниши.\n2. Определение символов.\n3. Цвета и стиль.\nOutput Format: Описание концепции логотипа.",
+      "variables": [
+        {"name": "ниша", "type": "string", "required": true, "description": "Бизнес-ниша", "example": "Кофейня, IT-компания, салон красоты"},
+        {"name": "ценности", "type": "string", "required": true, "description": "Ценности бренда", "example": "Качество, инновации, забота о клиентах"},
+        {"name": "аудитория", "type": "string", "required": true, "description": "Целевая аудитория", "example": "Молодые профессионалы 25-35 лет"}
+      ],
+      "usage_instructions": "Опишите нишу бизнеса, ценности и аудиторию для концепции логотипа.",
+      "examples": [
+        "ниша: Фитнес-клуб; ценности: Здоровье, мотивация, сообщество; аудитория: Активные люди 20-40 лет"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Пост для риелтора о продаже недвижимости",
+      "summary": "Эффективный пост для продажи недвижимости.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Маркетинг",
+      "license": "CC-BY",
+      "tags": ["риелтор", "недвижимость", "продажа"],
+      "prompt_text": "Role & Context: Ты маркетолог в недвижимости.\nGoal: Написать продающий пост.\nInput: {объект}, {цена}, {преимущества}.\nProcess:\n1. Зацепляющий хук.\n2. Описание выгод.\n3. Призыв к действию.\nOutput Format: Готовый пост.",
+      "variables": [
+        {"name": "объект", "type": "string", "required": true, "description": "Описание объекта", "example": "2-комнатная квартира в центре города"},
+        {"name": "цена", "type": "string", "required": true, "description": "Цена", "example": "5 500 000 рублей"},
+        {"name": "преимущества", "type": "string", "required": true, "description": "Преимущества", "example": "Рядом метро, ремонт, вид на парк"}
+      ],
+      "usage_instructions": "Укажите описание объекта, цену и преимущества для создания продающего поста.",
+      "examples": [
+        "объект: Дом в коттеджном поселке; цена: 12 млн рублей; преимущества: Собственный участок, гараж, тихий район"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Планирование отпуска: полный гид",
+      "summary": "Комплексное планирование отпуска с бюджетом и маршрутом.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Продуктивность",
+      "license": "CC-BY",
+      "tags": ["отпуск", "планирование", "путешествия"],
+      "prompt_text": "Role & Context: Ты эксперт по путешествиям.\nGoal: Спланировать идеальный отпуск.\nInput: {бюджет}, {длительность}, {направление}, {интересы}.\nProcess:\n1. Определи бюджет.\n2. Выбери маршрут.\n3. Запланируй активности.\n4. Укажи расходы.\nOutput Format: Детальный план путешествия.",
+      "variables": [
+        {"name": "бюджет", "type": "string", "required": true, "description": "Бюджет на человека", "example": "50 000 рублей"},
+        {"name": "длительность", "type": "string", "required": true, "description": "Длительность отпуска", "example": "7 дней"},
+        {"name": "направление", "type": "string", "required": true, "description": "Желаемое направление", "example": "Таиланд, Москва, горы"},
+        {"name": "интересы", "type": "string", "required": false, "description": "Интересы", "example": "пляж, экскурсии, активный отдых"}
+      ],
+      "usage_instructions": "Укажите бюджет, длительность, направление и интересы для планирования отпуска.",
+      "examples": [
+        "бюджет: 30 000 рублей; длительность: 5 дней; направление: Санкт-Петербург; интересы: музеи, архитектура"
+      ],
+      "attribution": {
+        "author_name": "HitMaker"
+      },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}
