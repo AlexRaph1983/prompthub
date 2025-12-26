@@ -158,15 +158,6 @@ async function main() {
     )
   }
 
-  // Готовим категории
-  const categoryCache = new Map()
-  for (const it of items) {
-    const slug = it.categorySlug.trim()
-    if (!categoryCache.has(slug)) {
-      categoryCache.set(slug, await getCategoryBySlug(slug))
-    }
-  }
-
   const planByCategory = new Map()
   for (const it of items) {
     const slug = it.categorySlug.trim()
@@ -176,19 +167,34 @@ async function main() {
   console.log('=== Import plan ===')
   console.log('File:', file)
   console.log('Items:', items.length)
-  console.log('Author:', { id: author.id, email: author.email })
   console.log('Dry run:', dryRun)
   console.log('Batch size:', batch)
   console.log('Sleep between batches (ms):', sleepMs)
   console.log('By categorySlug:')
   for (const [slug, cnt] of Array.from(planByCategory.entries()).sort((a, b) => b[1] - a[1])) {
-    const cat = categoryCache.get(slug)
-    console.log(`- ${slug} (${cat?.nameRu || cat?.nameEn || ''}): ${cnt}`)
+    console.log(`- ${slug}: ${cnt}`)
   }
 
   if (dryRun) {
+    // В dryRun мы НЕ создаём юзеров/тегов/промптов, только валидируем.
+    // Дополнительно проверяем, что категории существуют и активны.
+    for (const slug of planByCategory.keys()) {
+      await getCategoryBySlug(slug)
+    }
     console.log('✅ Dry run OK (no DB writes). Re-run with --dryRun=false to import.')
     return
+  }
+
+  const author = await getOrCreateAuthorByEmail(authorEmail)
+  console.log('Author:', { id: author.id, email: author.email })
+
+  // Готовим категории
+  const categoryCache = new Map()
+  for (const it of items) {
+    const slug = it.categorySlug.trim()
+    if (!categoryCache.has(slug)) {
+      categoryCache.set(slug, await getCategoryBySlug(slug))
+    }
   }
 
   let imported = 0

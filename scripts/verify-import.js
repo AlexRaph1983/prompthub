@@ -20,12 +20,12 @@ function parseArgs() {
 
 async function main() {
   const { authorEmail } = parseArgs()
-  const author = await prisma.user.findUnique({ where: { email: authorEmail.toLowerCase().trim() } })
-  if (!author) throw new Error(`Author not found: ${authorEmail}`)
+  const normalizedEmail = authorEmail.toLowerCase().trim()
+  const author = await prisma.user.findUnique({ where: { email: normalizedEmail } })
 
   const [total, mine, videoCategory] = await Promise.all([
     prisma.prompt.count(),
-    prisma.prompt.count({ where: { authorId: author.id } }),
+    author ? prisma.prompt.count({ where: { authorId: author.id } }) : Promise.resolve(0),
     prisma.category.findUnique({ where: { slug: 'video' }, select: { promptCount: true } })
   ])
 
