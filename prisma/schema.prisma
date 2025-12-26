@@ -157,6 +157,11 @@ model PromptInteraction {
 
   @@index([userId, promptId])
   @@index([promptId])
+  @@index([type])
+  @@index([createdAt])
+  @@index([userId, type, createdAt])
+  @@index([userId, promptId, type, createdAt])
+  @@index([promptId, type])
 }
 
 /// Cached prompt vectors for fast similarity queries
