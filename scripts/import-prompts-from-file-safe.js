@@ -141,23 +141,6 @@ async function main() {
     assert(Array.isArray(raw.tags) && raw.tags.length > 0, `#${idx}: tags[] required`)
   }
 
-  const author = await getOrCreateAuthorByEmail(authorEmail)
-
-  // Глобальная уникальность заголовков (по всей таблице Prompt)
-  const titles = Array.from(seenTitles)
-  const existing = await prisma.prompt.findMany({
-    where: { title: { in: titles } },
-    select: { title: true, authorId: true }
-  })
-  if (existing.length > 0) {
-    const examples = existing.slice(0, 10).map((p) => `"${p.title}" (authorId=${p.authorId})`)
-    throw new Error(
-      `Refusing to import: ${existing.length} titles already exist in DB (global uniqueness enforced). Examples: ${examples.join(
-        ', '
-      )}`
-    )
-  }
-
   const planByCategory = new Map()
   for (const it of items) {
     const slug = it.categorySlug.trim()
@@ -187,6 +170,21 @@ async function main() {
 
   const author = await getOrCreateAuthorByEmail(authorEmail)
   console.log('Author:', { id: author.id, email: author.email })
+
+  // Глобальная уникальность заголовков (по всей таблице Prompt)
+  const titles = Array.from(seenTitles)
+  const existing = await prisma.prompt.findMany({
+    where: { title: { in: titles } },
+    select: { title: true, authorId: true }
+  })
+  if (existing.length > 0) {
+    const examples = existing.slice(0, 10).map((p) => `"${p.title}" (authorId=${p.authorId})`)
+    throw new Error(
+      `Refusing to import: ${existing.length} titles already exist in DB (global uniqueness enforced). Examples: ${examples.join(
+        ', '
+      )}`
+    )
+  }
 
   // Готовим категории
   const categoryCache = new Map()
