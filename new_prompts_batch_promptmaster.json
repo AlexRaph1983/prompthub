@@ -1,0 +1,378 @@
+{
+  "version": "1.0",
+  "submitted_by": {
+    "username": "PromptMaster",
+    "user_id": "",
+    "profile_url": ""
+  },
+  "taxonomy": {
+    "languages": ["English", "Русский", "Español", "Deutsch"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Custom", "Paid"],
+    "categories": [
+      "Chat", "Code", "SEO", "Design", "Legal", "Education", "Image", "Video",
+      "Music", "Animation", "Business", "Marketing", "Writing",
+      "Research", "Analysis", "Creative", "Productivity",
+      "Finance", "Cooking", "Health"
+    ],
+    "models": [
+      "GPT-5", "Claude Opus 4.1", "Gemini 2.5 Pro",
+      "Google Veo 3", "Runway Gen-2", "Suno", "Llama 3.1"
+    ]
+  },
+  "items": [
+    {
+      "title": "Анализ карьерных возможностей и направлений роста",
+      "summary": "Глубокий анализ карьерных возможностей с учетом навыков, рынка труда и личных целей.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Analysis",
+      "license": "CC-BY",
+      "tags": ["анализ карьерных возможностей", "карьера", "профориентация", "работа", "рынок труда"],
+      "prompt_text": "Role & Context: Ты карьерный консультант и аналитик рынка труда.\nGoal: Провести анализ карьерных возможностей пользователя и возможных направлений роста.\nInput: {навыки}, {опыт}, {интересы}, {регион}.\nResearch / Grounding: Определи текущие тренды рынка, востребованные профессии, барьеры входа.\nProcess:\n1. Проанализируй навыки и опыт.\n2. Сопоставь их с рынком труда региона.\n3. Выдели 3–5 карьерных направлений.\n4. Опиши перспективы, риски и требования.\nConstraints: Реалистичность, без обещаний гарантированного дохода.\nQuality Check: Логика, практическая применимость.\nOutput Format: Структурированный список направлений с пояснениями.",
+      "variables": [
+        {"name": "навыки", "type": "string", "required": true, "description": "Ключевые навыки пользователя", "example": "аналитика, Excel, коммуникации"},
+        {"name": "опыт", "type": "string", "required": true, "description": "Профессиональный опыт", "example": "3 года в продажах"},
+        {"name": "интересы", "type": "string", "required": false, "description": "Интересы", "example": "IT, образование"},
+        {"name": "регион", "type": "string", "required": true, "description": "Регион проживания", "example": "Россия"}
+      ],
+      "usage_instructions": "Замените переменные в фигурных скобках на свои данные перед использованием промпта.",
+      "examples": [
+        "навыки: аналитика данных, Python; опыт: 5 лет в IT; интересы: AI, ML; регион: Москва"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Как понять, чем я хочу заниматься в жизни",
+      "summary": "Помогает понять, чем вы хотите заниматься, через структурированный самоанализ.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["как понять чем я хочу заниматься", "самоопределение", "цели", "профориентация"],
+      "prompt_text": "Role & Context: Ты коуч по самоопределению.\nGoal: Помочь пользователю понять, чем он хочет заниматься.\nInput: {текущая_ситуация}, {интересы}, {ограничения}.\nProcess:\n1. Проанализируй текущую ситуацию.\n2. Выяви повторяющиеся интересы и мотивацию.\n3. Сформируй 3 гипотезы направлений.\n4. Предложи практические шаги для проверки.\nOutput Format: Анализ + гипотезы + рекомендации.",
+      "variables": [
+        {"name": "текущая_ситуация", "type": "string", "required": true, "description": "Текущая ситуация пользователя", "example": "Работаю менеджером, но хочу сменить сферу"},
+        {"name": "интересы", "type": "string", "required": true, "description": "Интересы", "example": "IT, дизайн, спорт"},
+        {"name": "ограничения", "type": "string", "required": false, "description": "Ограничения", "example": "Возраст, образование, финансы"}
+      ],
+      "usage_instructions": "Опишите свою текущую ситуацию, интересы и ограничения для получения персонализированных рекомендаций.",
+      "examples": [
+        "текущая_ситуация: Учусь на 3 курсе университета; интересы: программирование, дизайн; ограничения: мало времени"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание резюме под конкретную вакансию",
+      "summary": "Профессиональное резюме, адаптированное под требования вакансии.",
+      "language": "Русский",
+      "model": "Claude Opus 4.1",
+      "category": "Business",
+      "license": "CC-BY",
+      "tags": ["резюме", "резюмс", "вакансия", "карьера"],
+      "prompt_text": "Role & Context: Ты HR-эксперт.\nGoal: Составить сильное резюме под вакансию.\nInput: {опыт}, {навыки}, {вакансия}.\nProcess:\n1. Проанализируй требования вакансии.\n2. Адаптируй опыт и навыки.\n3. Сформируй достижения.\nOutput Format: Готовое резюме.",
+      "variables": [
+        {"name": "опыт", "type": "string", "required": true, "description": "Профессиональный опыт", "example": "5 лет в маркетинге, опыт управления командой"},
+        {"name": "навыки", "type": "string", "required": true, "description": "Ключевые навыки", "example": "аналитика, управление проектами, коммуникации"},
+        {"name": "вакансия", "type": "string", "required": true, "description": "Описание вакансии", "example": "Маркетолог в IT-компанию"}
+      ],
+      "usage_instructions": "Укажите свой опыт, навыки и описание вакансии для получения адаптированного резюме.",
+      "examples": [
+        "опыт: 3 года в продажах, опыт ведения соцсетей; вакансия: SMM-менеджер в розничную сеть"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Как писать мемуары: структура и стиль",
+      "summary": "Помогает написать мемуары с понятной структурой и сильным стилем.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["как писать мемуары", "мемуары", "автобиография"],
+      "prompt_text": "Role & Context: Ты литературный редактор.\nGoal: Помочь пользователю написать мемуары.\nInput: {период_жизни}, {ключевые_события}.\nProcess:\n1. Определи центральную тему.\n2. Построй хронологию.\n3. Предложи структуру глав.\n4. Дай советы по стилю.\nOutput Format: План книги + рекомендации.",
+      "variables": [
+        {"name": "период_жизни", "type": "string", "required": true, "description": "Период жизни для мемуаров", "example": "Студенческие годы в 90-х"},
+        {"name": "ключевые_события", "type": "string", "required": true, "description": "Ключевые события", "example": "Переезд в другой город, первая любовь, успех в карьере"}
+      ],
+      "usage_instructions": "Опишите период жизни и ключевые события для получения структурированного плана.",
+      "examples": [
+        "период_жизни: Детство в маленьком городе; ключевые_события: Первая школа, семейные традиции, первые друзья"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Информационный разбор статьи 159 УК РФ",
+      "summary": "Общий разбор, как может строиться защита по статье 159 без юридических советов.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Legal",
+      "license": "CC-BY",
+      "tags": ["ст 159", "мошенничество", "закон", "невиновность"],
+      "prompt_text": "Role & Context: Ты юридический аналитик.\nGoal: Дать общий информационный разбор ситуации.\nInput: {описание_ситуации}.\nProcess:\n1. Опиши состав преступления.\n2. Перечисли типовые линии защиты.\n3. Укажи, какие доказательства анализируются.\nConstraints: Без персональных юридических рекомендаций.\nOutput Format: Информационный обзор.",
+      "variables": [
+        {"name": "описание_ситуации", "type": "string", "required": true, "description": "Описание ситуации", "example": "Обвинение в мошенничестве при покупке автомобиля"}
+      ],
+      "usage_instructions": "Опишите ситуацию для получения общего информационного обзора.",
+      "examples": [
+        "описание_ситуации: Подозрение в получении денег под ложным предлогом"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Промпт для SUNO: генерация музыкального трека",
+      "summary": "Профессиональный промпт для генерации музыки в SUNO.",
+      "language": "English",
+      "model": "Suno",
+      "category": "Music",
+      "license": "CC-BY",
+      "tags": ["suno", "music ai", "prompt", "генерация музыки"],
+      "prompt_text": "Role & Context: You are an AI music producer.\nGoal: Generate a complete track in SUNO.\nInput: {genre}, {mood}, {tempo}, {structure}.\nProcess:\n1. Define genre and tempo.\n2. Describe mood and energy.\n3. Specify structure and vocals.\nOutput Format: Ready-to-use SUNO prompt.",
+      "variables": [
+        {"name": "genre", "type": "string", "required": true, "description": "Музыкальный жанр", "example": "electronic, hip-hop, rock"},
+        {"name": "mood", "type": "string", "required": true, "description": "Настроение", "example": "energetic, melancholic, upbeat"},
+        {"name": "tempo", "type": "string", "required": false, "description": "Темп", "example": "120 BPM, fast, slow"},
+        {"name": "structure", "type": "string", "required": false, "description": "Структура", "example": "verse-chorus-verse, with bridge"}
+      ],
+      "usage_instructions": "Specify genre, mood, and optionally tempo and structure for your music generation prompt.",
+      "examples": [
+        "genre: electronic; mood: upbeat; tempo: 128 BPM; structure: verse-chorus-verse"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Анимация портретного фото с микродвижениями",
+      "summary": "Оживление портрета: моргание, дыхание, микровыражения.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Animation",
+      "license": "CC-BY",
+      "tags": ["animate portrait photo", "анимация фото", "micro expressions"],
+      "prompt_text": "Role & Context: You are a digital animation director.\nGoal: Animate a portrait photo realistically.\nInput: {photo_description}.\nProcess:\n1. Add natural blinking.\n2. Subtle head movement.\n3. Breathing and micro-expressions.\nOutput Format: Video animation prompt.",
+      "variables": [
+        {"name": "photo_description", "type": "string", "required": true, "description": "Описание фотографии", "example": "Portrait of a young woman with long brown hair, smiling"}
+      ],
+      "usage_instructions": "Describe your portrait photo for realistic animation generation.",
+      "examples": [
+        "photo_description: Close-up portrait of a businessman in suit, serious expression"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание логотипа для бизнеса",
+      "summary": "Стратегический подход к созданию логотипа.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Design",
+      "license": "CC-BY",
+      "tags": ["логотип", "создание логотипа", "брендинг"],
+      "prompt_text": "Role & Context: Ты бренд-дизайнер.\nGoal: Разработать концепцию логотипа.\nInput: {ниша}, {ценности}, {аудитория}.\nProcess:\n1. Анализ ниши.\n2. Выбор символов.\n3. Цвета и стиль.\nOutput Format: Концепция логотипа.",
+      "variables": [
+        {"name": "ниша", "type": "string", "required": true, "description": "Бизнес-ниша", "example": "Кофейня, IT-компания, салон красоты"},
+        {"name": "ценности", "type": "string", "required": true, "description": "Ценности бренда", "example": "Качество, инновации, забота о клиентах"},
+        {"name": "аудитория", "type": "string", "required": true, "description": "Целевая аудитория", "example": "Молодые профессионалы 25-35 лет"}
+      ],
+      "usage_instructions": "Опишите нишу бизнеса, ценности и аудиторию для концепции логотипа.",
+      "examples": [
+        "ниша: Фитнес-клуб; ценности: Здоровье, мотивация, сообщество; аудитория: Активные люди 20-40 лет"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Продающий пост для риелтора",
+      "summary": "Пост для продажи недвижимости с акцентом на выгоды.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Marketing",
+      "license": "CC-BY",
+      "tags": ["риелтор", "продажа недвижимости", "недвижимость"],
+      "prompt_text": "Role & Context: Ты маркетолог в недвижимости.\nGoal: Написать продающий пост.\nInput: {объект}, {цена}, {преимущества}.\nProcess:\n1. Хук.\n2. Выгоды объекта.\n3. Призыв к действию.\nOutput Format: Готовый текст поста.",
+      "variables": [
+        {"name": "объект", "type": "string", "required": true, "description": "Описание объекта", "example": "2-комнатная квартира в центре города"},
+        {"name": "цена", "type": "string", "required": true, "description": "Цена", "example": "5 500 000 рублей"},
+        {"name": "преимущества", "type": "string", "required": true, "description": "Преимущества", "example": "Рядом метро, ремонт, вид на парк"}
+      ],
+      "usage_instructions": "Укажите описание объекта, цену и преимущества для создания продающего поста.",
+      "examples": [
+        "объект: Дом в коттеджном поселке; цена: 12 млн рублей; преимущества: Собственный участок, гараж, тихий район"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодняя открытка: идея и текст",
+      "summary": "Создание идеи и текста для новогодней открытки.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["новогодняя открытка", "поздравление", "новый год"],
+      "prompt_text": "Role & Context: Ты копирайтер.\nGoal: Создать новогоднюю открытку.\nInput: {адресат}, {тон}.\nProcess:\n1. Определи настроение.\n2. Сформулируй поздравление.\nOutput Format: Текст открытки.",
+      "variables": [
+        {"name": "адресат", "type": "string", "required": true, "description": "Кому адресована открытка", "example": "друзья, коллеги, семья"},
+        {"name": "тон", "type": "string", "required": false, "description": "Тон поздравления", "example": "торжественный, веселый, теплый"}
+      ],
+      "usage_instructions": "Укажите адресата и желаемый тон поздравления.",
+      "examples": [
+        "адресат: семья; тон: теплый"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Поздравление с днем рождения",
+      "summary": "Персональное поздравление с днем рождения.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["поздравление с днем рождения", "поздравление"],
+      "prompt_text": "Role & Context: Ты автор поздравлений.\nGoal: Написать поздравление.\nInput: {имя}, {возраст}, {характер}.\nOutput Format: Теплый поздравительный текст.",
+      "variables": [
+        {"name": "имя", "type": "string", "required": true, "description": "Имя именинника", "example": "Александр"},
+        {"name": "возраст", "type": "number", "required": false, "description": "Возраст", "example": "30"},
+        {"name": "характер", "type": "string", "required": false, "description": "Характер человека", "example": "веселый, добрый, творческий"}
+      ],
+      "usage_instructions": "Укажите имя человека и опционально возраст и характер.",
+      "examples": [
+        "имя: Мария; возраст: 25; характер: творческий"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "План отпуска и отдыха",
+      "summary": "Помогает спланировать отпуск с учетом бюджета и целей.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Productivity",
+      "license": "CC-BY",
+      "tags": ["отпуск", "отдых", "путешествие"],
+      "prompt_text": "Role & Context: Ты тревел-планировщик.\nGoal: Составить план отпуска.\nInput: {бюджет}, {даты}, {интересы}.\nOutput Format: План поездки.",
+      "variables": [
+        {"name": "бюджет", "type": "string", "required": true, "description": "Бюджет на человека", "example": "50 000 рублей"},
+        {"name": "даты", "type": "string", "required": true, "description": "Даты отпуска", "example": "15-30 июля"},
+        {"name": "интересы", "type": "string", "required": false, "description": "Интересы", "example": "пляж, экскурсии, активный отдых"}
+      ],
+      "usage_instructions": "Укажите бюджет, даты и интересы для планирования отпуска.",
+      "examples": [
+        "бюджет: 30 000 рублей; даты: 7 дней в июне; интересы: горы и природа"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Отдых в Китае: обзор и советы",
+      "summary": "Обзор формата отдыха в Китае.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Research",
+      "license": "CC-BY",
+      "tags": ["отдых в китае", "путешествия"],
+      "prompt_text": "Role & Context: Ты тревел-аналитик.\nGoal: Описать отдых в Китае.\nInput: {город}, {тип_отдыха}.\nOutput Format: Обзор и советы.",
+      "variables": [
+        {"name": "город", "type": "string", "required": true, "description": "Город в Китае", "example": "Пекин, Шанхай, Гуанчжоу"},
+        {"name": "тип_отдыха", "type": "string", "required": true, "description": "Тип отдыха", "example": "экскурсионный, пляжный, шопинг"}
+      ],
+      "usage_instructions": "Укажите город и тип отдыха для получения обзора.",
+      "examples": [
+        "город: Пекин; тип_отдыха: экскурсионный"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Семейные фото: идеи для съемки",
+      "summary": "Идеи и сценарии для семейной фотосессии.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Image",
+      "license": "CC-BY",
+      "tags": ["семейные фото", "фотосессия"],
+      "prompt_text": "Role & Context: Ты фотограф.\nGoal: Предложить идеи для семейных фото.\nInput: {локация}, {количество_людей}.\nOutput Format: Список идей.",
+      "variables": [
+        {"name": "локация", "type": "string", "required": true, "description": "Место съемки", "example": "парк, пляж, студия"},
+        {"name": "количество_людей", "type": "number", "required": true, "description": "Количество человек", "example": "4"}
+      ],
+      "usage_instructions": "Укажите локацию и количество людей для идей фотосессии.",
+      "examples": [
+        "локация: лес; количество_людей: 3"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Меню на неделю с говядиной",
+      "summary": "Сбалансированное меню на неделю с блюдами из говядины.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Cooking",
+      "license": "CC-BY",
+      "tags": ["меню на неделю", "говядина", "еда"],
+      "prompt_text": "Role & Context: Ты нутрициолог.\nGoal: Составить меню.\nInput: {калорийность}, {предпочтения}.\nOutput Format: Меню на 7 дней.",
+      "variables": [
+        {"name": "калорийность", "type": "string", "required": false, "description": "Калорийность рациона", "example": "2000 ккал, низкокалорийное"},
+        {"name": "предпочтения", "type": "string", "required": false, "description": "Предпочтения в еде", "example": "без лактозы, вегетарианское"}
+      ],
+      "usage_instructions": "Укажите желаемую калорийность и предпочтения в питании.",
+      "examples": [
+        "калорийность: 1800 ккал; предпочтения: полезная еда"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}
+

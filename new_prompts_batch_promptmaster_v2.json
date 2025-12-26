@@ -1,0 +1,371 @@
+{
+  "version": "1.0",
+  "submitted_by": {
+    "username": "PromptMaster",
+    "user_id": "",
+    "profile_url": ""
+  },
+  "taxonomy": {
+    "languages": ["English", "Русский", "Español", "Deutsch"],
+    "licenses": ["CC-BY", "CC-BY-SA", "CC0", "Custom", "Paid"],
+    "categories": [
+      "Chat", "Code", "SEO", "Design", "Legal", "Education", "Image", "Video",
+      "Music", "Animation", "Business", "Marketing", "Writing",
+      "Research", "Analysis", "Creative", "Productivity",
+      "Finance", "Cooking", "Health"
+    ],
+    "models": [
+      "GPT-5", "Claude Opus 4.1", "Gemini 2.5 Pro",
+      "Google Veo 3", "Runway Gen-2", "Suno", "Llama 3.1"
+    ]
+  },
+  "items": [
+    {
+      "title": "Новогоднее меню для праздничного стола в России",
+      "summary": "Подробное и сбалансированное меню для новогоднего стола с традиционными и современными блюдами.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Cooking",
+      "license": "CC-BY",
+      "tags": ["новогоднее меню", "новогодний стол", "блюда на новый год", "праздничная еда"],
+      "prompt_text": "Role & Context: Ты профессиональный шеф-повар и фуд-редактор.\nGoal: Составить полноценное новогоднее меню для праздничного стола в России.\nResearch / Grounding: Учитывай традиции новогоднего застолья, популярные вкусы и сочетания блюд.\nProcess:\n1. Сформируй холодные закуски.\n2. Предложи горячие блюда.\n3. Добавь салаты и гарниры.\n4. Заверши десертами и напитками.\nConstraints: Понятный язык, без экзотических ингредиентов.\nOutput Format: Структурированное меню по категориям.",
+      "variables": [
+        {"name": "количество_гостей", "type": "number", "required": false, "description": "Количество гостей", "example": "6"},
+        {"name": "бюджет", "type": "string", "required": false, "description": "Бюджет на продукты", "example": "5000 рублей"},
+        {"name": "предпочтения", "type": "string", "required": false, "description": "Кулинарные предпочтения", "example": "без мяса, вегетарианское"}
+      ],
+      "usage_instructions": "Укажите количество гостей, бюджет и предпочтения для персонализированного меню.",
+      "examples": [
+        "количество_гостей: 4; бюджет: 3000 рублей; предпочтения: традиционные блюда"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Набор блюд для новогоднего стола на семью",
+      "summary": "Готовый набор блюд для семейного новогоднего застолья.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Cooking",
+      "license": "CC-BY",
+      "tags": ["набор блюд", "новый год", "семейный стол"],
+      "prompt_text": "Role & Context: Ты домашний кулинар и эксперт по праздничным ужинам.\nGoal: Подобрать оптимальный набор блюд для семейного новогоднего стола.\nProcess:\n1. Определи базовые блюда.\n2. Добавь 1–2 праздничных акцента.\n3. Сбалансируй по сложности приготовления.\nOutput Format: Список блюд с краткими комментариями.",
+      "variables": [
+        {"name": "семья", "type": "string", "required": false, "description": "Состав семьи", "example": "родители, дети 5 и 10 лет"},
+        {"name": "традиции", "type": "string", "required": false, "description": "Кулинарные традиции", "example": "русские, с оливье"}
+      ],
+      "usage_instructions": "Опишите состав семьи и кулинарные традиции.",
+      "examples": [
+        "семья: 2 взрослых + 2 ребенка; традиции: классический новогодний стол"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Экономное новогоднее меню без потери праздника",
+      "summary": "Новогодний стол при ограниченном бюджете.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Finance",
+      "license": "CC-BY",
+      "tags": ["экономное меню", "новый год", "бюджетный стол"],
+      "prompt_text": "Role & Context: Ты консультант по разумному потреблению.\nGoal: Составить бюджетное новогоднее меню.\nProcess:\n1. Выбери доступные продукты.\n2. Предложи замены дорогим ингредиентам.\n3. Сохрани праздничное настроение.\nOutput Format: Меню с пояснениями.",
+      "variables": [
+        {"name": "бюджет", "type": "string", "required": true, "description": "Общий бюджет", "example": "2000 рублей"},
+        {"name": "гости", "type": "number", "required": false, "description": "Количество человек", "example": "4"}
+      ],
+      "usage_instructions": "Укажите бюджет и количество гостей.",
+      "examples": [
+        "бюджет: 1500 рублей; гости: 3"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "План подготовки новогоднего стола по дням",
+      "summary": "Четкий план подготовки блюд к Новому году без спешки.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Productivity",
+      "license": "CC-BY",
+      "tags": ["подготовка к новому году", "планирование", "новогодний стол"],
+      "prompt_text": "Role & Context: Ты организатор праздников.\nGoal: Составить поэтапный план подготовки новогоднего стола.\nProcess:\n1. Раздели задачи по дням.\n2. Укажи, что можно приготовить заранее.\n3. Определи действия в день праздника.\nOutput Format: План по дням.",
+      "variables": [
+        {"name": "дата_праздника", "type": "string", "required": true, "description": "Дата праздника", "example": "31 декабря"},
+        {"name": "блюда", "type": "string", "required": false, "description": "Планируемые блюда", "example": "оливье, селедка под шубой, гусь"}
+      ],
+      "usage_instructions": "Укажите дату праздника и планируемые блюда.",
+      "examples": [
+        "дата_праздника: 31 декабря; блюда: традиционные салаты"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодние закуски для фуршета",
+      "summary": "Идеи простых и эффектных закусок на Новый год.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Cooking",
+      "license": "CC-BY",
+      "tags": ["новогодние закуски", "фуршет", "новый год"],
+      "prompt_text": "Role & Context: Ты фуд-стилист.\nGoal: Предложить идеи закусок для новогоднего фуршета.\nProcess:\n1. Подбери мини-закуски.\n2. Удели внимание подаче.\n3. Учти скорость приготовления.\nOutput Format: Список закусок.",
+      "variables": [
+        {"name": "стиль", "type": "string", "required": false, "description": "Стиль подачи", "example": "элегантный, casual"},
+        {"name": "ингредиенты", "type": "string", "required": false, "description": "Доступные ингредиенты", "example": "рыба, сыр, овощи"}
+      ],
+      "usage_instructions": "Укажите стиль подачи и доступные ингредиенты.",
+      "examples": [
+        "стиль: праздничный; ингредиенты: морепродукты"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодние десерты для домашнего праздника",
+      "summary": "Подборка десертов для завершения новогоднего застолья.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Cooking",
+      "license": "CC-BY",
+      "tags": ["новогодние десерты", "сладкое", "новый год"],
+      "prompt_text": "Role & Context: Ты кондитер.\nGoal: Предложить варианты новогодних десертов.\nProcess:\n1. Подбери классические десерты.\n2. Добавь быстрые варианты.\n3. Укажи идеи подачи.\nOutput Format: Список десертов.",
+      "variables": [
+        {"name": "уровень_сложности", "type": "string", "required": false, "description": "Уровень сложности", "example": "простой, средний"},
+        {"name": "время", "type": "string", "required": false, "description": "Время на приготовление", "example": "30 минут, 2 часа"}
+      ],
+      "usage_instructions": "Укажите уровень сложности и время на приготовление.",
+      "examples": [
+        "уровень_сложности: простой; время: 1 час"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "План новогоднего отдыха дома",
+      "summary": "Идеи и план отдыха в новогодние праздники дома.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Productivity",
+      "license": "CC-BY",
+      "tags": ["новогодний отдых", "каникулы дома", "новый год"],
+      "prompt_text": "Role & Context: Ты лайфстайл-редактор.\nGoal: Помочь спланировать новогодний отдых дома.\nProcess:\n1. Раздели дни отдыха.\n2. Предложи активности.\n3. Учти баланс отдыха и дел.\nOutput Format: План каникул.",
+      "variables": [
+        {"name": "продолжительность", "type": "string", "required": true, "description": "Длительность каникул", "example": "10 дней"},
+        {"name": "интересы", "type": "string", "required": false, "description": "Интересы семьи", "example": "фильмы, игры, чтение"}
+      ],
+      "usage_instructions": "Укажите продолжительность каникул и интересы.",
+      "examples": [
+        "продолжительность: неделя; интересы: семейные игры"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Планирование новогоднего отпуска",
+      "summary": "Структурированный подход к планированию новогоднего отпуска.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Productivity",
+      "license": "CC-BY",
+      "tags": ["новогодний отпуск", "путешествия", "планирование"],
+      "prompt_text": "Role & Context: Ты тревел-планировщик.\nGoal: Помочь спланировать новогодний отпуск.\nProcess:\n1. Определи формат отдыха.\n2. Предложи направления.\n3. Укажи плюсы и минусы.\nOutput Format: План отпуска.",
+      "variables": [
+        {"name": "бюджет", "type": "string", "required": true, "description": "Бюджет на человека", "example": "30000 рублей"},
+        {"name": "направление", "type": "string", "required": false, "description": "Предпочтительное направление", "example": "горы, море, город"}
+      ],
+      "usage_instructions": "Укажите бюджет и предпочтительное направление.",
+      "examples": [
+        "бюджет: 25000 рублей; направление: Европа"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодний отдых в России: идеи направлений",
+      "summary": "Обзор вариантов новогоднего отдыха в России.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Research",
+      "license": "CC-BY",
+      "tags": ["новогодний отдых в россии", "путешествия", "новый год"],
+      "prompt_text": "Role & Context: Ты тревел-аналитик.\nGoal: Предложить идеи отдыха в России на Новый год.\nProcess:\n1. Подбери города и регионы.\n2. Опиши атмосферу.\n3. Укажи формат отдыха.\nOutput Format: Список направлений.",
+      "variables": [
+        {"name": "регион", "type": "string", "required": false, "description": "Предпочтительный регион", "example": "Северо-Запад, Сибирь"},
+        {"name": "активность", "type": "string", "required": false, "description": "Тип активности", "example": "лыжи, экскурсии, SPA"}
+      ],
+      "usage_instructions": "Укажите предпочтительный регион и тип активности.",
+      "examples": [
+        "регион: Краснодарский край; активность: пляжный отдых"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодние традиции и сценарий вечера",
+      "summary": "Сценарий новогоднего вечера с традициями и развлечениями.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["новогодние традиции", "сценарий нового года", "праздник"],
+      "prompt_text": "Role & Context: Ты сценарист праздников.\nGoal: Составить сценарий новогоднего вечера.\nProcess:\n1. Определи ключевые моменты.\n2. Добавь традиции.\n3. Предложи развлечения.\nOutput Format: Сценарий вечера.",
+      "variables": [
+        {"name": "участники", "type": "string", "required": false, "description": "Состав участников", "example": "семья, друзья, коллеги"},
+        {"name": "возраст", "type": "string", "required": false, "description": "Возраст участников", "example": "дети, взрослые"}
+      ],
+      "usage_instructions": "Укажите состав участников и их возраст.",
+      "examples": [
+        "участники: семья с детьми; возраст: от 5 до 50 лет"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодние цели и планы на год",
+      "summary": "Помогает осмысленно подвести итоги года и поставить цели.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Productivity",
+      "license": "CC-BY",
+      "tags": ["новогодние цели", "итоги года", "планы на год"],
+      "prompt_text": "Role & Context: Ты коуч по целям.\nGoal: Помочь сформулировать цели на новый год.\nProcess:\n1. Подведение итогов.\n2. Формулировка целей.\n3. Проверка реалистичности.\nOutput Format: Список целей.",
+      "variables": [
+        {"name": "сфера", "type": "string", "required": false, "description": "Жизненная сфера", "example": "карьера, здоровье, отношения"},
+        {"name": "тип_целей", "type": "string", "required": false, "description": "Тип целей", "example": "SMART, простые"}
+      ],
+      "usage_instructions": "Укажите жизненную сферу и тип целей.",
+      "examples": [
+        "сфера: карьера; тип_целей: SMART"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодние поздравления для близких",
+      "summary": "Теплые и искренние новогодние поздравления.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["новогоднее поздравление", "новый год", "пожелания"],
+      "prompt_text": "Role & Context: Ты автор поздравительных текстов.\nGoal: Написать новогодние поздравления.\nProcess:\n1. Подбери тон.\n2. Добавь личные пожелания.\n3. Сохрани искренность.\nOutput Format: Текст поздравления.",
+      "variables": [
+        {"name": "отношения", "type": "string", "required": true, "description": "Отношения с адресатом", "example": "родители, друг, коллега"},
+        {"name": "тон", "type": "string", "required": false, "description": "Тон поздравления", "example": "торжественный, теплый, шутливый"}
+      ],
+      "usage_instructions": "Укажите отношения с адресатом и желаемый тон.",
+      "examples": [
+        "отношения: родители; тон: теплый"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Новогодние подарки: идеи и подход",
+      "summary": "Осмысленный подбор новогодних подарков.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Creative",
+      "license": "CC-BY",
+      "tags": ["новогодние подарки", "идеи подарков", "новый год"],
+      "prompt_text": "Role & Context: Ты консультант по подаркам.\nGoal: Предложить идеи новогодних подарков.\nProcess:\n1. Универсальные подарки.\n2. Персональные варианты.\n3. Бюджетные решения.\nOutput Format: Список идей.",
+      "variables": [
+        {"name": "бюджет", "type": "string", "required": true, "description": "Бюджет на подарок", "example": "1000 рублей"},
+        {"name": "интересы", "type": "string", "required": false, "description": "Интересы получателя", "example": "спорт, книги, техника"}
+      ],
+      "usage_instructions": "Укажите бюджет и интересы получателя.",
+      "examples": [
+        "бюджет: 2000 рублей; интересы: фотография"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Финансовое планирование января после праздников",
+      "summary": "Помогает восстановить бюджет после новогодних трат.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Finance",
+      "license": "CC-BY",
+      "tags": ["финансы после праздников", "январский бюджет", "новый год"],
+      "prompt_text": "Role & Context: Ты финансовый консультант.\nGoal: Помочь спланировать финансы после праздников.\nProcess:\n1. Анализ трат.\n2. Определение приоритетов.\n3. План восстановления.\nOutput Format: Финансовый план.",
+      "variables": [
+        {"name": "траты", "type": "string", "required": false, "description": "Основные траты на праздники", "example": "подарки, еда, поездки"},
+        {"name": "доходы", "type": "string", "required": true, "description": "Ежемесячные доходы", "example": "50000 рублей"}
+      ],
+      "usage_instructions": "Укажите основные траты на праздники и ежемесячные доходы.",
+      "examples": [
+        "траты: подарки и еда; доходы: 40000 рублей"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Возвращение в рабочий ритм после Нового года",
+      "summary": "Мягкий и эффективный вход в рабочий режим.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Health",
+      "license": "CC-BY",
+      "tags": ["после праздников", "рабочий ритм", "продуктивность"],
+      "prompt_text": "Role & Context: Ты специалист по восстановлению продуктивности.\nGoal: Помочь вернуться в рабочий ритм.\nProcess:\n1. Постепенное включение.\n2. Восстановление режима.\n3. Приоритизация задач.\nOutput Format: План действий.",
+      "variables": [
+        {"name": "профессия", "type": "string", "required": false, "description": "Тип работы", "example": "офис, удаленка, творческая"},
+        {"name": "проблемы", "type": "string", "required": false, "description": "Трудности после праздников", "example": "усталость, мотивация"}
+      ],
+      "usage_instructions": "Укажите тип работы и возможные трудности.",
+      "examples": [
+        "профессия: офисная работа; проблемы: отсутствие мотивации"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}
+

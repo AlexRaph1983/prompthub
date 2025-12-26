@@ -444,7 +444,16 @@ async function main() {
     viewsByCategoryId.set(catId, (viewsByCategoryId.get(catId) || 0) + v)
   }
 
+  // Получаем количество промптов по категориям
+  const promptsByCategoryId = new Map()
+  for (const p of prompts) {
+    const catId = p.categoryId || null
+    if (!catId) continue
+    promptsByCategoryId.set(catId, (promptsByCategoryId.get(catId) || 0) + 1)
+  }
+
   const totalTopLevelViews = topLevel.reduce((sum, c) => sum + (viewsByCategoryId.get(c.id) || 0), 0)
+  const totalTopLevelPrompts = topLevel.reduce((sum, c) => sum + (promptsByCategoryId.get(c.id) || 0), 0)
 
   let shares
   if (quotaMode === 'views+prior') {
@@ -453,14 +462,123 @@ async function main() {
       const v = viewsByCategoryId.get(c.id) || 0
       return { key: c.slug, share: (v + alpha) / (totalTopLevelViews + alpha * K) }
     })
+  } else if (quotaMode === 'mixed') {
+    // Смешанная стратегия: просмотры + промпты
+    if (totalTopLevelViews > 0 && totalTopLevelViews >= 10) {
+      // Комбинируем: 70% просмотры, 30% промпты
+      const combined = topLevel.map((c) => {
+        const v = viewsByCategoryId.get(c.id) || 0
+        const p = promptsByCategoryId.get(c.id) || 0
+        const viewsShare = v / totalTopLevelViews
+        const promptsShare = totalTopLevelPrompts > 0 ? p / totalTopLevelPrompts : 0
+        return {
+          key: c.slug,
+          combined: viewsShare * 0.7 + promptsShare * 0.3
+        }
+      })
+      const totalCombined = combined.reduce((sum, r) => sum + r.combined, 0)
+      shares = combined.map((r) => ({
+        key: r.key,
+        share: totalCombined > 0 ? r.combined / totalCombined : 1 / topLevel.length
+      }))
+    } else if (totalTopLevelPrompts > 0) {
+      // Просмотров мало - используем промпты
+      shares = topLevel.map((c) => {
+        const p = promptsByCategoryId.get(c.id) || 0
+        return { key: c.slug, share: p / totalTopLevelPrompts }
+      })
+    } else {
+      // Равномерное распределение
+      shares = topLevel.map((c) => ({ key: c.slug, share: 1 / topLevel.length }))
+    }
+    
+    // Ограничиваем максимальную долю одной категории (не более 25%)
+    const maxSharePerCategory = 0.25
+    shares = shares.map((s) => ({
+      key: s.key,
+      share: Math.min(s.share, maxSharePerCategory)
+    }))
+    const totalAfterMax = shares.reduce((sum, s) => sum + s.share, 0)
+    if (totalAfterMax > 0) {
+      shares = shares.map((s) => ({
+        key: s.key,
+        share: s.share / totalAfterMax
+      }))
+    }
+    
+    // Минимальная квота: хотя бы 2 промпта на категорию (если есть промпты)
+    const minQuota = 2
+    const categoriesWithPrompts = topLevel.filter((c) => (promptsByCategoryId.get(c.id) || 0) > 0)
+    const minTotal = categoriesWithPrompts.length * minQuota
+    
+    if (count >= minTotal) {
+      const adjustedShares = shares.map((s) => {
+        const catData = topLevel.find((c) => c.slug === s.key)
+        const hasPrompts = catData && (promptsByCategoryId.get(catData.id) || 0) > 0
+        return {
+          key: s.key,
+          share: hasPrompts ? Math.max(s.share, minQuota / count) : s.share
+        }
+      })
+      const totalAdjusted = adjustedShares.reduce((sum, s) => sum + s.share, 0)
+      shares = adjustedShares.map((s) => ({
+        key: s.key,
+        share: totalAdjusted > 0 ? s.share / totalAdjusted : s.share
+      }))
+    }
   } else {
-    // strict views
+    // strict views (старая логика) - но с ограничением максимума
     if (totalTopLevelViews === 0) {
-      shares = []
+      // Если просмотров нет - используем промпты
+      if (totalTopLevelPrompts > 0) {
+        shares = topLevel.map((c) => {
+          const p = promptsByCategoryId.get(c.id) || 0
+          return { key: c.slug, share: p / totalTopLevelPrompts }
+        })
+      } else {
+        shares = topLevel.map((c) => ({ key: c.slug, share: 1 / topLevel.length }))
+      }
     } else {
       shares = topLevel
         .map((c) => ({ key: c.slug, share: (viewsByCategoryId.get(c.id) || 0) / totalTopLevelViews }))
         .filter((s) => s.share > 0)
+    }
+    
+    // Ограничиваем максимум даже для strict views
+    const maxSharePerCategory = 0.25
+    shares = shares.map((s) => ({
+      key: s.key,
+      share: Math.min(s.share, maxSharePerCategory)
+    }))
+    const totalAfterMax = shares.reduce((sum, s) => sum + s.share, 0)
+    if (totalAfterMax > 0) {
+      shares = shares.map((s) => ({
+        key: s.key,
+        share: s.share / totalAfterMax
+      }))
+    }
+  }
+  
+  // Минимальная квота для mixed режима
+  if (quotaMode === 'mixed') {
+    const minQuota = 2
+    const categoriesWithPrompts = topLevel.filter((c) => (promptsByCategoryId.get(c.id) || 0) > 0)
+    const minTotal = categoriesWithPrompts.length * minQuota
+    
+    if (count >= minTotal) {
+      const adjustedShares = shares.map((s) => {
+        const catData = topLevel.find((c) => c.slug === s.key)
+        const hasPrompts = catData && (promptsByCategoryId.get(catData.id) || 0) > 0
+        return {
+          key: s.key,
+          share: hasPrompts ? Math.max(s.share, minQuota / count) : s.share
+        }
+      })
+      const totalAdjusted = adjustedShares.reduce((sum, s) => sum + s.share, 0)
+      shares = adjustedShares.map((s) => ({
+        key: s.key,
+        share: totalAdjusted > 0 ? s.share / totalAdjusted : s.share
+      }))
     }
   }
 

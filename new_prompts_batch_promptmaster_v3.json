@@ -1,0 +1,425 @@
+{
+  "version": "1.0",
+  "submitted_by": {
+    "username": "PromptMaster",
+    "user_id": "",
+    "profile_url": ""
+  },
+  "taxonomy": {
+    "languages": ["Русский", "English"],
+    "licenses": ["CC-BY"],
+    "categories": [
+      "Code",
+      "Image",
+      "Video",
+      "Design",
+      "Business",
+      "Marketing",
+      "Writing",
+      "Education",
+      "Analysis",
+      "Research",
+      "Creative",
+      "Productivity",
+      "Finance",
+      "Health"
+    ],
+    "models": ["GPT-5", "Runway Gen-2", "Google Veo 3", "Claude Opus 4.1", "Suno"]
+  },
+  "items": [
+    {
+      "title": "Промпт для анализа и написания кода",
+      "summary": "Помогает писать, анализировать и улучшать код с пояснениями.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Code",
+      "license": "CC-BY",
+      "tags": ["код", "программирование", "разработка"],
+      "prompt_text": "Role & Context: Ты senior-разработчик.\nGoal: Написать или проанализировать код.\nProcess:\n1. Проанализируй задачу.\n2. Предложи решение.\n3. Объясни логику.\n4. Укажи возможные улучшения.\nOutput Format: Код + пояснения.",
+      "variables": [
+        {"name": "язык_программирования", "type": "string", "required": false, "description": "Язык программирования", "example": "Python, JavaScript, Java"},
+        {"name": "задача", "type": "string", "required": true, "description": "Описание задачи", "example": "создать функцию для сортировки массива"},
+        {"name": "уровень", "type": "string", "required": false, "description": "Уровень сложности", "example": "начинающий, средний, продвинутый"}
+      ],
+      "usage_instructions": "Укажите задачу и язык программирования для получения кода с объяснениями.",
+      "examples": [
+        "задача: написать функцию для проверки палиндрома; язык_программирования: Python"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Оживление портретного фото с микродвижениями",
+      "summary": "Реалистичная анимация портрета с дыханием и микровыражениями.",
+      "language": "English",
+      "model": "Runway Gen-2",
+      "category": "Video",
+      "license": "CC-BY",
+      "tags": ["animate portrait photo", "photo animation", "micro expressions"],
+      "prompt_text": "Role & Context: You are a cinematic animation director.\nGoal: Animate a static portrait photo realistically.\nProcess:\n1. Add natural blinking.\n2. Subtle head motion.\n3. Breathing and facial micro-expressions.\n4. Keep realism and proportions.\nOutput Format: Video generation prompt.",
+      "variables": [
+        {"name": "описание_фото", "type": "string", "required": true, "description": "Описание фотографии", "example": "portrait of a young woman with long brown hair"},
+        {"name": "настроение", "type": "string", "required": false, "description": "Желаемое настроение", "example": "calm, mysterious, friendly"}
+      ],
+      "usage_instructions": "Describe your portrait photo and desired mood for realistic animation.",
+      "examples": [
+        "описание_фото: close-up portrait of a businessman; настроение: professional"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Премиальная предметная фотосъемка продукта",
+      "summary": "Создание сцены high-end предметной фотосъемки.",
+      "language": "English",
+      "model": "GPT-5",
+      "category": "Image",
+      "license": "CC-BY",
+      "tags": ["product photography", "high-end", "commercial photo"],
+      "prompt_text": "Role & Context: You are a professional commercial photographer.\nGoal: Create a high-end product photography scene.\nProcess:\n1. Define lighting style.\n2. Set background and reflections.\n3. Add cinematic macro details.\n4. Emphasize premium look.\nOutput Format: Image generation prompt.",
+      "variables": [
+        {"name": "продукт", "type": "string", "required": true, "description": "Описание продукта", "example": "luxury watch, perfume bottle"},
+        {"name": "стиль", "type": "string", "required": false, "description": "Стиль съемки", "example": "minimalist, luxurious, modern"}
+      ],
+      "usage_instructions": "Describe the product and desired style for premium photography scene.",
+      "examples": [
+        "продукт: luxury smartphone; стиль: minimalist"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание и анализ сайта",
+      "summary": "Анализ структуры сайта и рекомендации по улучшению.",
+      "language": "Русский",
+      "model": "Claude Opus 4.1",
+      "category": "Business",
+      "license": "CC-BY",
+      "tags": ["site", "веб-сайт", "анализ сайта"],
+      "prompt_text": "Role & Context: Ты веб-аналитик и UX-эксперт.\nGoal: Проанализировать сайт и предложить улучшения.\nProcess:\n1. Оцени структуру.\n2. Найди слабые места.\n3. Предложи улучшения.\nOutput Format: Анализ + рекомендации.",
+      "variables": [
+        {"name": "url_сайта", "type": "string", "required": false, "description": "URL сайта для анализа", "example": "https://example.com"},
+        {"name": "цель_анализа", "type": "string", "required": false, "description": "Цель анализа", "example": "улучшение конверсии, UX"}
+      ],
+      "usage_instructions": "Укажите URL сайта и цель анализа для получения рекомендаций.",
+      "examples": [
+        "url_сайта: сайт интернет-магазина; цель_анализа: повышение продаж"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание логотипа для бренда",
+      "summary": "Разработка концепции логотипа с учетом ниши и аудитории.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Design",
+      "license": "CC-BY",
+      "tags": ["логотип", "создание логотипа", "брендинг"],
+      "prompt_text": "Role & Context: Ты бренд-дизайнер.\nGoal: Разработать концепцию логотипа.\nProcess:\n1. Анализ ниши.\n2. Подбор символов.\n3. Цветовая палитра.\n4. Стиль и ассоциации.\nOutput Format: Описание концепции.",
+      "variables": [
+        {"name": "бренд", "type": "string", "required": true, "description": "Название бренда", "example": "Кофейня Утро"},
+        {"name": "ниша", "type": "string", "required": true, "description": "Бизнес-ниша", "example": "кофейня, IT-компания"},
+        {"name": "аудитория", "type": "string", "required": false, "description": "Целевая аудитория", "example": "молодежь 20-35 лет"}
+      ],
+      "usage_instructions": "Укажите название бренда, нишу и аудиторию для концепции логотипа.",
+      "examples": [
+        "бренд: FitLife; ниша: фитнес-клуб; аудитория: активные люди 25-40"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Девушка на выпускном: идея фотосессии",
+      "summary": "Сценарий и идеи для фотосессии выпускного.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Image",
+      "license": "CC-BY",
+      "tags": ["девушка на выпускном", "выпускной", "фотосессия"],
+      "prompt_text": "Role & Context: Ты fashion-фотограф.\nGoal: Создать идею фотосессии выпускного.\nProcess:\n1. Образ и стиль.\n2. Локация.\n3. Настроение кадра.\nOutput Format: Описание сцен.",
+      "variables": [
+        {"name": "стиль_праздника", "type": "string", "required": false, "description": "Стиль выпускного", "example": "классический, современный, тематический"},
+        {"name": "локация", "type": "string", "required": false, "description": "Место съемки", "example": "парк, студия, набережная"}
+      ],
+      "usage_instructions": "Опишите стиль выпускного и предпочтительную локацию.",
+      "examples": [
+        "стиль_праздника: романтический; локация: парк у реки"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Методические идеи для воспитателей",
+      "summary": "Идеи занятий и активностей для воспитателей.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Education",
+      "license": "CC-BY",
+      "tags": ["для воспитателей", "детский сад", "занятия"],
+      "prompt_text": "Role & Context: Ты методист дошкольного образования.\nGoal: Предложить идеи занятий.\nProcess:\n1. Определи цель занятия.\n2. Подбери активности.\n3. Укажи развиваемые навыки.\nOutput Format: План занятия.",
+      "variables": [
+        {"name": "возраст_детей", "type": "string", "required": true, "description": "Возраст детей", "example": "3-4 года, 5-6 лет"},
+        {"name": "тема", "type": "string", "required": false, "description": "Тема занятия", "example": "осень, дружба, математика"}
+      ],
+      "usage_instructions": "Укажите возраст детей и тему занятия.",
+      "examples": [
+        "возраст_детей: 4-5 лет; тема: времена года"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Контент для риелтора",
+      "summary": "Контент-план и тексты для риелтора.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Marketing",
+      "license": "CC-BY",
+      "tags": ["риелтор", "недвижимость", "контент"],
+      "prompt_text": "Role & Context: Ты маркетолог в недвижимости.\nGoal: Создать контент для риелтора.\nProcess:\n1. Определи ЦА.\n2. Подбери темы.\n3. Сформируй тексты.\nOutput Format: Контент-план.",
+      "variables": [
+        {"name": "специализация", "type": "string", "required": false, "description": "Специализация риелтора", "example": "продажа квартир, коммерческая недвижимость"},
+        {"name": "платформа", "type": "string", "required": false, "description": "Платформа для контента", "example": "Instagram, Telegram, сайт"}
+      ],
+      "usage_instructions": "Укажите специализацию и платформу для контента.",
+      "examples": [
+        "специализация: продажа загородной недвижимости; платформа: Instagram"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Анализ затрат кафе-бистро",
+      "summary": "Анализ ежемесячных затрат кафе-бистро в процентах.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Finance",
+      "license": "CC-BY",
+      "tags": ["затраты кафе", "бистро", "финансы"],
+      "prompt_text": "Role & Context: Ты финансовый аналитик общепита.\nGoal: Проанализировать структуру затрат кафе-бистро.\nProcess:\n1. Аренда.\n2. Продукты.\n3. Персонал.\n4. Прочие расходы.\nOutput Format: Таблица с процентами.",
+      "variables": [
+        {"name": "тип_заведения", "type": "string", "required": false, "description": "Тип заведения", "example": "кафе, бистро, ресторан"},
+        {"name": "город", "type": "string", "required": false, "description": "Город расположения", "example": "Москва, СПб, регион"}
+      ],
+      "usage_instructions": "Укажите тип заведения и город для анализа затрат.",
+      "examples": [
+        "тип_заведения: кафе-кондитерская; город: Москва"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Курсовая работа: структура и план",
+      "summary": "Помощь в создании курсовой работы.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Education",
+      "license": "CC-BY",
+      "tags": ["курсовая работа", "учеба", "план"],
+      "prompt_text": "Role & Context: Ты научный руководитель.\nGoal: Помочь составить курсовую работу.\nProcess:\n1. Формулировка темы.\n2. План.\n3. Методология.\n4. Выводы.\nOutput Format: Структура курсовой.",
+      "variables": [
+        {"name": "предмет", "type": "string", "required": true, "description": "Учебный предмет", "example": "экономика, история, программирование"},
+        {"name": "тема", "type": "string", "required": false, "description": "Тема курсовой", "example": "Цифровая трансформация бизнеса"}
+      ],
+      "usage_instructions": "Укажите предмет и тему курсовой работы.",
+      "examples": [
+        "предмет: маркетинг; тема: SMM-стратегии"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Семейная фотосессия: идеи",
+      "summary": "Идеи и сценарии для семейных фотографий.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Image",
+      "license": "CC-BY",
+      "tags": ["семейные фото", "фотосессия", "семья"],
+      "prompt_text": "Role & Context: Ты семейный фотограф.\nGoal: Предложить идеи для семейной фотосессии.\nProcess:\n1. Локации.\n2. Образы.\n3. Настроение.\nOutput Format: Список идей.",
+      "variables": [
+        {"name": "состав_семьи", "type": "string", "required": false, "description": "Состав семьи", "example": "родители + 2 ребенка, бабушка + внуки"},
+        {"name": "повод", "type": "string", "required": false, "description": "Повод для съемки", "example": "день рождения, Новый год, просто так"}
+      ],
+      "usage_instructions": "Опишите состав семьи и повод для съемки.",
+      "examples": [
+        "состав_семьи: родители с малышом; повод: первый годик ребенка"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "План адской недели",
+      "summary": "Жесткий, но реалистичный план интенсивной недели.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Productivity",
+      "license": "CC-BY",
+      "tags": ["план недели", "продуктивность", "тайм-менеджмент"],
+      "prompt_text": "Role & Context: Ты коуч по продуктивности.\nGoal: Составить план максимально загруженной недели.\nProcess:\n1. Приоритеты.\n2. Распределение задач.\n3. Контроль энергии.\nOutput Format: План на 7 дней.",
+      "variables": [
+        {"name": "цели_недели", "type": "string", "required": true, "description": "Основные цели недели", "example": "завершить проект, подготовиться к экзамену"},
+        {"name": "ограничения", "type": "string", "required": false, "description": "Ограничения времени", "example": "работа 9-18, семья"}
+      ],
+      "usage_instructions": "Опишите цели недели и имеющиеся ограничения.",
+      "examples": [
+        "цели_недели: сдать экзамен, закончить отчет; ограничения: учеба + подработка"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Психологический разбор страха",
+      "summary": "Разбор природы страха и способов работы с ним.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Health",
+      "license": "CC-BY",
+      "tags": ["психология", "страх", "эмоции"],
+      "prompt_text": "Role & Context: Ты психолог-консультант.\nGoal: Проанализировать страх.\nProcess:\n1. Источники страха.\n2. Механизмы.\n3. Практические шаги.\nOutput Format: Анализ + рекомендации.",
+      "variables": [
+        {"name": "тип_страха", "type": "string", "required": true, "description": "Тип страха", "example": "страх публичных выступлений, страх неудачи"},
+        {"name": "ситуация", "type": "string", "required": false, "description": "Конкретная ситуация", "example": "выступление перед аудиторией"}
+      ],
+      "usage_instructions": "Опишите тип страха и конкретную ситуацию.",
+      "examples": [
+        "тип_страха: страх высоты; ситуация: необходимость подняться на крышу"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Анализ базовых принципов трейдинга",
+      "summary": "Пояснение принципов трейдинга для начинающих.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Finance",
+      "license": "CC-BY",
+      "tags": ["трейдинг", "финансы", "инвестиции"],
+      "prompt_text": "Role & Context: Ты финансовый аналитик.\nGoal: Объяснить основы трейдинга.\nProcess:\n1. Риски.\n2. Стратегии.\n3. Управление капиталом.\nConstraints: Без инвестиционных рекомендаций.\nOutput Format: Обзор.",
+      "variables": [
+        {"name": "уровень_знаний", "type": "string", "required": false, "description": "Уровень знаний", "example": "новичок, имею базовые знания"},
+        {"name": "интерес", "type": "string", "required": false, "description": "Чем интересуется", "example": "криптовалюта, акции, фьючерсы"}
+      ],
+      "usage_instructions": "Укажите уровень знаний и область интересов.",
+      "examples": [
+        "уровень_знаний: новичок; интерес: фондовый рынок"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Финансовый обзор личного бюджета",
+      "summary": "Анализ и оптимизация личных финансов.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Finance",
+      "license": "CC-BY",
+      "tags": ["финансы", "личный бюджет", "деньги"],
+      "prompt_text": "Role & Context: Ты финансовый консультант.\nGoal: Проанализировать личный бюджет.\nProcess:\n1. Доходы.\n2. Расходы.\n3. Оптимизация.\nOutput Format: Финансовый разбор.",
+      "variables": [
+        {"name": "доходы", "type": "string", "required": true, "description": "Ежемесячные доходы", "example": "80000 рублей"},
+        {"name": "расходы", "type": "string", "required": true, "description": "Основные расходы", "example": "аренда 30000, еда 15000"}
+      ],
+      "usage_instructions": "Укажите доходы и основные расходы для анализа бюджета.",
+      "examples": [
+        "доходы: 60000 рублей; расходы: аренда 25000, продукты 10000, транспорт 5000"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Создание статей под запросы",
+      "summary": "Создание структурированных статей под заданную тему.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["статьи", "контент", "копирайтинг"],
+      "prompt_text": "Role & Context: Ты профессиональный автор статей.\nGoal: Написать информативную статью.\nProcess:\n1. Структура.\n2. Раскрытие темы.\n3. Выводы.\nOutput Format: Готовая статья.",
+      "variables": [
+        {"name": "тема", "type": "string", "required": true, "description": "Тема статьи", "example": "Искусственный интеллект в бизнесе"},
+        {"name": "длина", "type": "string", "required": false, "description": "Желаемая длина", "example": "1500 слов, краткая"}
+      ],
+      "usage_instructions": "Укажите тему статьи и желаемую длину.",
+      "examples": [
+        "тема: Экологичное потребление; длина: 1000 слов"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    },
+    {
+      "title": "Социальный пост для АНО о лесопарке",
+      "summary": "Пост в соцсети для АНО о школе тропостроения и лекции.",
+      "language": "Русский",
+      "model": "GPT-5",
+      "category": "Writing",
+      "license": "CC-BY",
+      "tags": ["ано", "лесопарк", "соцсети"],
+      "prompt_text": "Role & Context: Ты редактор НКО.\nGoal: Написать пост для соцсетей АНО.\nProcess:\n1. Описать миссию.\n2. Представить лекцию.\n3. Подчеркнуть ценность.\nOutput Format: Готовый пост.",
+      "variables": [
+        {"name": "мероприятие", "type": "string", "required": true, "description": "Описание мероприятия", "example": "лекция о тропостроении"},
+        {"name": "платформа", "type": "string", "required": false, "description": "Соцсеть", "example": "VK, Telegram, Instagram"}
+      ],
+      "usage_instructions": "Опишите мероприятие и укажите платформу.",
+      "examples": [
+        "мероприятие: мастер-класс по ориентированию; платформа: Instagram"
+      ],
+      "attribution": {
+        "author_name": "PromptMaster"
+      },
+      "visibility": "public",
+      "status": "published"
+    }
+  ]
+}
+

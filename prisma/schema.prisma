@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,71 +8,63 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String?  @unique
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  prompts   Prompt[]
-  ratings   Rating[]
-  reviews   Review[]
-  likes     Like[]
-  saves     Save[]
-  comments  Comment[]
-  preferences UserPreference?
-  adminUser AdminUser?
-  articles  Article[] // Статьи автора
-
-  // Profile fields
-  bio       String?  // Описание профиля
-  website   String?  // Сайт
-  telegram  String?  // Telegram
-  github    String?  // GitHub
-  twitter   String?  // Twitter/X
-  linkedin  String?  // LinkedIn
-
-  // Reputation fields
-  reputationScore       Int      @default(0)
-  reputationPromptCount Int      @default(0)
-  reputationRatingsSum  Int      @default(0)
-  reputationRatingsCnt  Int      @default(0)
-  reputationLikesCnt    Int      @default(0)
-  reputationSavesCnt    Int      @default(0)
-  reputationCommentsCnt Int      @default(0)
+  id                    String          @id @default(cuid())
+  name                  String?
+  email                 String?         @unique
+  image                 String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @default(now()) @updatedAt
+  bio                   String?
+  website               String?
+  telegram              String?
+  github                String?
+  twitter               String?
+  linkedin              String?
+  reputationScore       Int             @default(0)
+  reputationPromptCount Int             @default(0)
+  reputationRatingsSum  Int             @default(0)
+  reputationRatingsCnt  Int             @default(0)
+  reputationLikesCnt    Int             @default(0)
+  reputationSavesCnt    Int             @default(0)
+  reputationCommentsCnt Int             @default(0)
+  adminUser             AdminUser?
+  articles              Article[]
+  comments              Comment[]
+  likes                 Like[]
+  prompts               Prompt[]
+  ratings               Rating[]
+  reviews               Review[]
+  saves                 Save[]
+  preferences           UserPreference?
 }
 
 model Prompt {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  prompt      String
-  model       String
-  lang        String
-  category    String
-  tags        String
-  license     String
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
-  ratings     Rating[]
-  reviews     Review[]
-  likes       Like[]
-  saves       Save[]
-  comments    Comment[]
-  vectors     PromptVector?
-
-  // Кэш для средней оценки и числа оценок (обновляется после каждого ревью/рейтинга)
-  averageRating Float   @default(0)
-  totalRatings  Int     @default(0)
-  views       Int     @default(0)
-  viewEvents  PromptViewEvent[]
-
-  // Связи с категориями и тегами
-  categoryId String?
-  categoryRef Category? @relation(fields: [categoryId], references: [id])
-  promptTags PromptTag[]
+  id            String            @id @default(cuid())
+  title         String
+  description   String
+  prompt        String
+  model         String
+  lang          String
+  category      String
+  tags          String
+  license       String
+  authorId      String
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
+  averageRating Float             @default(0)
+  totalRatings  Int               @default(0)
+  views         Int               @default(0)
+  categoryId    String?
+  comments      Comment[]
+  likes         Like[]
+  categoryRef   Category?         @relation(fields: [categoryId], references: [id])
+  author        User              @relation(fields: [authorId], references: [id])
+  promptTags    PromptTag[]
+  vectors       PromptVector?
+  viewEvents    PromptViewEvent[]
+  ratings       Rating[]
+  reviews       Review[]
+  saves         Save[]
 
   @@unique([title, authorId])
   @@index([category])
@@ -93,10 +79,10 @@ model Rating {
   value     Int
   userId    String
   promptId  String
-  user      User     @relation(fields: [userId], references: [id])
-  prompt    Prompt   @relation(fields: [promptId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, promptId])
 }
@@ -110,9 +96,8 @@ model Review {
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-
-  user      User     @relation(fields: [userId], references: [id])
   prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([promptId, userId])
 }
@@ -121,9 +106,9 @@ model Like {
   id        String   @id @default(cuid())
   userId    String
   promptId  String
-  user      User     @relation(fields: [userId], references: [id])
-  prompt    Prompt   @relation(fields: [promptId], references: [id])
   createdAt DateTime @default(now())
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, promptId])
 }
@@ -132,9 +117,9 @@ model Save {
   id        String   @id @default(cuid())
   userId    String
   promptId  String
-  user      User     @relation(fields: [userId], references: [id])
-  prompt    Prompt   @relation(fields: [promptId], references: [id])
   createdAt DateTime @default(now())
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, promptId])
 }
@@ -144,10 +129,10 @@ model Comment {
   userId    String
   promptId  String
   content   String
-  user      User     @relation(fields: [userId], references: [id])
-  prompt    Prompt   @relation(fields: [promptId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 /// User saved preferences to guide recommendations
@@ -166,7 +151,7 @@ model PromptInteraction {
   id        String   @id @default(cuid())
   userId    String
   promptId  String
-  type      String   // view | open | copy | save | rate
+  type      String
   weight    Float    @default(1)
   createdAt DateTime @default(now())
 
@@ -176,17 +161,15 @@ model PromptInteraction {
 
 /// Cached prompt vectors for fast similarity queries
 model PromptVector {
-  promptId String  @id
-  vector   Json
+  promptId  String   @id
+  vector    Json
   updatedAt DateTime @updatedAt
-  prompt   Prompt  @relation(fields: [promptId], references: [id])
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
 }
-
 
 model PromptViewEvent {
   id          String   @id @default(cuid())
   promptId    String
-  prompt      Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
   userId      String?
   ipHash      String?
   uaHash      String?
@@ -195,6 +178,7 @@ model PromptViewEvent {
   isCounted   Boolean  @default(false)
   reason      String?
   createdAt   DateTime @default(now())
+  prompt      Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
 
   @@index([promptId, createdAt])
   @@index([userId, promptId, createdAt])
@@ -204,14 +188,14 @@ model PromptViewEvent {
 
 /// Система мониторинга и алертов для просмотров
 model ViewMonitoringAlert {
-  id          String   @id @default(cuid())
-  type        String   // SPIKE_DETECTION, HIGH_REJECTION_RATE, SUSPICIOUS_PATTERN
-  severity    String   // LOW, MEDIUM, HIGH, CRITICAL
-  message     String
-  metadata    Json?    // Дополнительные данные для алерта
-  isResolved  Boolean  @default(false)
-  resolvedAt  DateTime?
-  createdAt   DateTime @default(now())
+  id         String    @id @default(cuid())
+  type       String
+  severity   String
+  message    String
+  metadata   Json?
+  isResolved Boolean   @default(false)
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
 
   @@index([type, createdAt])
   @@index([severity, isResolved])
@@ -219,16 +203,16 @@ model ViewMonitoringAlert {
 
 /// Агрегированная статистика просмотров для аналитики
 model ViewAnalytics {
-  id              String   @id @default(cuid())
-  promptId        String
-  date            DateTime
-  totalViews      Int      @default(0)
-  countedViews    Int      @default(0)
-  rejectedViews   Int      @default(0)
-  uniqueUsers     Int      @default(0)
-  uniqueGuests    Int      @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            String   @id @default(cuid())
+  promptId      String
+  date          DateTime
+  totalViews    Int      @default(0)
+  countedViews  Int      @default(0)
+  rejectedViews Int      @default(0)
+  uniqueUsers   Int      @default(0)
+  uniqueGuests  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@unique([promptId, date])
   @@index([date])
@@ -252,16 +236,16 @@ model PromptDailyStats {
 
 /// Отслеживание поисковых запросов пользователей для аналитики
 model SearchQuery {
-  id          String   @id @default(cuid())
-  query       String   // Поисковый запрос (нормализованный)
-  queryHash   String?  // Хэш запроса для дедупликации
-  userId      String?  // ID пользователя (если авторизован)
-  ipHash      String?  // Хэш IP для анонимных пользователей
-  userAgent   String?  // User Agent для анализа
-  resultsCount Int     @default(0) // Количество найденных результатов
-  clickedResult String? // ID промпта, на который кликнули (если есть)
-  sessionId   String?  // ID сессии для группировки запросов
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  query         String
+  queryHash     String?
+  userId        String?
+  ipHash        String?
+  userAgent     String?
+  resultsCount  Int      @default(0)
+  clickedResult String?
+  sessionId     String?
+  createdAt     DateTime @default(now())
 
   @@index([query, createdAt])
   @@index([queryHash])
@@ -273,15 +257,14 @@ model SearchQuery {
 /// Расширение модели User для админских функций
 model AdminUser {
   id          String   @id @default(cuid())
-  userId      String   @unique // Связь с основной моделью User
-  role        String   @default("admin") // admin, moderator, super_admin
-  permissions Json     // JSON с разрешениями
+  userId      String   @unique
+  role        String   @default("admin")
+  permissions Json
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  createdBy   String?  // Кто создал этого админа
-  
+  createdBy   String?
   user        User     @relation(fields: [userId], references: [id])
-  
+
   @@index([role])
 }
 
@@ -290,7 +273,7 @@ model SearchMetrics {
   id               String   @id @default("main")
   countSaved       Int      @default(0) @map("count_saved")
   countRejected    Int      @default(0) @map("count_rejected")
-  rejectionReasons String  @default("{}") @map("rejection_reasons")
+  rejectionReasons String   @default("{}") @map("rejection_reasons")
   lastUpdated      DateTime @default(now()) @map("last_updated")
 
   @@index([id])
@@ -298,23 +281,21 @@ model SearchMetrics {
 
 /// Категории промптов с поддержкой иерархии и i18n
 model Category {
-  id            String   @id @default(cuid())
-  nameRu        String   // Русское название для SEO
-  nameEn        String   // Английское название
-  slug          String   @unique // URL-слаг
-  descriptionRu String?  // Описание на русском
-  descriptionEn String?  // Описание на английском
-  parentId      String?  // ID родительской категории для иерархии
-  parent        Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  id            String     @id @default(cuid())
+  nameRu        String
+  nameEn        String
+  slug          String     @unique
+  descriptionRu String?
+  descriptionEn String?
+  parentId      String?
+  isActive      Boolean    @default(true)
+  sortOrder     Int        @default(0)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  promptCount   Int        @default(0)
+  parent        Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children      Category[] @relation("CategoryHierarchy")
-  isActive      Boolean  @default(true) // Активна ли категория
-  sortOrder     Int      @default(0) // Порядок сортировки
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Связи
   prompts       Prompt[]
-  promptCount   Int      @default(0) // Кэш количества промптов
 
   @@index([parentId])
   @@index([slug])
@@ -324,20 +305,18 @@ model Category {
 
 /// Теги для промптов
 model Tag {
-  id          String   @id @default(cuid())
-  name        String   // Название тега
-  slug        String   @unique // URL-слаг
-  description String?  // Описание тега
-  isNsfw      Boolean  @default(false) // NSFW тег
-  isActive    Boolean  @default(true) // Активен ли тег
-  color       String?  // Цвет тега (hex)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Связи
-  promptTags  PromptTag[]
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String?
+  isNsfw      Boolean      @default(false)
+  isActive    Boolean      @default(true)
+  color       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  promptCount Int          @default(0)
   articleTags ArticleTag[]
-  promptCount Int      @default(0) // Кэш количества промптов
+  promptTags  PromptTag[]
 
   @@index([slug])
   @@index([isActive])
@@ -349,8 +328,8 @@ model PromptTag {
   id       String @id @default(cuid())
   promptId String
   tagId    String
-  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
   tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
 
   @@unique([promptId, tagId])
   @@index([promptId])
@@ -359,24 +338,22 @@ model PromptTag {
 
 /// Статьи и посты блога с поддержкой i18n
 model Article {
-  id            String   @id @default(cuid())
-  slug          String   @unique // URL-слаг для статьи
-  titleRu       String   // Заголовок на русском
-  titleEn       String   // Заголовок на английском
-  descriptionRu String   // Описание на русском
-  descriptionEn String   // Описание на английском
-  contentRu     String   // Контент на русском (Markdown)
-  contentEn     String   // Контент на английском (Markdown)
-  coverImage    String?  // URL изображения обложки
-  authorId      String   // Автор статьи
-  author        User     @relation(fields: [authorId], references: [id])
-  status        String   @default("draft") // draft | published | archived
-  publishedAt   DateTime? // Дата публикации
-  viewCount     Int      @default(0) // Счетчик просмотров
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  // Связи
+  id            String       @id @default(cuid())
+  slug          String       @unique
+  titleRu       String
+  titleEn       String
+  descriptionRu String
+  descriptionEn String
+  contentRu     String
+  contentEn     String
+  coverImage    String?
+  authorId      String
+  status        String       @default("draft")
+  publishedAt   DateTime?
+  viewCount     Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  author        User         @relation(fields: [authorId], references: [id])
   articleTags   ArticleTag[]
 
   @@index([slug])
@@ -390,11 +367,10 @@ model ArticleTag {
   id        String  @id @default(cuid())
   articleId String
   tagId     String
-  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
   tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@unique([articleId, tagId])
   @@index([articleId])
   @@index([tagId])
 }
-

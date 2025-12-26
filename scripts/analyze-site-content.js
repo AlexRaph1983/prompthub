@@ -166,11 +166,89 @@ async function main() {
   })
 
   const topLevelTotalViews = viewsByTopLevel.reduce((s, r) => s + r.views, 0)
-  const shares = viewsByTopLevel
-    .filter((r) => r.views > 0)
-    .map((r) => ({ key: r.cat.slug, share: r.views / topLevelTotalViews }))
+  const topLevelTotalPrompts = viewsByTopLevel.reduce((s, r) => s + r.prompts, 0)
+  
+  // Проверяем, не сконцентрированы ли все просмотры в одной категории
+  const categoriesWithViews = viewsByTopLevel.filter((r) => r.views > 0)
+  const maxViewsShare = categoriesWithViews.length > 0 
+    ? Math.max(...categoriesWithViews.map((r) => r.views / topLevelTotalViews))
+    : 0
+  
+  // Смешанная стратегия: учитываем и просмотры, и количество промптов
+  // Если просмотров мало (<10) ИЛИ они все в одной категории (>90%) - используем только промпты
+  // Иначе комбинируем (50% просмотры, 50% промпты) для более равномерного распределения
+  let shares = []
+  
+  if (topLevelTotalViews >= 10 && maxViewsShare < 0.9 && topLevelTotalPrompts > 0) {
+    // Есть просмотры, они распределены - комбинируем
+    const viewsShares = viewsByTopLevel.map((r) => ({
+      key: r.cat.slug,
+      viewsShare: r.views / topLevelTotalViews,
+      promptsShare: r.prompts / topLevelTotalPrompts
+    }))
+    
+    // Комбинация: 50% просмотры, 50% промпты (более равномерно)
+    const totalCombined = viewsShares.reduce((sum, r) => sum + (r.viewsShare * 0.5 + r.promptsShare * 0.5), 0)
+    shares = viewsShares.map((r) => ({
+      key: r.key,
+      share: totalCombined > 0 ? (r.viewsShare * 0.5 + r.promptsShare * 0.5) / totalCombined : r.promptsShare
+    }))
+  } else if (topLevelTotalPrompts > 0) {
+    // Просмотров мало или они сконцентрированы - используем только промпты
+    shares = viewsByTopLevel.map((r) => ({
+      key: r.cat.slug,
+      share: r.prompts / topLevelTotalPrompts
+    }))
+  } else {
+    // Если вообще нет данных - равномерное распределение
+    shares = viewsByTopLevel.map((r) => ({
+      key: r.cat.slug,
+      share: 1 / viewsByTopLevel.length
+    }))
+  }
+  
+  // Ограничиваем максимальную долю одной категории (не более 25%)
+  const maxSharePerCategory = 0.25
+  shares = shares.map((s) => ({
+    key: s.key,
+    share: Math.min(s.share, maxSharePerCategory)
+  }))
+  
+  // Нормализуем после ограничения максимума
+  const totalAfterMax = shares.reduce((sum, s) => sum + s.share, 0)
+  if (totalAfterMax > 0) {
+    shares = shares.map((s) => ({
+      key: s.key,
+      share: s.share / totalAfterMax
+    }))
+  }
+  
+  // Минимальная квота: хотя бы 2 промпта на категорию (если категория не пустая)
+  // Это гарантирует разнообразие
+  const minQuota = 2
+  const categoriesWithPrompts = viewsByTopLevel.filter((r) => r.prompts > 0)
+  const minTotal = categoriesWithPrompts.length * minQuota
+  
+  if (newCount >= minTotal) {
+    // Сначала выделяем минимум каждой категории
+    const adjustedShares = shares.map((s) => {
+      const catData = viewsByTopLevel.find((r) => r.cat.slug === s.key)
+      const hasPrompts = catData && catData.prompts > 0
+      return {
+        key: s.key,
+        share: hasPrompts ? Math.max(s.share, minQuota / newCount) : s.share
+      }
+    })
+    
+    // Нормализуем после добавления минимумов
+    const totalAdjusted = adjustedShares.reduce((sum, s) => sum + s.share, 0)
+    shares = adjustedShares.map((s) => ({
+      key: s.key,
+      share: totalAdjusted > 0 ? s.share / totalAdjusted : s.share
+    }))
+  }
 
-  const quotas = topLevelTotalViews > 0 ? allocateByShares(newCount, shares) : []
+  const quotas = shares.length ? allocateByShares(newCount, shares) : []
 
   // Доп. срезы
   const langs = new Map()
@@ -219,16 +297,17 @@ async function main() {
   console.log('')
 
   console.log(`--- Quotas for +${newCount} prompts by top-level views share ---`)
-  if (topLevelTotalViews === 0) {
-    console.log('No views found in top-level categories; quotas not computed (total views = 0).')
+  if (quotas.length === 0) {
+    console.log('No quotas computed (no shares available).')
   } else {
-    const qMap = new Map(quotas.map((q) => [q.key, q.n]))
-    viewsByTopLevel
-      .sort((a, b) => b.views - a.views)
-      .filter((r) => r.views > 0)
-      .forEach((r) => {
+    // Показываем все категории с ненулевыми квотами, сортированные по квоте
+    quotas
+      .filter((q) => q.n > 0)
+      .sort((a, b) => b.n - a.n)
+      .forEach((q) => {
+        const catData = viewsByTopLevel.find((r) => r.cat.slug === q.key)
         console.log(
-          `- ${r.cat.slug}: +${qMap.get(r.cat.slug) || 0} (share=${pct(r.views, topLevelTotalViews).toFixed(2)}%)`
+          `- ${q.key}: +${q.n} (share=${pct(q.n, newCount).toFixed(2)}%, prompts=${catData?.prompts || 0}, views=${catData?.views || 0})`
         )
       })
     console.log('Sum:', quotas.reduce((s, q) => s + q.n, 0))
