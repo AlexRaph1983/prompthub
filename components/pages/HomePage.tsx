@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Star, Sparkles, Eye, Calendar } from 'lucide-react'
+import { Copy, Star, Sparkles, Eye, Calendar, ArrowUpDown, Wand2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import { usePromptStore } from '@/contexts/PromptStore'
@@ -20,6 +20,8 @@ import { getABTestFeatures } from '@/analytics/abTestConfig'
 import AutoRefreshWidgets from '@/components/AutoRefreshWidgets'
 import { RandomArticlesCarousel } from '@/components/articles/RandomArticlesCarousel'
 
+type SortMode = 'recommendations' | 'date'
+
 export default function HomePage() {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
@@ -27,9 +29,13 @@ export default function HomePage() {
   const locale = useLocale()
   const { state, dispatch, getFilteredPrompts, loadMorePrompts } = usePromptStore()
   
-  // Ленивый скролл: подгрузка при достижении низа
+  // Режим отображения: рекомендации или по дате
+  const [sortMode, setSortMode] = React.useState<SortMode>('recommendations')
+  
+  // Ленивый скролл: подгрузка при достижении низа (только в режиме даты)
   React.useEffect(() => {
     if (!mounted) return;
+    if (sortMode === 'recommendations') return; // В режиме рекомендаций не догружаем
     const handleScroll = () => {
       if (state.isLoading || !state.hasMore) return;
       const scrollY = window.scrollY || window.pageYOffset;
@@ -41,7 +47,7 @@ export default function HomePage() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [mounted, state.isLoading, state.hasMore, loadMorePrompts]);
+  }, [mounted, state.isLoading, state.hasMore, loadMorePrompts, sortMode]);
   const { searchValue, setSearchValue, debouncedValue } = useSearch()
   const { trackSearch, trackCompletedSearch, trackOnBlur, trackClick } = useSearchTracking()
   const { trackRealTimeSearch } = useRealTimeSearchTracking()
@@ -317,29 +323,34 @@ export default function HomePage() {
     return matchesSearch && matchesModel && matchesCategory && matchesLang
   }
 
-  // Загружаем рекомендованные промпты
+  // Загружаем рекомендованные промпты (все, не только 6)
   React.useEffect(() => {
     let ignore = false
     const loadRecommendations = async () => {
-      if (!session?.user?.id) return
+      // Загружаем рекомендации только в режиме рекомендаций
+      if (sortMode !== 'recommendations') return
       
       setIsLoadingRecommendations(true)
-             try {
-         const url = new URL('/api/recommendations', window.location.origin)
-         url.searchParams.set('for', session.user.id)
-         url.searchParams.set('locale', (navigator.language || 'en').startsWith('ru') ? 'ru' : 'en')
-         console.log('Fetching recommendations for user:', session.user.id)
-         const r = await fetch(url.toString(), { cache: 'no-store' as any })
-         console.log('Recommendations response status:', r.status)
-         if (!r.ok) {
-           console.log('Recommendations API failed:', r.status)
-           return
-         }
-         const data = await r.json()
-         console.log('Recommendations data:', data)
-         if (!ignore) {
-           // Извлекаем данные промптов из ответа API
-           const prompts = (data || []).slice(0, 6).map((item: any) => {
+      try {
+        const url = new URL('/api/recommendations', window.location.origin)
+        // Для авторизованных пользователей добавляем персонализацию
+        if (session?.user?.id) {
+          url.searchParams.set('for', session.user.id)
+        }
+        url.searchParams.set('locale', (navigator.language || 'en').startsWith('ru') ? 'ru' : 'en')
+        url.searchParams.set('limit', '50') // Загружаем больше промптов
+        console.log('Fetching recommendations, user:', session?.user?.id || 'anonymous')
+        const r = await fetch(url.toString(), { cache: 'no-store' as any })
+        console.log('Recommendations response status:', r.status)
+        if (!r.ok) {
+          console.log('Recommendations API failed:', r.status)
+          return
+        }
+        const data = await r.json()
+        console.log('Recommendations data count:', data?.length)
+        if (!ignore) {
+          // Извлекаем данные промптов из ответа API
+          const prompts = (data || []).map((item: any) => {
             const views = typeof item.prompt?.views === 'number' ? item.prompt.views : 0
             const likesCount = (item.prompt as any)?._count?.likes ?? 0
 
@@ -359,11 +370,12 @@ export default function HomePage() {
               score: item.score,
               likesCount,
               views,
+              createdAt: item.prompt.createdAt,
             })
-           })
-          console.log('Processed recommended prompts:', prompts)
+          })
+          console.log('Processed recommended prompts:', prompts.length)
           setRecommendedPrompts(prompts)
-         }
+        }
       } catch (error) {
         console.error('Failed to load recommendations:', error)
       } finally {
@@ -375,22 +387,21 @@ export default function HomePage() {
 
     loadRecommendations()
     return () => { ignore = true }
-  }, [session?.user?.id])
+  }, [session?.user?.id, sortMode])
 
   const filteredPrompts = getFilteredPrompts()
   
-  // Объединяем рекомендованные и обычные промпты (рекомендованные тоже фильтруем)
+  // Выбираем промпты в зависимости от режима
   const allPrompts = React.useMemo(() => {
-    const filteredRecommended = recommendedPrompts.filter(filterByState)
-
-    const recommendedIds = new Set(filteredRecommended.map(p => p.id))
-    const regularPrompts = filteredPrompts.filter(p => !recommendedIds.has(p.id))
-
-    return [
-      ...filteredRecommended.map(p => ({ ...p, isRecommended: true })),
-      ...regularPrompts.map(p => ({ ...p, isRecommended: false })),
-    ]
-  }, [recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
+    if (sortMode === 'recommendations') {
+      // В режиме рекомендаций показываем только рекомендованные
+      const filteredRecommended = recommendedPrompts.filter(filterByState)
+      return filteredRecommended.map(p => ({ ...p, isRecommended: true }))
+    } else {
+      // В режиме сортировки по дате показываем обычные промпты
+      return filteredPrompts.map(p => ({ ...p, isRecommended: false }))
+    }
+  }, [sortMode, recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
 
   // Убираем автоматическое отслеживание при каждом изменении
   // Теперь отслеживаем только завершенные поиски (Enter/blur)
@@ -417,17 +428,51 @@ export default function HomePage() {
           />
         </div>
         
-        {isLoadingRecommendations && session?.user?.id && (
+        {/* Карусель полезных статей */}
+        <RandomArticlesCarousel locale={locale} className="mb-8" />
+        
+        {/* Переключатель режимов отображения */}
+        <div className="flex items-center justify-between mb-4 p-3 bg-white rounded-xl shadow-sm border border-gray-100">
+          <span className="text-sm text-gray-600 font-medium">
+            {sortMode === 'recommendations' ? 'Персональная подборка' : 'Новые промпты'}
+          </span>
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setSortMode('recommendations')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                sortMode === 'recommendations'
+                  ? 'bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden sm:inline">Рекомендации</span>
+            </button>
+            <button
+              onClick={() => setSortMode('date')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                sortMode === 'date'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <ArrowUpDown className="w-4 h-4" />
+              <span className="hidden sm:inline">По дате</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Индикатор загрузки рекомендаций */}
+        {isLoadingRecommendations && sortMode === 'recommendations' && (
           <div className="mb-6 p-4 bg-violet-50 rounded-lg border border-violet-200">
             <div className="flex items-center gap-2 text-violet-700">
-              <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Загружаем рекомендации...</span>
+              <Sparkles className="w-4 h-4 animate-pulse" />
+              <span className="text-sm font-medium">
+                {session?.user?.id ? 'Формируем персональные рекомендации...' : 'Загружаем популярные промпты...'}
+              </span>
             </div>
           </div>
         )}
-
-        {/* Карусель полезных статей вместо громоздкого приветственного блока */}
-        <RandomArticlesCarousel locale={locale} className="mb-8" />
         
         <div className="grid gap-4">
           {allPrompts.map((prompt) => (
@@ -440,8 +485,8 @@ export default function HomePage() {
             />
           ))}
           
-          {/* Индикатор загрузки */}
-          {state.isLoading && state.prompts.length > 0 && (
+          {/* Индикатор загрузки (только в режиме даты) */}
+          {sortMode === 'date' && state.isLoading && state.prompts.length > 0 && (
             <div className="flex justify-center items-center py-8">
               <div className="flex items-center gap-2 text-gray-500">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-violet-600"></div>
@@ -450,11 +495,24 @@ export default function HomePage() {
             </div>
           )}
           
-          {/* Сообщение о том, что больше нет промптов */}
-          {!state.hasMore && state.prompts.length > 0 && (
+          {/* Сообщение о том, что больше нет промптов (только в режиме даты) */}
+          {sortMode === 'date' && !state.hasMore && state.prompts.length > 0 && (
             <div className="flex justify-center items-center py-8">
               <div className="text-gray-500 text-sm">
                 Вы просмотрели все доступные решения
+              </div>
+            </div>
+          )}
+          
+          {/* Сообщение для режима рекомендаций */}
+          {sortMode === 'recommendations' && allPrompts.length > 0 && !isLoadingRecommendations && (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-gray-500 text-sm flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-violet-500" />
+                {session?.user?.id 
+                  ? 'Это ваши персональные рекомендации на основе истории'
+                  : 'Войдите, чтобы получить персональные рекомендации'
+                }
               </div>
             </div>
           )}
