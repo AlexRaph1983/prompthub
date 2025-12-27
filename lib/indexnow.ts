@@ -9,8 +9,8 @@ const INDEXNOW_API_URLS = [
   'https://yandex.com/indexnow',
 ];
 
-// Генерируем ключ IndexNow (должен быть доступен по /{key}.txt в корне)
-export const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'indexnow-key-' + Date.now();
+// Генерируем ключ IndexNow (должен быть доступен по /indexnow-key.txt в корне)
+export const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'indexnow-key-1735295876621';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
 
