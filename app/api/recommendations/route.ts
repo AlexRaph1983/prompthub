@@ -72,24 +72,26 @@ interface RecommendationMetrics {
 export async function GET(req: NextRequest) {
   const requestId = crypto.randomUUID().slice(0, 8)
   const startTime = Date.now()
-  
+
   return tracer.startActiveSpan('reco.request', async (span) => {
     const metrics: Partial<RecommendationMetrics> = {
       requestId,
       cacheHit: false,
     }
-    
+
     try {
       const url = new URL(req.url)
       const forUserId = url.searchParams.get('for') || undefined
       const locale = url.searchParams.get('locale') || undefined
       const limit = Math.min(parseInt(url.searchParams.get('limit') || '12', 10), 50)
+      const search = url.searchParams.get('q') || undefined // Добавляем поддержку поиска
       
       span.setAttributes({
         'reco.request_id': requestId,
         'reco.for_user': forUserId || 'anonymous',
         'reco.locale': locale || 'default',
         'reco.limit': limit,
+        'reco.search': search || '',
       })
       
       // ============ ПРОВЕРКА АВТОРИЗАЦИИ ============
@@ -125,9 +127,9 @@ export async function GET(req: NextRequest) {
       
       // ============ ПРОВЕРКА КЭША ============
       const redis = await getRedis()
-      const cacheKey = targetUserId 
-        ? `reco:user:${targetUserId}:${limit}` 
-        : `reco:cold:${locale || 'default'}:${limit}`
+      const cacheKey = targetUserId
+        ? `reco:user:${targetUserId}:${limit}:${search || ''}`
+        : `reco:cold:${locale || 'default'}:${limit}:${search || ''}`
       
       const cached = await redis.get(cacheKey)
       if (cached) {
@@ -145,16 +147,31 @@ export async function GET(req: NextRequest) {
       
       // ============ ЗАГРУЗКА КАНДИДАТОВ ============
       const scoringStart = Date.now()
-      
-      const prompts = await prisma.prompt.findMany({
-        include: {
-          ratings: { select: { value: true } },
-          _count: { select: { likes: true, saves: true, comments: true, ratings: true } },
-          author: { select: { name: true } },
-        },
-        take: RECO_CONFIG.CANDIDATES_LIMIT,
-        orderBy: { updatedAt: 'desc' }, // Приоритет свежим
-      })
+
+      let prompts: any[]
+
+      if (search) {
+        // Если есть поисковый запрос, используем текстовый поиск для консистентности
+        const { enhancedSearch } = await import('@/lib/search-enhanced')
+        const searchResult = await enhancedSearch({
+          query: search,
+          limit: RECO_CONFIG.CANDIDATES_LIMIT * 2, // Берем больше для лучшего ранжирования
+          sort: 'relevance',
+          order: 'desc'
+        })
+        prompts = searchResult.items
+      } else {
+        // Обычные рекомендации на основе векторов
+        prompts = await prisma.prompt.findMany({
+          include: {
+            ratings: { select: { value: true } },
+            _count: { select: { likes: true, saves: true, comments: true, ratings: true } },
+            author: { select: { name: true } },
+          },
+          take: RECO_CONFIG.CANDIDATES_LIMIT,
+          orderBy: { updatedAt: 'desc' }, // Приоритет свежим
+        })
+      }
       
       metrics.candidatesCount = prompts.length
       span.setAttribute('reco.candidates_count', prompts.length)
@@ -176,101 +193,138 @@ export async function GET(req: NextRequest) {
       const viewTotals = await ViewsService.getPromptsViews(promptIds)
       
       // ============ СКОРИНГ ============
-      const idf = computeIdfForTags(prompts as any)
-      
-      // Вычисляем popularity values для нормализации
-      const popularityValues = prompts.map((p) => 
-        computePromptPopularity({
-          _count: p._count as any,
-          totalRatings: p.totalRatings,
-          averageRating: p.averageRating,
-        } as any)
-      )
-      
-      const now = Date.now()
-      const freshnessDecayMs = RECO_CONFIG.FRESHNESS_DECAY_DAYS * 24 * 60 * 60 * 1000
-      
-      const scored = prompts.map((p) => {
-        // Строим вектор промпта
-        const promptVector = buildSparseVectorTfidf(
-          { tags: parseTags(p.tags), category: p.category, model: p.model, lang: p.lang }, 
-          idf
-        )
-        
-        // Персонализированный score (ИСПРАВЛЕННЫЙ БАГ - теперь сравниваем с профилем пользователя!)
-        let personalizationScore = 0.5 // default для cold-start
-        let seenPenalty = 1
-        
-        if (userProfile && isPersonalized) {
-          const personalizedResult = computePersonalizedScore(promptVector, userProfile, p.id)
-          personalizationScore = personalizedResult.similarity
-          seenPenalty = personalizedResult.seenPenalty
-        }
-        
-        // Байесовский рейтинг
-        const bayesian = computePromptBayesian({
+      let scored: any[]
+
+      if (search) {
+        // Для поиска используем простое ранжирование по релевантности
+        const { calculateRelevanceScore, extractSearchTerms } = await import('@/lib/search-enhanced')
+        const searchTerms = extractSearchTerms(search)
+
+        scored = prompts.map((p) => ({
           id: p.id,
-          tags: p.tags,
-          category: p.category,
-          model: p.model,
-          lang: p.lang,
-          ratings: p.ratings as any,
-          _count: p._count as any,
-          averageRating: p.averageRating,
-          totalRatings: p.totalRatings,
-        } as any)
-        
-        // Popularity
-        const pop = computePromptPopularity({ _count: p._count as any, totalRatings: p.totalRatings, averageRating: p.averageRating } as any)
-        const popNorm = normalizePopularity(popularityValues, pop)
-        
-        // Freshness (экспоненциальный decay)
-        const ageMs = now - p.updatedAt.getTime()
-        const freshness = Math.exp(-ageMs / freshnessDecayMs)
-        
-        // Финальный score
-        const rawScore = 
-          RECO_CONFIG.WEIGHTS.personalization * personalizationScore +
-          RECO_CONFIG.WEIGHTS.popularity * popNorm +
-          RECO_CONFIG.WEIGHTS.bayesian * (bayesian / 5) +
-          RECO_CONFIG.WEIGHTS.freshness * freshness
-        
-        const finalScore = rawScore * seenPenalty
-        
-        return { 
-          id: p.id, 
-          score: finalScore, 
-          vector: promptVector,
-          prompt: { 
-            ...p, 
+          score: calculateRelevanceScore(p, searchTerms),
+          vector: null, // Не нужен для текстового поиска
+          prompt: {
+            ...p,
             views: viewTotals.get(p.id) ?? (p as any).views ?? 0,
           },
           debug: {
-            personalization: personalizationScore,
-            popularity: popNorm,
-            bayesian: bayesian / 5,
-            freshness,
-            seenPenalty,
+            relevance: calculateRelevanceScore(p, searchTerms),
           },
-        }
-      })
+        }))
+      } else {
+        // Обычные рекомендации с векторным скорингом
+        const idf = computeIdfForTags(prompts as any)
+
+        // Вычисляем popularity values для нормализации
+        const popularityValues = prompts.map((p) =>
+          computePromptPopularity({
+            _count: p._count as any,
+            totalRatings: p.totalRatings,
+            averageRating: p.averageRating,
+          } as any)
+        )
+
+        const now = Date.now()
+        const freshnessDecayMs = RECO_CONFIG.FRESHNESS_DECAY_DAYS * 24 * 60 * 60 * 1000
+
+        scored = prompts.map((p) => {
+          // Строим вектор промпта
+          const promptVector = buildSparseVectorTfidf(
+            { tags: parseTags(p.tags), category: p.category, model: p.model, lang: p.lang },
+            idf
+          )
+
+          // Персонализированный score
+          let personalizationScore = 0.5 // default для cold-start
+          let seenPenalty = 1
+
+          if (userProfile && isPersonalized) {
+            const personalizedResult = computePersonalizedScore(promptVector, userProfile, p.id)
+            personalizationScore = personalizedResult.similarity
+            seenPenalty = personalizedResult.seenPenalty
+          }
+
+          // Байесовский рейтинг
+          const bayesian = computePromptBayesian({
+            id: p.id,
+            tags: p.tags,
+            category: p.category,
+            model: p.model,
+            lang: p.lang,
+            ratings: p.ratings as any,
+            _count: p._count as any,
+            averageRating: p.averageRating,
+            totalRatings: p.totalRatings,
+          } as any)
+
+          // Popularity
+          const pop = computePromptPopularity({ _count: p._count as any, totalRatings: p.totalRatings, averageRating: p.averageRating } as any)
+          const popNorm = normalizePopularity(popularityValues, pop)
+
+          // Freshness (экспоненциальный decay)
+          const ageMs = now - p.updatedAt.getTime()
+          const freshness = Math.exp(-ageMs / freshnessDecayMs)
+
+          // Финальный score
+          const rawScore =
+            RECO_CONFIG.WEIGHTS.personalization * personalizationScore +
+            RECO_CONFIG.WEIGHTS.popularity * popNorm +
+            RECO_CONFIG.WEIGHTS.bayesian * (bayesian / 5) +
+            RECO_CONFIG.WEIGHTS.freshness * freshness
+
+          const finalScore = rawScore * seenPenalty
+
+          return {
+            id: p.id,
+            score: finalScore,
+            vector: promptVector,
+            prompt: {
+              ...p,
+              views: viewTotals.get(p.id) ?? (p as any).views ?? 0,
+            },
+            debug: {
+              personalization: personalizationScore,
+              popularity: popNorm,
+              bayesian: bayesian / 5,
+              freshness,
+              seenPenalty,
+            },
+          }
+        })
+      }
       
       // ============ DIVERSITY RERANKING ============
-      const diversified = applyDiversityPenalty(
-        scored.map((s) => ({ id: s.id, score: s.score, vector: s.vector })),
-        limit
-      )
-      
-      // Собираем финальный результат
-      const scoreMap = new Map(scored.map((s) => [s.id, s]))
-      const results = diversified.map((d) => {
-        const original = scoreMap.get(d.id)!
-        return {
-          id: d.id,
-          score: d.score,
-          prompt: original.prompt,
-        }
-      })
+      let finalResults: any[]
+
+      if (search) {
+        // Для поиска просто сортируем по релевантности и берем топ
+        finalResults = scored
+          .sort((a, b) => b.score - a.score)
+          .slice(0, limit)
+          .map((s) => ({
+            id: s.id,
+            score: s.score,
+            prompt: s.prompt,
+          }))
+      } else {
+        // Для рекомендаций применяем diversity reranking
+        const diversified = applyDiversityPenalty(
+          scored.map((s) => ({ id: s.id, score: s.score, vector: s.vector })),
+          limit
+        )
+
+        // Собираем финальный результат
+        const scoreMap = new Map(scored.map((s) => [s.id, s]))
+        finalResults = diversified.map((d) => {
+          const original = scoreMap.get(d.id)!
+          return {
+            id: d.id,
+            score: d.score,
+            prompt: original.prompt,
+          }
+        })
+      }
       
       const scoringTimeMs = Date.now() - scoringStart
       metrics.scoringTimeMs = scoringTimeMs

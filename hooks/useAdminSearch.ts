@@ -54,7 +54,8 @@ export function useAdminSearch(options: AdminSearchOptions = {}) {
 
   // Обработка потери фокуса
   const handleBlur = useCallback(() => {
-    handleSearchSubmit()
+    // Не логируем при потере фокуса - только при явном завершении (Enter)
+    // handleSearchSubmit()
   }, [])
 
   // Отправка завершенного поиска

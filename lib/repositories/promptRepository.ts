@@ -190,6 +190,15 @@ export class PromptRepository {
 
   async listPrompts(params: PromptListParams = {}): Promise<PromptListResult> {
     const limit = Math.min(params.limit || 20, 50) // Максимум 50
+
+    // Всегда используем качественный поиск для обеспечения консистентности
+    // даже без поискового запроса
+    if (params.search && params.search.trim()) {
+      return this.searchPrompts(params)
+    }
+
+    // Для обычного списка без поиска используем улучшенную фильтрацию
+    // но без сложного ранжирования по релевантности
     const where = await this.buildWhereClause(params)
     const orderBy = this.buildOrderBy(params)
 

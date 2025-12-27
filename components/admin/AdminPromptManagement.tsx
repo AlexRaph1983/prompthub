@@ -18,6 +18,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 import Link from 'next/link'
 import { useAdminSearch } from '@/hooks/useAdminSearch'
+import { useSearchTracking } from '@/hooks/useSearchTracking'
 
 interface Prompt {
   id: string
@@ -83,6 +84,9 @@ export function AdminPromptManagement() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
 
+  // Хук для отслеживания поиска в админке
+  const { trackCompletedSearch } = useSearchTracking({ sessionId: 'admin-session' })
+
   // Используем улучшенный хук поиска
   const {
     searchValue,
@@ -96,6 +100,7 @@ export function AdminPromptManagement() {
       if (finished) {
         setSearchQuery(query)
         setCurrentPage(1) // Сбрасываем на первую страницу при новом поиске
+        // Логирование происходит после получения результатов в fetchPrompts
       }
     },
     onSuggestions: (query) => {
@@ -141,6 +146,11 @@ export function AdminPromptManagement() {
       
       const result = await response.json()
       setData(result)
+
+      // Логируем завершенный поиск только если есть поисковый запрос
+      if (searchQuery.trim()) {
+        trackCompletedSearch(searchQuery, result.prompts.length)
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
@@ -176,28 +186,49 @@ export function AdminPromptManagement() {
 
   const handleBulkDelete = async () => {
     if (selectedPrompts.size === 0) return
-    
+
     if (!confirm(`Вы уверены, что хотите удалить ${selectedPrompts.size} промптов?`)) {
       return
     }
 
-    try {
-      const promises = Array.from(selectedPrompts).map(id => 
-        fetch(`/api/admin/prompts?id=${id}`, { 
+    const promptIds = Array.from(selectedPrompts)
+    let successCount = 0
+    let errorCount = 0
+
+    // Удаляем по одному для гарантированного выполнения и обработки ошибок
+    for (const promptId of promptIds) {
+      try {
+        const response = await fetch(`/api/admin/prompts?id=${promptId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': 'Bearer test-admin-key'
           }
         })
-      )
-      
-      await Promise.all(promises)
-      setSelectedPrompts(new Set())
-      await fetchPrompts()
-      alert('Промпты успешно удалены')
-    } catch (err) {
-      alert('Ошибка при массовом удалении')
+
+        if (response.ok) {
+          successCount++
+        } else {
+          console.error(`Failed to delete prompt ${promptId}:`, response.statusText)
+          errorCount++
+        }
+      } catch (err) {
+        console.error(`Error deleting prompt ${promptId}:`, err)
+        errorCount++
+      }
     }
+
+    // Очищаем выделение и обновляем список
+    setSelectedPrompts(new Set())
+
+    // Показываем результат
+    if (errorCount === 0) {
+      alert(`Все ${successCount} промптов успешно удалены`)
+    } else {
+      alert(`Удалено ${successCount} промптов. Ошибок: ${errorCount}`)
+    }
+
+    // Обновляем список в любом случае
+    await fetchPrompts()
   }
 
   const togglePromptSelection = (promptId: string) => {
@@ -211,12 +242,25 @@ export function AdminPromptManagement() {
   }
 
   const toggleSelectAll = () => {
-    if (!data) return
-    
-    if (selectedPrompts.size === data.prompts.length) {
-      setSelectedPrompts(new Set())
+    if (!data || !data.prompts) return
+
+    const currentPromptIds = data.prompts.map(p => p.id)
+    const allSelected = currentPromptIds.every(id => selectedPrompts.has(id))
+
+    if (allSelected) {
+      // Снимаем выделение со всех текущих промптов на странице
+      setSelectedPrompts(prev => {
+        const newSelected = new Set(prev)
+        currentPromptIds.forEach(id => newSelected.delete(id))
+        return newSelected
+      })
     } else {
-      setSelectedPrompts(new Set(data.prompts.map(p => p.id)))
+      // Выбираем все промпты на текущей странице
+      setSelectedPrompts(prev => {
+        const newSelected = new Set(prev)
+        currentPromptIds.forEach(id => newSelected.add(id))
+        return newSelected
+      })
     }
   }
 
@@ -380,7 +424,7 @@ export function AdminPromptManagement() {
             <label className="inline-flex items-center">
               <input
                 type="checkbox"
-                checked={data.prompts.length > 0 && selectedPrompts.size === data.prompts.length}
+                checked={data.prompts.length > 0 && data.prompts.every(p => selectedPrompts.has(p.id))}
                 onChange={toggleSelectAll}
                 className="form-checkbox h-4 w-4 text-blue-600"
               />
