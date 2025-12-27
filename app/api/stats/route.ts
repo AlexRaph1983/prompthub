@@ -44,8 +44,7 @@ export async function GET(request: Request) {
       totalUsers,
       totalActiveUsers,
       totalPrompts,
-      totalRatings,
-      totalReviews
+      totalRatings
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({
@@ -59,8 +58,14 @@ export async function GET(request: Request) {
         }
       }),
       prisma.prompt.count(),
-      prisma.rating.count(),
-      prisma.review.count()
+      // Считаем общее количество оценок через сумму totalRatings из всех промптов
+      // Это правильнее, чем считать Rating.count(), так как Review создает и Rating,
+      // что приводит к двойному подсчету
+      prisma.prompt.aggregate({
+        _sum: {
+          totalRatings: true
+        }
+      })
     ]);
 
     // Получаем все id промптов
@@ -75,8 +80,8 @@ export async function GET(request: Request) {
       users: totalUsers, // Используем общее количество пользователей вместо отфильтрованного
       prompts: totalPrompts,
       views: totalViews,
-      ratings: totalRatings,
-      reviews: totalReviews,
+      ratings: totalRatings._sum.totalRatings || 0, // Сумма totalRatings из всех промптов
+      reviews: 0, // Удаляем reviews из статистики, так как они уже учтены в ratings
       timestamp: new Date().toISOString()
     };
 

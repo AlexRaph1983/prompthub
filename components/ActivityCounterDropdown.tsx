@@ -100,7 +100,7 @@ export function ActivityCounterDropdown() {
     },
     {
       icon: Star,
-      value: (stats?.ratings || 0) + (stats?.reviews || 0),
+      value: stats?.ratings || 0, // Используем только ratings, так как reviews уже учтены
       label: 'Оценки',
       color: 'text-amber-600',
       bgColor: 'bg-amber-50',

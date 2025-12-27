@@ -502,16 +502,16 @@ export function AdminSearchAnalytics() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      query.resultsCount > 0 
+                      (query.resultsCount ?? 0) > 0 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-red-100 text-red-800'
                     }`}>
-                      {query.resultsCount}
+                      {query.resultsCount ?? 0}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {query.hasClick ? (
-                      <span className="text-green-600 text-sm">✓ Да</span>
+                      <span className="text-green-600 text-sm font-medium">✓ Да</span>
                     ) : (
                       <span className="text-gray-400 text-sm">Нет</span>
                     )}

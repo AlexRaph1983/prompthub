@@ -55,19 +55,55 @@ export async function POST(request: NextRequest) {
     // Создаем хэш для дедупликации
     const queryHash = createQueryHash(validation.normalizedQuery!, userId, ipHash)
 
-    // Проверяем дедупликацию по хэшу
+    // Проверяем существующую запись по хэшу и sessionId (если есть)
+    // Приоритет: ищем запись с тем же sessionId, затем по queryHash
+    const whereClause: any = {
+      queryHash,
+      userId: userId || null,
+      ipHash: userId ? null : ipHash,
+      createdAt: {
+        gte: new Date(Date.now() - 5 * 60 * 1000) // 5 минут
+      }
+    }
+
+    // Если есть sessionId, добавляем его в условие для более точного поиска
+    if (sessionId) {
+      whereClause.sessionId = sessionId
+    }
+
     const existingQuery = await prisma.searchQuery.findFirst({
-      where: {
-        queryHash,
-        userId: userId || null,
-        ipHash: userId ? null : ipHash,
-        createdAt: {
-          gte: new Date(Date.now() - 5 * 60 * 1000) // 5 минут
-        }
+      where: whereClause,
+      orderBy: {
+        createdAt: 'desc'
       }
     })
 
-    if (existingQuery) {
+    // Если приходит клик по результату и есть существующая запись без клика - обновляем её
+    if (existingQuery && clickedResult && !existingQuery.clickedResult) {
+      console.log(`🔄 Updating existing query with click: ${validation.normalizedQuery}, clickedResult: ${clickedResult}`)
+      
+      await prisma.searchQuery.update({
+        where: { id: existingQuery.id },
+        data: {
+          clickedResult,
+          // Обновляем resultsCount если он был передан
+          ...(resultsCount !== undefined && resultsCount !== null && {
+            resultsCount: Number(resultsCount) || 0
+          })
+        }
+      })
+
+      return NextResponse.json({ 
+        success: true,
+        processed: validation.normalizedQuery,
+        hash: queryHash,
+        updated: true,
+        metrics: validation.metrics
+      })
+    }
+
+    // Если запись уже существует и это не клик - отклоняем как дубликат
+    if (existingQuery && !clickedResult) {
       console.log(`⚠️ Duplicate search query detected: ${validation.normalizedQuery}`)
       await incrementRejectedCount('DUPLICATE_QUERY')
       
@@ -127,6 +163,11 @@ export async function POST(request: NextRequest) {
 
     const userAgent = request.headers.get('user-agent') || null
 
+    // Убеждаемся, что resultsCount - это число
+    const normalizedResultsCount = resultsCount !== undefined && resultsCount !== null 
+      ? Number(resultsCount) || 0 
+      : 0
+
     // Сохраняем поисковый запрос
     await prisma.searchQuery.create({
       data: {
@@ -135,8 +176,8 @@ export async function POST(request: NextRequest) {
         userId,
         ipHash: userId ? null : ipHash,
         userAgent,
-        resultsCount: resultsCount || 0,
-        clickedResult,
+        resultsCount: normalizedResultsCount,
+        clickedResult: clickedResult || null,
         sessionId,
       },
     })

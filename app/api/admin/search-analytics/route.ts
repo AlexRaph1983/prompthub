@@ -172,7 +172,7 @@ export async function GET(request: NextRequest) {
         id: q.id,
         query: q.query,
         userId: q.userId,
-        resultsCount: q.resultsCount,
+        resultsCount: q.resultsCount !== null && q.resultsCount !== undefined ? Number(q.resultsCount) : 0,
         hasClick: !!q.clickedResult,
         createdAt: q.createdAt,
         userAgent: q.userAgent?.substring(0, 100) // Обрезаем для безопасности
