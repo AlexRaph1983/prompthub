@@ -35,7 +35,9 @@ export function buildCanonicalUrl(path: string, locale?: Locale): string {
   const baseUrl = SITEMAP_CONFIG.BASE_URL;
   
   if (locale) {
-    return `${baseUrl}/${locale}${path}`;
+    // Убираем начальный / если path уже содержит /
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return `${baseUrl}/${locale}${cleanPath}`;
   }
   
   return `${baseUrl}${path}`;
@@ -45,11 +47,11 @@ export function buildCanonicalUrl(path: string, locale?: Locale): string {
 export const urlBuilders = {
   home: (locale?: Locale) => {
     if (!locale) return SITEMAP_CONFIG.BASE_URL;
-    return buildCanonicalUrl('', locale);
+    return buildCanonicalUrl('/home', locale);
   },
   
-  prompt: (slug: string, locale: Locale) => {
-    return buildCanonicalUrl(`/prompt/${slug}`, locale);
+  prompt: (id: string, locale: Locale) => {
+    return buildCanonicalUrl(`/prompt/${id}`, locale);
   },
   
   category: (category: string, locale: Locale) => {
@@ -65,14 +67,14 @@ export const urlBuilders = {
 export function generateHreflangLinks(
   basePath: string,
   locales: Locale[],
-  xDefaultLocale: Locale = 'en'
+  xDefaultLocale: Locale = 'ru'
 ): string {
   const links = locales.map(locale => {
     const url = buildCanonicalUrl(basePath, locale);
     return `    <xhtml:link rel="alternate" hreflang="${locale}" href="${url}" />`;
   });
   
-  // Добавляем x-default
+  // Добавляем x-default (RU основной для домена)
   const xDefaultUrl = buildCanonicalUrl(basePath, xDefaultLocale);
   links.push(`    <xhtml:link rel="alternate" hreflang="x-default" href="${xDefaultUrl}" />`);
   

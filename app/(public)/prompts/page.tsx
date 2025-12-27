@@ -61,20 +61,64 @@ async function getAuthorInfo(authorId?: string) {
   }
 }
 
-export const metadata: Metadata = {
-  title: 'Каталог промптов — PromptHub',
-  description: 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.',
-  keywords: 'промпты, каталог, ChatGPT, Claude, Gemini, ИИ, нейросети, шаблоны',
-  openGraph: {
-    title: 'Каталог промптов — PromptHub',
-    description: 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.',
-    type: 'website',
-    siteName: 'PromptHub'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Каталог промптов — PromptHub',
-    description: 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.'
+export async function generateMetadata({
+  params: { locale }
+}: {
+  params: { locale: string }
+}): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'
+  const isRu = locale === 'ru'
+  
+  const title = isRu 
+    ? 'Каталог промптов — база готовых AI-промптов | PromptHub'
+    : 'Prompt Catalog — Ready-to-use AI Prompts | PromptHub'
+  
+  const description = isRu
+    ? 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов. База промптов с рейтингами и отзывами.'
+    : 'Find the perfect prompt for your task. Thousands of ready-to-use solutions for ChatGPT, Claude, Gemini and other AI tools. Prompt database with ratings and reviews.'
+  
+  const canonical = `${baseUrl}/${locale}/prompts`
+  
+  return {
+    title,
+    description,
+    keywords: isRu 
+      ? 'каталог промптов, база промптов, промпты, ChatGPT, Claude, Gemini, ИИ, нейросети, шаблоны'
+      : 'prompt catalog, prompt database, prompts, ChatGPT, Claude, Gemini, AI, templates',
+    alternates: {
+      canonical,
+      languages: {
+        ru: `${baseUrl}/ru/prompts`,
+        en: `${baseUrl}/en/prompts`,
+        'x-default': `${baseUrl}/ru/prompts`
+      }
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: 'PromptHub',
+      locale: isRu ? 'ru_RU' : 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: `/og/prompt-hub-${locale}.png`,
+          width: 1200,
+          height: 630,
+          alt: title
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [`/og/prompt-hub-${locale}.png`]
+    },
+    robots: {
+      index: true,
+      follow: true
+    }
   }
 }
 

@@ -16,10 +16,11 @@ export const revalidate = SITEMAP_CONFIG.REVALIDATE_TIME;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { page: string } }
+  { params }: { params: Promise<{ page: string }> }
 ) {
   try {
-    const page = parseInt(params.page, 10);
+    const { page: pageParam } = await params;
+    const page = parseInt(pageParam, 10);
     
     if (isNaN(page) || page < 1) {
       return new NextResponse('Invalid page number', { status: 400 });
@@ -32,19 +33,20 @@ export async function GET(
       const urls = [];
 
       for (const prompt of prompts) {
-        const promptSlug = generateSlug(prompt.title);
+        // Используем ID промпта (реальные URL используют ID, не slug)
+        const promptId = prompt.id;
         
         // Генерируем hreflang для промпта
-        const hreflang = generateHreflangLinks(`/prompt/${promptSlug}`, SITEMAP_CONFIG.LOCALES, 'en');
+        const hreflang = generateHreflangLinks(`/prompt/${promptId}`, SITEMAP_CONFIG.LOCALES, 'ru');
         
         // Добавляем URL для каждой локали
         for (const locale of SITEMAP_CONFIG.LOCALES) {
           urls.push({
-            loc: urlBuilders.prompt(promptSlug, locale),
+            loc: urlBuilders.prompt(promptId, locale),
             lastmod: formatLastMod(prompt.updatedAt),
             changefreq,
             priority,
-            hreflang: locale === 'en' ? hreflang : undefined, // hreflang только для первой записи
+            hreflang: locale === 'ru' ? hreflang : undefined, // hreflang только для первой записи
           });
         }
       }
@@ -62,7 +64,8 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(`Error generating prompts sitemap page ${params.page}:`, error);
+    const { page: pageParam } = await params;
+    console.error(`Error generating prompts sitemap page ${pageParam}:`, error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }

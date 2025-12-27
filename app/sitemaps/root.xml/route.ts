@@ -17,55 +17,50 @@ export async function GET(request: NextRequest) {
       const now = new Date();
       const { priority, changefreq } = SITEMAP_PRIORITIES.root;
       
-      // Главная страница (x-default)
-      const homeUrl = urlBuilders.home();
-      const homeHreflang = generateHreflangLinks('', SITEMAP_CONFIG.LOCALES, 'en');
+      // Главная страница (x-default = ru)
+      const homeUrl = urlBuilders.home('ru');
+      const homeHreflang = generateHreflangLinks('/home', SITEMAP_CONFIG.LOCALES, 'ru');
       
       return [
+        // RU версия главной (x-default)
         {
-          loc: homeUrl,
+          loc: `${SITEMAP_CONFIG.BASE_URL}/ru/home`,
           lastmod: formatLastMod(now),
           changefreq,
           priority,
           hreflang: homeHreflang,
         },
-        // RU версия главной
-        {
-          loc: urlBuilders.home('ru'),
-          lastmod: formatLastMod(now),
-          changefreq,
-          priority,
-        },
         // EN версия главной
         {
-          loc: urlBuilders.home('en'),
+          loc: `${SITEMAP_CONFIG.BASE_URL}/en/home`,
           lastmod: formatLastMod(now),
           changefreq,
           priority,
         },
-        // Основные страницы без локали
+        // Каталог промптов
         {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/prompts`,
+          loc: `${SITEMAP_CONFIG.BASE_URL}/ru/prompts`,
           lastmod: formatLastMod(now),
-          changefreq,
-          priority: '0.8',
-        },
-        {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/add`,
-          lastmod: formatLastMod(now),
-          changefreq,
-          priority: '0.7',
-        },
-        {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/home`,
-          lastmod: formatLastMod(now),
-          changefreq,
+          changefreq: 'daily',
           priority: '0.9',
         },
         {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/leaders`,
+          loc: `${SITEMAP_CONFIG.BASE_URL}/en/prompts`,
           lastmod: formatLastMod(now),
-          changefreq,
+          changefreq: 'daily',
+          priority: '0.9',
+        },
+        // Лидеры
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/ru/leaders`,
+          lastmod: formatLastMod(now),
+          changefreq: 'weekly',
+          priority: '0.6',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/en/leaders`,
+          lastmod: formatLastMod(now),
+          changefreq: 'weekly',
           priority: '0.6',
         },
       ];

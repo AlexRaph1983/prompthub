@@ -8,6 +8,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = params
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'
   
   try {
     // Загружаем данные промпта напрямую из базы данных
@@ -17,6 +18,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: true,
         description: true,
         tags: true,
+        model: true,
+        category: true,
+        createdAt: true,
+        updatedAt: true,
         author: {
           select: {
             name: true
@@ -28,7 +33,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!prompt) {
       return {
         title: 'Промпт не найден | PromptHub',
-        description: 'Запрашиваемый промпт не найден'
+        description: 'Запрашиваемый промпт не найден',
+        robots: { index: false, follow: false }
       }
     }
     
@@ -42,17 +48,29 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       : prompt.description
     
     const tags = prompt.tags ? prompt.tags.split(',').map(tag => tag.trim()) : []
+    const keywords = [...tags, 'промпты', 'AI промпты', prompt.model].join(', ')
+    
+    // Canonical URL (используем RU как default, но промпты не локализованы)
+    const canonical = `${baseUrl}/prompt/${id}`
     
     return {
       title,
       description,
-      keywords: tags.join(', '),
+      keywords,
+      alternates: {
+        canonical,
+      },
       openGraph: {
         title,
         description,
         type: 'article',
-        url: `${process.env.NEXT_PUBLIC_APP_HOST || 'https://prompthub.ru'}/prompt/${id}`,
+        url: canonical,
         siteName: 'PromptHub',
+        locale: 'ru_RU',
+        publishedTime: prompt.createdAt.toISOString(),
+        modifiedTime: prompt.updatedAt.toISOString(),
+        authors: prompt.author.name ? [prompt.author.name] : undefined,
+        tags: tags,
         images: [
           {
             url: '/og/prompt-hub.png',
@@ -67,13 +85,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         images: ['/og/prompt-hub.png']
+      },
+      robots: {
+        index: true,
+        follow: true
       }
     }
   } catch (error) {
     console.error('Error generating metadata for prompt:', error)
     return {
       title: 'Промпт | PromptHub',
-      description: 'Просмотр промпта на PromptHub'
+      description: 'Просмотр промпта на PromptHub',
+      robots: { index: false, follow: true }
     }
   }
 }

@@ -14,10 +14,11 @@ export const revalidate = SITEMAP_CONFIG.REVALIDATE_TIME;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { locale: string } }
+  { params }: { params: Promise<{ locale: string }> }
 ) {
   try {
-    const locale = params.locale as Locale;
+    const { locale: localeParam } = await params;
+    const locale = localeParam as Locale;
     
     if (!SITEMAP_CONFIG.LOCALES.includes(locale)) {
       return new NextResponse('Not Found', { status: 404 });
@@ -27,9 +28,9 @@ export async function GET(
       const now = new Date();
       const { priority, changefreq } = SITEMAP_PRIORITIES.root;
       
-      return [
+      const urls = [
         {
-          loc: urlBuilders.home(locale),
+          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/home`,
           lastmod: formatLastMod(now),
           changefreq,
           priority,
@@ -37,28 +38,48 @@ export async function GET(
         {
           loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/prompts`,
           lastmod: formatLastMod(now),
-          changefreq,
-          priority: '0.8',
-        },
-        {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/add`,
-          lastmod: formatLastMod(now),
-          changefreq,
-          priority: '0.7',
-        },
-        {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/home`,
-          lastmod: formatLastMod(now),
-          changefreq,
+          changefreq: 'daily',
           priority: '0.9',
         },
         {
           loc: `${SITEMAP_CONFIG.BASE_URL}/${locale}/leaders`,
           lastmod: formatLastMod(now),
-          changefreq,
+          changefreq: 'weekly',
           priority: '0.6',
         },
       ];
+      
+      // Добавляем SEO-лендинги только для RU
+      if (locale === 'ru') {
+        urls.push(
+          {
+            loc: `${SITEMAP_CONFIG.BASE_URL}/ru/marketpleys-promtov`,
+            lastmod: formatLastMod(now),
+            changefreq: 'monthly',
+            priority: '0.8',
+          },
+          {
+            loc: `${SITEMAP_CONFIG.BASE_URL}/ru/baza-promtov`,
+            lastmod: formatLastMod(now),
+            changefreq: 'monthly',
+            priority: '0.8',
+          },
+          {
+            loc: `${SITEMAP_CONFIG.BASE_URL}/ru/katalog-promtov`,
+            lastmod: formatLastMod(now),
+            changefreq: 'monthly',
+            priority: '0.8',
+          },
+          {
+            loc: `${SITEMAP_CONFIG.BASE_URL}/ru/biblioteka-promtov`,
+            lastmod: formatLastMod(now),
+            changefreq: 'monthly',
+            priority: '0.8',
+          }
+        );
+      }
+      
+      return urls;
     });
 
     const xml = XML_TEMPLATES.urlSet(urls);
@@ -71,7 +92,8 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error(`Error generating ${params.locale} sitemap:`, error);
+    const { locale: localeParam } = await params;
+    console.error(`Error generating ${localeParam} sitemap:`, error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
