@@ -335,7 +335,7 @@ export async function GET(req: NextRequest) {
         ? RECO_CONFIG.CACHE_TTL_SECONDS 
         : RECO_CONFIG.COLD_START_CACHE_TTL_SECONDS
       
-      await redis.set(cacheKey, JSON.stringify(results), 'EX', cacheTtl)
+      await redis.set(cacheKey, JSON.stringify(finalResults), 'EX', cacheTtl)
       
       // ============ ЛОГИРОВАНИЕ ============
       const totalTimeMs = Date.now() - startTime
@@ -349,13 +349,13 @@ export async function GET(req: NextRequest) {
         userId: targetUserId || 'anonymous',
         isPersonalized,
         candidatesCount: prompts.length,
-        resultsCount: results.length,
+        resultsCount: finalResults.length,
         scoringTimeMs,
         totalTimeMs,
       }, `Recommendations generated in ${totalTimeMs}ms`)
       
       span.setStatus({ code: SpanStatusCode.OK })
-      return NextResponse.json(results)
+      return NextResponse.json(finalResults)
       
     } catch (error) {
       const totalTimeMs = Date.now() - startTime
