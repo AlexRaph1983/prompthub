@@ -54,6 +54,11 @@ export default function HomePage() {
   const { session } = useAuth()
   const router = useRouter()
   
+  // Синхронизируем локальное состояние поиска с глобальным состоянием
+  React.useEffect(() => {
+    dispatch({ type: 'SET_SEARCH_QUERY', payload: debouncedValue })
+  }, [debouncedValue, dispatch])
+  
   // A/B тест функции
   const abFeatures = getABTestFeatures()
   const [recommendedPrompts, setRecommendedPrompts] = React.useState<any[]>([])
@@ -339,15 +344,23 @@ export default function HomePage() {
         }
         url.searchParams.set('locale', (navigator.language || 'en').startsWith('ru') ? 'ru' : 'en')
         url.searchParams.set('limit', '50') // Загружаем больше промптов
-        console.log('Fetching recommendations, user:', session?.user?.id || 'anonymous')
+        
+        // Добавляем поисковый запрос если он есть (серверный поиск)
+        const searchQuery = debouncedValue.trim() || state.searchQuery.trim()
+        if (searchQuery) {
+          url.searchParams.set('q', searchQuery)
+          console.log('[RECO] Fetching recommendations with search query:', searchQuery)
+        }
+        
+        console.log('[RECO] Fetching recommendations, user:', session?.user?.id || 'anonymous', 'URL:', url.toString())
         const r = await fetch(url.toString(), { cache: 'no-store' as any })
-        console.log('Recommendations response status:', r.status)
+        console.log('[RECO] Recommendations response status:', r.status)
         if (!r.ok) {
-          console.log('Recommendations API failed:', r.status)
+          console.log('[RECO] Recommendations API failed:', r.status)
           return
         }
         const data = await r.json()
-        console.log('Recommendations data count:', data?.length)
+        console.log('[RECO] Recommendations data count:', data?.length)
         if (!ignore) {
           // Извлекаем данные промптов из ответа API
           const prompts = (data || []).map((item: any) => {
@@ -373,11 +386,11 @@ export default function HomePage() {
               createdAt: item.prompt.createdAt,
             })
           })
-          console.log('Processed recommended prompts:', prompts.length)
+          console.log('[RECO] Processed recommended prompts:', prompts.length)
           setRecommendedPrompts(prompts)
         }
       } catch (error) {
-        console.error('Failed to load recommendations:', error)
+        console.error('[RECO] Failed to load recommendations:', error)
       } finally {
         if (!ignore) {
           setIsLoadingRecommendations(false)
@@ -387,7 +400,7 @@ export default function HomePage() {
 
     loadRecommendations()
     return () => { ignore = true }
-  }, [session?.user?.id, sortMode])
+  }, [session?.user?.id, sortMode, debouncedValue, state.searchQuery])
 
   const filteredPrompts = getFilteredPrompts()
   
@@ -395,13 +408,35 @@ export default function HomePage() {
   const allPrompts = React.useMemo(() => {
     if (sortMode === 'recommendations') {
       // В режиме рекомендаций показываем только рекомендованные
-      const filteredRecommended = recommendedPrompts.filter(filterByState)
+      // Если есть поисковый запрос, сервер уже отфильтровал результаты, поэтому
+      // применяем только фильтры по модели/категории/языку, но НЕ по поиску
+      const searchQuery = debouncedValue.trim() || state.searchQuery.trim()
+      const hasServerSearch = !!searchQuery
+      
+      let filteredRecommended = recommendedPrompts
+      if (hasServerSearch) {
+        // При серверном поиске применяем только фильтры модели/категории/языка (без поиска)
+        // Используем существующие хелперы из компонента
+        const selectedModel = normalizeModel(state.selectedModel)
+        const selectedLang = langToCode(state.selectedLang)
+        
+        filteredRecommended = recommendedPrompts.filter(p => {
+          const matchesModel = !selectedModel || normalizeModel(p.model) === selectedModel
+          const matchesCategory = !state.selectedCategory || (Array.isArray(p.tags) && p.tags.map((t: string) => t.toLowerCase()).includes(state.selectedCategory.toLowerCase()))
+          const matchesLang = !selectedLang || langToCode(p.lang) === selectedLang
+          return matchesModel && matchesCategory && matchesLang
+        })
+      } else {
+        // Без серверного поиска применяем все фильтры (включая client-side поиск)
+        filteredRecommended = recommendedPrompts.filter(filterByState)
+      }
+      
       return filteredRecommended.map(p => ({ ...p, isRecommended: true }))
     } else {
       // В режиме сортировки по дате показываем обычные промпты
       return filteredPrompts.map(p => ({ ...p, isRecommended: false }))
     }
-  }, [sortMode, recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang])
+  }, [sortMode, recommendedPrompts, filteredPrompts, state.searchQuery, state.selectedModel, state.selectedCategory, state.selectedLang, debouncedValue])
 
   // Убираем автоматическое отслеживание при каждом изменении
   // Теперь отслеживаем только завершенные поиски (Enter/blur)

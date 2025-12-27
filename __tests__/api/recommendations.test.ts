@@ -221,6 +221,56 @@ describe('Recommendations API Integration', () => {
       
       expect(setSpy).toHaveBeenCalled()
     })
+    
+    it('uses different cache keys for different search queries', async () => {
+      const { GET } = await import('@/app/api/recommendations/route')
+      const { getRedis } = await import('@/lib/redis')
+      
+      const redis = await getRedis()
+      const setSpy = vi.spyOn(redis, 'set')
+      
+      // First request with search
+      const request1 = new Request('http://localhost/api/recommendations?q=test')
+      await GET(request1 as any)
+      
+      // Second request without search
+      const request2 = new Request('http://localhost/api/recommendations')
+      await GET(request2 as any)
+      
+      expect(setSpy).toHaveBeenCalledTimes(2)
+      
+      // Check that cache keys are different
+      const calls = setSpy.mock.calls
+      expect(calls[0][0]).toContain('test')
+      expect(calls[1][0]).not.toContain('test')
+    })
+  })
+  
+  describe('Search in Recommendations', () => {
+    it('accepts q parameter for search', async () => {
+      const { GET } = await import('@/app/api/recommendations/route')
+      
+      const request = new Request('http://localhost/api/recommendations?q=ai')
+      const response = await GET(request as any)
+      
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(Array.isArray(data)).toBe(true)
+    })
+    
+    it('accepts q parameter and processes search query', async () => {
+      const { GET } = await import('@/app/api/recommendations/route')
+      
+      // Note: We can't easily mock enhancedSearch due to dynamic import in the API
+      // This test verifies that the API accepts the parameter without error
+      const request = new Request('http://localhost/api/recommendations?q=ai')
+      const response = await GET(request as any)
+      
+      expect(response.status).toBe(200)
+      const data = await response.json()
+      expect(Array.isArray(data)).toBe(true)
+      // Results may be empty if no prompts match, but API should not error
+    })
   })
 })
 

@@ -84,7 +84,16 @@ export async function GET(req: NextRequest) {
       const forUserId = url.searchParams.get('for') || undefined
       const locale = url.searchParams.get('locale') || undefined
       const limit = Math.min(parseInt(url.searchParams.get('limit') || '12', 10), 50)
-      const search = url.searchParams.get('q') || undefined // Добавляем поддержку поиска
+      const search = url.searchParams.get('q') || undefined // Поддержка поиска
+      
+      console.log('[RECO API] Request params:', {
+        requestId,
+        forUserId: forUserId || 'anonymous',
+        locale: locale || 'default',
+        limit,
+        search: search || '(none)',
+        url: url.toString()
+      })
       
       span.setAttributes({
         'reco.request_id': requestId,
@@ -152,6 +161,7 @@ export async function GET(req: NextRequest) {
 
       if (search) {
         // Если есть поисковый запрос, используем текстовый поиск для консистентности
+        console.log('[RECO API] Using enhanced search with query:', search)
         const { enhancedSearch } = await import('@/lib/search-enhanced')
         const searchResult = await enhancedSearch({
           query: search,
@@ -160,7 +170,9 @@ export async function GET(req: NextRequest) {
           order: 'desc'
         })
         prompts = searchResult.items
+        console.log('[RECO API] Enhanced search returned', prompts.length, 'prompts')
       } else {
+        console.log('[RECO API] No search query, using regular recommendations')
         // Обычные рекомендации на основе векторов
         prompts = await prisma.prompt.findMany({
           include: {

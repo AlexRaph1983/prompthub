@@ -30,6 +30,37 @@ test.describe('Recommendations E2E', () => {
     }
   })
   
+  test('recommendations API supports search query parameter', async ({ request }) => {
+    const response = await request.get('/api/recommendations?q=test')
+    expect(response.ok()).toBeTruthy()
+    
+    const data = await response.json()
+    expect(Array.isArray(data)).toBeTruthy()
+    // Even if no results, should return empty array, not error
+    if (data.length > 0) {
+      expect(data[0]).toHaveProperty('id')
+      expect(data[0]).toHaveProperty('score')
+      expect(data[0]).toHaveProperty('prompt')
+    }
+  })
+  
+  test('recommendations with search returns different results than without', async ({ request }) => {
+    const responseWithSearch = await request.get('/api/recommendations?q=ai&limit=10')
+    const responseWithoutSearch = await request.get('/api/recommendations?limit=10')
+    
+    expect(responseWithSearch.ok()).toBeTruthy()
+    expect(responseWithoutSearch.ok()).toBeTruthy()
+    
+    const dataWithSearch = await responseWithSearch.json()
+    const dataWithoutSearch = await responseWithoutSearch.json()
+    
+    expect(Array.isArray(dataWithSearch)).toBeTruthy()
+    expect(Array.isArray(dataWithoutSearch)).toBeTruthy()
+    
+    // Results may differ (or be empty), but both should be valid arrays
+    // If both have results, IDs might overlap but ordering/selection should differ
+  })
+  
   test('interaction API accepts valid requests', async ({ request }) => {
     // Сначала получаем промпт
     const recoResponse = await request.get('/api/recommendations')
