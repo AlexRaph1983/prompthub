@@ -137,14 +137,14 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  const { searchParams } = new URL(request.url)
+  const promptId = searchParams.get('id')
+
+  if (!promptId) {
+    return NextResponse.json({ error: 'Prompt ID is required' }, { status: 400 })
+  }
+
   try {
-    const { searchParams } = new URL(request.url)
-    const promptId = searchParams.get('id')
-
-    if (!promptId) {
-      return NextResponse.json({ error: 'Prompt ID is required' }, { status: 400 })
-    }
-
     // Проверяем существование промпта
     const prompt = await prisma.prompt.findUnique({
       where: { id: promptId },
@@ -170,7 +170,28 @@ export async function DELETE(request: NextRequest) {
       }
     })
   } catch (error) {
-    console.error('Error deleting prompt:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error(`[ADMIN] Error deleting prompt ${promptId}:`, error)
+    
+    // Обрабатываем известные ошибки Prisma
+    if (error instanceof Error) {
+      // Если промпт не найден (может произойти при race condition)
+      if (error.message.includes('not found') || error.message.includes('Record to delete does not exist')) {
+        return NextResponse.json({ error: 'Prompt not found' }, { status: 404 })
+      }
+      
+      // Ошибки FK constraint (не должны возникать после наших исправлений, но на всякий случай)
+      if (error.message.includes('Foreign key constraint') || error.message.includes('ForeignKey')) {
+        console.error(`[ADMIN] FK constraint violation when deleting prompt ${promptId}`)
+        return NextResponse.json({ 
+          error: 'Cannot delete prompt due to database constraints',
+          details: 'Please contact administrator'
+        }, { status: 409 })
+      }
+    }
+    
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      message: 'Failed to delete prompt'
+    }, { status: 500 })
   }
 }

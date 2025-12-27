@@ -274,6 +274,95 @@ describe('Prisma Sync Helpers - Category Counter Management', () => {
         deletePromptAndSync({ id: 'non-existent-id' })
       ).rejects.toThrow()
     })
+
+    it('должен удалить все зависимые записи при удалении промпта', async () => {
+      // Создаём зависимые записи
+      const rating = await prisma.rating.create({
+        data: {
+          value: 5,
+          userId: testUser.id,
+          promptId: testPrompt.id
+        }
+      })
+
+      const review = await prisma.review.create({
+        data: {
+          rating: 5,
+          comment: 'Great prompt!',
+          userId: testUser.id,
+          promptId: testPrompt.id
+        }
+      })
+
+      const like = await prisma.like.create({
+        data: {
+          userId: testUser.id,
+          promptId: testPrompt.id
+        }
+      })
+
+      const save = await prisma.save.create({
+        data: {
+          userId: testUser.id,
+          promptId: testPrompt.id
+        }
+      })
+
+      const comment = await prisma.comment.create({
+        data: {
+          userId: testUser.id,
+          promptId: testPrompt.id,
+          content: 'Test comment'
+        }
+      })
+
+      // Проверяем, что зависимости созданы
+      expect(rating).toBeDefined()
+      expect(review).toBeDefined()
+      expect(like).toBeDefined()
+      expect(save).toBeDefined()
+      expect(comment).toBeDefined()
+
+      // Удаляем промпт
+      await deletePromptAndSync({ id: testPrompt.id })
+
+      // Проверяем, что все зависимости удалены
+      const remainingRating = await prisma.rating.findUnique({ where: { id: rating.id } })
+      const remainingReview = await prisma.review.findUnique({ where: { id: review.id } })
+      const remainingLike = await prisma.like.findUnique({ where: { id: like.id } })
+      const remainingSave = await prisma.save.findUnique({ where: { id: save.id } })
+      const remainingComment = await prisma.comment.findUnique({ where: { id: comment.id } })
+
+      expect(remainingRating).toBeNull()
+      expect(remainingReview).toBeNull()
+      expect(remainingLike).toBeNull()
+      expect(remainingSave).toBeNull()
+      expect(remainingComment).toBeNull()
+
+      // Помечаем, что промпт уже удалён
+      testPrompt = null as any
+    })
+
+    it('не должен увести promptCount в минус', async () => {
+      // Создаём категорию со счётчиком = 1
+      const category = await prisma.category.findUnique({
+        where: { id: testCategory1.id }
+      })
+      expect(category?.promptCount).toBe(1)
+
+      // Удаляем промпт
+      await deletePromptAndSync({ id: testPrompt.id })
+
+      // Проверяем, что счётчик = 0, а не отрицательный
+      const categoryAfter = await prisma.category.findUnique({
+        where: { id: testCategory1.id }
+      })
+      expect(categoryAfter?.promptCount).toBe(0)
+      expect(categoryAfter?.promptCount).toBeGreaterThanOrEqual(0)
+
+      // Помечаем, что промпт уже удалён
+      testPrompt = null as any
+    })
   })
 
   describe('Транзакционность', () => {
