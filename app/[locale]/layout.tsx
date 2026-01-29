@@ -14,8 +14,6 @@ import CookieConsent from '@/components/CookieConsent';
 import Footer from '@/components/Footer';
 import Script from 'next/script';
 import { ScrollRestoration } from '@/components/ScrollRestoration';
-import { Snowflakes } from '@/components/Snowflakes';
-import { SnowProvider } from '@/contexts/SnowContext';
 export const dynamic = 'force-dynamic';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -96,24 +94,18 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthProvider>
             <PromptProvider>
-              <SnowProvider>
-                {/* Глобальный фон (за снегом и контентом) */}
-                <div aria-hidden className="fixed inset-0 z-0 bg-gray-50 dark:bg-gray-900" />
+              <div aria-hidden className="fixed inset-0 z-0 bg-gray-50 dark:bg-gray-900" />
 
-                {/* Снег должен быть поверх фона, но за блоками */}
-                <Snowflakes />
-
-                <div className="relative z-10">
-                  <ScrollRestoration />
-                  <Navigation />
-                  <div className="min-h-screen">
-                    {children}
-                  </div>
-                  <Footer />
-                  <AddPromptModal />
-                  <CookieConsent />
+              <div className="relative z-10">
+                <ScrollRestoration />
+                <Navigation />
+                <div className="min-h-screen">
+                  {children}
                 </div>
-              </SnowProvider>
+                <Footer />
+                <AddPromptModal />
+                <CookieConsent />
+              </div>
             </PromptProvider>
           </AuthProvider>
         </NextIntlClientProvider>

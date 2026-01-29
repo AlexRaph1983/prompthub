@@ -11,7 +11,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { useAdmin } from '@/hooks/useAdmin'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useSnow } from '@/contexts/SnowContext'
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -27,7 +26,6 @@ export function Navigation() {
   const { session, isAuthenticated, isLoading, signIn, signOut } = useAuth()
   const { isAdmin, role, permissions } = useAdmin()
   const { toggleModal } = usePromptStore()
-  const { enabled: snowEnabled, toggle: toggleSnow } = useSnow()
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname() || '/'
   const [, seg] = pathname.split('/')
@@ -61,21 +59,6 @@ export function Navigation() {
             <Link href={`/${currentLocale}`} className="group inline-flex items-center gap-2" aria-label="PromptHub home">
               <span className="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">{t('appName')}</span>
             </Link>
-            <button
-              type="button"
-              onClick={toggleSnow}
-              aria-pressed={snowEnabled}
-              aria-label={snowEnabled ? 'Выключить снег' : 'Включить снег'}
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-full text-2xl leading-none shadow-sm ring-1 transition ${
-                snowEnabled
-                  ? 'bg-emerald-100 ring-emerald-200 hover:bg-emerald-200'
-                  : 'bg-slate-100 ring-slate-200 opacity-60 grayscale hover:opacity-80'
-              }`}
-              title={snowEnabled ? 'Выключить снег' : 'Включить снег'}
-            >
-              🎄
-            </button>
-
             <Button asChild variant="outline" size="sm" className="hidden lg:inline-flex">
               <Link href={`/${currentLocale}/home`} className="inline-flex items-center gap-2">
                 <User className="w-4 h-4" />
