@@ -9,10 +9,19 @@ interface PrivacyPageProps {
 export async function generateMetadata({ params }: PrivacyPageProps): Promise<Metadata> {
   const { locale } = params;
   const t = await getTranslations({ locale, namespace: 'privacy' });
+  const canonicalLocale: 'ru' | 'en' = 'ru';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
   
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
+    alternates: {
+      canonical: `${baseUrl}/${canonicalLocale}/privacy`
+    },
+    robots: {
+      index: locale === canonicalLocale,
+      follow: true
+    }
   };
 }
 
@@ -208,4 +217,3 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
     </main>
   );
 }
-

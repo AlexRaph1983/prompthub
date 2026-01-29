@@ -15,15 +15,16 @@ import { usePromptStore } from '@/contexts/PromptStore'
 import { useRouter } from 'next/navigation'
 import { ViewsService } from '@/lib/services/viewsService'
 import { RelatedArticlesWidget } from '@/components/articles/RelatedArticlesWidget'
+import Link from 'next/link'
 
 interface PromptDetailsClientProps {
   promptId: string
+  initialPrompt?: any
+  locale: string
 }
 
-export default function PromptDetailsClient({ promptId }: PromptDetailsClientProps) {
+export default function PromptDetailsClient({ promptId, initialPrompt, locale }: PromptDetailsClientProps) {
   const t = useTranslations()
-  const [mounted, setMounted] = React.useState(false)
-  React.useEffect(() => setMounted(true), [])
   const router = useRouter()
   const { state, dispatch } = usePromptStore()
   const { isAuthenticated, signIn, session } = useAuth() as any
@@ -31,7 +32,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   const [submitting, setSubmitting] = React.useState(false)
   const [pendingRating, setPendingRating] = React.useState<number | null>(null)
   
-  const [loadedPrompt, setLoadedPrompt] = React.useState<any>(null)
+  const [loadedPrompt, setLoadedPrompt] = React.useState<any>(initialPrompt ?? null)
   const [isLoadingPrompt, setIsLoadingPrompt] = React.useState(false)
   const [promptViews, setPromptViews] = React.useState<number | null>(null)
   
@@ -430,7 +431,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   }
 
   const handleViewDetails = (promptId: string) => {
-    router.push(`/prompt/${promptId}`)
+    router.push(`/${locale}/prompt/${promptId}`)
   }
 
   // Загружаем мой отзыв (если есть) для предзаполнения формы
@@ -458,8 +459,6 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
     }
   }
 
-  if (!mounted) return null
-  
   if (isLoadingPrompt) {
     return (
       <main className="bg-transparent min-h-screen pb-12">
@@ -492,6 +491,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
   return (
     <main className="bg-transparent min-h-screen pb-12">
       <div className="mx-auto max-w-4xl px-4 py-8">
+        <h1 className="sr-only">{prompt.title}</h1>
         <Button 
           onClick={handleGoBack} 
           variant="ghost" 
@@ -620,7 +620,17 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-gray-600 flex items-center gap-2">
-                    {t('prompt.author')} {prompt.author}
+                    {t('prompt.author')}{' '}
+                    {prompt.authorId ? (
+                      <Link
+                        href={`/${locale}/author/${encodeURIComponent(prompt.authorId)}`}
+                        className="underline hover:text-gray-600"
+                      >
+                        {prompt.author}
+                      </Link>
+                    ) : (
+                      <span>{prompt.author}</span>
+                    )}
                     {typeof (prompt as any).authorReputationScore === 'number' && (
                       <UserReputationBadge score={(prompt as any).authorReputationScore} tier={(prompt as any).authorReputationTier || 'bronze'} />
                     )}
@@ -696,7 +706,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
                     if (!p) return null
                     
                     return (
-                      <Card key={s.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer" onClick={() => router.push(`/prompt/${s.id}`)}>
+                      <Card key={s.id} className="hover:shadow-lg transition-shadow duration-200 cursor-pointer" onClick={() => router.push(`/${locale}/prompt/${s.id}`)}>
                         <CardContent className="p-6">
                           <div className="flex items-start justify-between mb-3">
                             <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{p.title}</h3>
@@ -739,7 +749,7 @@ export default function PromptDetailsClient({ promptId }: PromptDetailsClientPro
                               className="underline hover:text-gray-600"
                               onClick={(e) => {
                                 e.stopPropagation()
-                                p.authorId && router.push(`/prompts?authorId=${encodeURIComponent(p.authorId)}`)
+                                p.authorId && router.push(`/${locale}/author/${encodeURIComponent(p.authorId)}`)
                               }}
                               disabled={!p.authorId}
                             >{p.author}</button></span>

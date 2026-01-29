@@ -42,5 +42,5 @@ export default async function MyPromptsPage({
     updatedAt: p.updatedAt?.toISOString() ?? null,
   }))
 
-  return <MyPromptsClient prompts={serializedPrompts} />
+  return <MyPromptsClient prompts={serializedPrompts} locale={locale} />
 }

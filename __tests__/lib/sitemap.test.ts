@@ -39,12 +39,12 @@ describe('Sitemap Utils', () => {
 
     it('should build home URL with locale', () => {
       const result = urlBuilders.home('ru');
-      expect(result).toBe('https://prompt-hub.site/ru');
+      expect(result).toBe('https://prompt-hub.site/ru/home');
     });
 
     it('should build prompt URL', () => {
-      const result = urlBuilders.prompt('test-prompt', 'en');
-      expect(result).toBe('https://prompt-hub.site/en/prompt/test-prompt');
+      const result = urlBuilders.prompt('test-prompt', 'ru');
+      expect(result).toBe('https://prompt-hub.site/ru/prompt/test-prompt');
     });
 
     it('should build category URL', () => {
@@ -60,16 +60,14 @@ describe('Sitemap Utils', () => {
 
   describe('generateHreflangLinks', () => {
     it('should generate hreflang links for locales', () => {
-      const result = generateHreflangLinks('/test', ['ru', 'en'], 'en');
+      const result = generateHreflangLinks('/test', ['ru'], 'ru');
       expect(result).toContain('hreflang="ru"');
-      expect(result).toContain('hreflang="en"');
       expect(result).toContain('hreflang="x-default"');
     });
 
     it('should include correct URLs in hreflang', () => {
-      const result = generateHreflangLinks('/test', ['ru', 'en'], 'en');
+      const result = generateHreflangLinks('/test', ['ru'], 'ru');
       expect(result).toContain('https://prompt-hub.site/ru/test');
-      expect(result).toContain('https://prompt-hub.site/en/test');
     });
   });
 

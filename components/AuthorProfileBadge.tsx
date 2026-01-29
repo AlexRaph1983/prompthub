@@ -30,10 +30,12 @@ interface AuthorProfile {
 interface Props {
   author: AuthorProfile
   className?: string
+  locale?: string
 }
 
-export function AuthorProfileBadge({ author, className }: Props) {
+export function AuthorProfileBadge({ author, className, locale }: Props) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const resolvedLocale = locale || 'ru'
 
   const tier = author.reputationScore >= 85 ? 'platinum' : 
                author.reputationScore >= 65 ? 'gold' : 
@@ -64,7 +66,7 @@ export function AuthorProfileBadge({ author, className }: Props) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 min-w-0">
                 <Link 
-                  href={`/prompts?authorId=${encodeURIComponent(author.id)}`}
+                  href={`/${resolvedLocale}/author/${encodeURIComponent(author.id)}`}
                   className="font-semibold text-gray-900 hover:text-blue-600 transition-colors truncate min-w-0"
                   title={author.name}
                 >

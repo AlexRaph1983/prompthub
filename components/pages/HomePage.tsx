@@ -19,6 +19,7 @@ import { SearchBar } from '@/components/SearchBar'
 import { getABTestFeatures } from '@/analytics/abTestConfig'
 import AutoRefreshWidgets from '@/components/AutoRefreshWidgets'
 import { RandomArticlesCarousel } from '@/components/articles/RandomArticlesCarousel'
+import Link from 'next/link'
 
 type SortMode = 'recommendations' | 'date'
 
@@ -441,7 +442,6 @@ export default function HomePage() {
   // Убираем автоматическое отслеживание при каждом изменении
   // Теперь отслеживаем только завершенные поиски (Enter/blur)
 
-  if (!mounted) return null
   return (
     <main className="bg-gray-50 min-h-screen pb-12">
       <AutoRefreshWidgets refreshInterval={10000} />
@@ -582,6 +582,7 @@ interface PromptCardProps {
 
 function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProps & { copyState?: { isCopying: boolean; success: boolean } }) {
   const t = useTranslations()
+  const locale = useLocale()
   const getLicenseVariant = (license: string) => {
     switch (license) {
       case 'CC-BY': return 'ccby'
@@ -612,7 +613,14 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
           {prompt.license}
         </Badge>
       </div>
-      <h2 className="font-bold text-lg break-words line-clamp-2 min-w-0">{prompt.title}</h2>
+      <h2 className="font-bold text-lg break-words line-clamp-2 min-w-0">
+        <Link
+          href={`/${locale}/prompt/${prompt.id}`}
+          className="hover:text-violet-700"
+        >
+          {prompt.title}
+        </Link>
+      </h2>
       <div className="text-gray-500 text-sm break-words line-clamp-3 min-w-0">{prompt.description}</div>
       <div className="flex gap-2 mt-1 flex-wrap min-w-0">
         {prompt.tags.map((tag, i) => (
@@ -623,13 +631,17 @@ function PromptCard({ prompt, onCopy, onViewDetails, copyState }: PromptCardProp
       <div className="mt-auto flex flex-col gap-3 min-w-0">
         <div className="flex items-center justify-between flex-wrap gap-2 min-w-0">
           <div className="flex items-center gap-2 flex-wrap min-w-0 flex-1">
-            <span className="text-xs text-gray-400 min-w-0">By <button
-              type="button"
-              className="underline hover:text-gray-600 truncate max-w-[120px] inline-block"
-              onClick={() => (prompt as any).authorId && router.push(`/prompts?authorId=${encodeURIComponent((prompt as any).authorId)}`)}
-              disabled={!(prompt as any).authorId}
-              title={prompt.author}
-            >{prompt.author}</button></span>
+            <span className="text-xs text-gray-400 min-w-0">By {(prompt as any).authorId ? (
+              <Link
+                href={`/${locale}/author/${encodeURIComponent((prompt as any).authorId)}`}
+                className="underline hover:text-gray-600 truncate max-w-[120px] inline-block"
+                title={prompt.author}
+              >
+                {prompt.author}
+              </Link>
+            ) : (
+              <span title={prompt.author}>{prompt.author}</span>
+            )}</span>
             {prompt.createdAt && (
               <span className="inline-flex items-center gap-1 text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
                 <Calendar className="w-3 h-3 flex-shrink-0" />

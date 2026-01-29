@@ -100,7 +100,7 @@ export function generatePromptStructuredData(
   },
   locale: Locale
 ) {
-  const url = `${BASE_URL}/prompt/${prompt.id}`;
+  const url = `${BASE_URL}/${locale}/prompt/${prompt.id}`;
   const tags = prompt.tags ? prompt.tags.split(',').map(t => t.trim()) : [];
   
   return {

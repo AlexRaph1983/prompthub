@@ -4,6 +4,7 @@ import InfinitePromptList from '@/components/InfinitePromptList'
 import { promptRepository } from '@/lib/repositories/promptRepository'
 import { PromptCardDTO } from '@/lib/repositories/promptRepository'
 import { prisma } from '@/lib/prisma'
+import { generateItemListSchema } from '@/lib/structured-data'
 
 async function getInitialPrompts(authorId?: string): Promise<{
   prompts: PromptCardDTO[]
@@ -62,10 +63,28 @@ async function getAuthorInfo(authorId?: string) {
 }
 
 export async function generateMetadata({
-  params: { locale }
+  params,
+  searchParams
 }: {
-  params: { locale: string }
+  params?: { locale?: string }
+  searchParams?: {
+    authorId?: string
+    q?: string
+    sort?: string
+    order?: string
+    cursor?: string
+    page?: string
+    limit?: string
+    tag?: string
+    category?: string
+    model?: string
+    lang?: string
+  }
 }): Promise<Metadata> {
+  const routeLocale = params?.locale as string | undefined
+  const locale = routeLocale || 'ru'
+  const isLocaleRoute = Boolean(routeLocale)
+  const canonicalLocale: 'ru' | 'en' = 'ru'
   const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'
   const isRu = locale === 'ru'
   
@@ -77,7 +96,12 @@ export async function generateMetadata({
     ? 'Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов. База промптов с рейтингами и отзывами.'
     : 'Find the perfect prompt for your task. Thousands of ready-to-use solutions for ChatGPT, Claude, Gemini and other AI tools. Prompt database with ratings and reviews.'
   
-  const canonical = `${baseUrl}/${locale}/prompts`
+  const canonical = `${baseUrl}/${canonicalLocale}/prompts`
+  const hasQueryParams = !!searchParams && Object.keys(searchParams).length > 0
+  const authorId = searchParams?.authorId
+  const canonicalForParams = authorId
+    ? `${baseUrl}/${canonicalLocale}/author/${encodeURIComponent(authorId)}`
+    : canonical
   
   return {
     title,
@@ -86,19 +110,14 @@ export async function generateMetadata({
       ? 'каталог промптов, база промптов, промпты, ChatGPT, Claude, Gemini, ИИ, нейросети, шаблоны'
       : 'prompt catalog, prompt database, prompts, ChatGPT, Claude, Gemini, AI, templates',
     alternates: {
-      canonical,
-      languages: {
-        ru: `${baseUrl}/ru/prompts`,
-        en: `${baseUrl}/en/prompts`,
-        'x-default': `${baseUrl}/ru/prompts`
-      }
+      canonical: canonicalForParams
     },
     openGraph: {
       title,
       description,
-      url: canonical,
+      url: canonicalForParams,
       siteName: 'PromptHub',
-      locale: isRu ? 'ru_RU' : 'en_US',
+      locale: 'ru_RU',
       type: 'website',
       images: [
         {
@@ -116,7 +135,7 @@ export async function generateMetadata({
       images: [`/og/prompt-hub-${locale}.png`]
     },
     robots: {
-      index: true,
+      index: isLocaleRoute && locale === canonicalLocale && !hasQueryParams,
       follow: true
     }
   }
@@ -124,29 +143,48 @@ export async function generateMetadata({
 
 export default async function PromptsPage({
   searchParams,
-  params: { locale }
+  params
 }: {
   searchParams: { authorId?: string }
-  params: { locale: string }
+  params?: { locale?: string }
 }) {
+  const locale = params?.locale || 'ru'
   unstable_setRequestLocale(locale)
   const authorId = searchParams.authorId
 
   const { prompts, nextCursor } = await getInitialPrompts(authorId)
   const authorInfo = await getAuthorInfo(authorId)
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'
+  const canonicalLocale: 'ru' | 'en' = 'ru'
+  const itemListData = generateItemListSchema(
+    'Каталог промптов',
+    'Список промптов на PromptHub',
+    `${baseUrl}/${canonicalLocale}/prompts`,
+    prompts.map((prompt) => ({
+      name: prompt.title,
+      url: `${baseUrl}/${canonicalLocale}/prompt/${prompt.id}`
+    })),
+    prompts.length
+  )
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4 text-gray-900">Каталог промптов</h1>
-      <p className="text-gray-600 text-lg mb-6">Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.</p>
-      
-      <InfinitePromptList
-        initialPrompts={prompts}
-        initialNextCursor={nextCursor}
-        authorId={authorId}
-        authorInfo={authorInfo as any}
-        locale={locale}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListData) }}
       />
-    </div>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-4 text-gray-900">Каталог промптов</h1>
+        <p className="text-gray-600 text-lg mb-6">Найдите подходящий промпт для вашей задачи. Тысячи готовых решений для ChatGPT, Claude, Gemini и других ИИ-инструментов.</p>
+        
+        <InfinitePromptList
+          initialPrompts={prompts}
+          initialNextCursor={nextCursor}
+          authorId={authorId}
+          authorInfo={authorInfo as any}
+          locale={locale}
+        />
+      </div>
+    </>
   )
 } 

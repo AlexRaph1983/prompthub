@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { Card } from '@/components/ui/card'
-import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserReputationBadge } from '@/components/UserReputationBadge'
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 
 interface User {
   id: string
@@ -20,12 +20,7 @@ interface LeadersClientProps {
 }
 
 export default function LeadersClient({ users, locale }: LeadersClientProps) {
-  const router = useRouter()
   const t = useTranslations('leaders')
-
-  const handleUserClick = (userId: string) => {
-    router.push(`/${locale}/prompts?authorId=${encodeURIComponent(userId)}`)
-  }
 
   return (
     <main className="bg-transparent min-h-screen pb-12">
@@ -46,13 +41,12 @@ export default function LeadersClient({ users, locale }: LeadersClientProps) {
                     {user.name?.[0]?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <button
-                  type="button"
+                <Link
+                  href={`/${locale}/author/${encodeURIComponent(user.id)}`}
                   className="flex-1 text-left font-medium text-gray-900 hover:text-violet-600 transition-colors"
-                  onClick={() => handleUserClick(user.id)}
                 >
                   {user.name || t('anonymous')}
-                </button>
+                </Link>
                 <UserReputationBadge
                   score={user.reputationScore}
                   tier={

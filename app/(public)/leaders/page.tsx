@@ -2,14 +2,13 @@
 
 import React from 'react'
 import { Card } from '@/components/ui/card'
-import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserReputationBadge } from '@/components/UserReputationBadge'
+import Link from 'next/link'
 export default function LeadersPage() {
   const [users, setUsers] = React.useState<Array<{ id: string; name: string | null; image: string | null; reputationScore: number }>>([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
-  const router = useRouter()
 
   React.useEffect(() => {
     setLoading(true)
@@ -33,10 +32,6 @@ export default function LeadersPage() {
         setLoading(false)
       })
   }, [])
-
-  const handleUserClick = (userId: string) => {
-    router.push(`/prompts?authorId=${encodeURIComponent(userId)}`)
-  }
 
   if (loading) {
     return (
@@ -94,13 +89,12 @@ export default function LeadersPage() {
                     {user.name?.[0]?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                <button
-                  type="button"
+                <Link
+                  href={`/ru/author/${encodeURIComponent(user.id)}`}
                   className="flex-1 text-left font-medium text-gray-900 hover:text-violet-600 transition-colors"
-                  onClick={() => handleUserClick(user.id)}
                 >
                   {user.name || 'Анонимный пользователь'}
-                </button>
+                </Link>
                 <UserReputationBadge 
                   score={user.reputationScore} 
                   tier={
@@ -122,5 +116,4 @@ export default function LeadersPage() {
     </main>
   )
 }
-
 

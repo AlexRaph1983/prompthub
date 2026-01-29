@@ -25,7 +25,24 @@ export async function generateMetadata({ params, searchParams }: CategoryPagePro
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
-  return generateCategoryMetadata(category, locale, baseUrl);
+  const canonicalLocale: Locale = 'ru';
+  const hasParams = Boolean(searchParams?.tag || searchParams?.page || searchParams?.nsfw);
+  const metadata = generateCategoryMetadata(category, locale, baseUrl);
+  const canonical = `${baseUrl}/${canonicalLocale}/category/${category.slug}`;
+
+  return {
+    ...metadata,
+    alternates: { canonical },
+    openGraph: {
+      ...metadata.openGraph,
+      url: canonical,
+      locale: 'ru_RU'
+    },
+    robots: {
+      index: locale === canonicalLocale && !hasParams,
+      follow: true
+    }
+  };
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {

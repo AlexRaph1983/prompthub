@@ -27,6 +27,7 @@ type LayoutProps = {
 
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { locale } = params;
+  const canonicalLocale: Locale = 'ru';
   const host = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
   const messages = (await import(`@/messages/${locale}.json`)).default as any;
   const title = messages?.metadata?.title || 'PromptHub';
@@ -40,12 +41,11 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
     description,
     keywords,
     alternates: {
-      canonical: `${host}/${locale}`,
-      languages: { en: `${host}/en`, ru: `${host}/ru` },
+      canonical: `${host}/${canonicalLocale}`
     },
     openGraph: { title, description, url: `${host}/${locale}`, siteName: 'PromptHub', locale, type: 'website', images: [{ url: ogImage }] },
     twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
-    robots: { index: true, follow: true },
+    robots: { index: locale === canonicalLocale, follow: true },
     icons: { 
       icon: [
         { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },

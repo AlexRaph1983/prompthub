@@ -9,6 +9,7 @@ export function generateArticlesListMetadata(
   locale: Locale,
   baseUrl: string
 ): Metadata {
+  const canonicalLocale: Locale = 'ru';
   const title = locale === 'ru'
     ? 'Статьи о промптах и работе с нейросетями | PromptHub'
     : 'Articles about prompts and AI | PromptHub';
@@ -17,24 +18,21 @@ export function generateArticlesListMetadata(
     ? 'Полезные статьи, гайды и советы по созданию промптов для ChatGPT, Claude, Gemini и других нейросетей. Примеры использования, лучшие практики и кейсы.'
     : 'Useful articles, guides and tips on creating prompts for ChatGPT, Claude, Gemini and other neural networks. Use cases, best practices and examples.';
 
+  const canonical = `${baseUrl}/${canonicalLocale}/articles`;
+
   return {
     title,
     description,
     keywords: generateArticlesKeywords(locale),
     alternates: {
-      canonical: `${baseUrl}/${locale}/articles`,
-      languages: {
-        ru: `${baseUrl}/ru/articles`,
-        en: `${baseUrl}/en/articles`,
-        'x-default': `${baseUrl}/ru/articles`
-      }
+      canonical
     },
     openGraph: {
       title,
       description,
-      url: `${baseUrl}/${locale}/articles`,
+      url: canonical,
       siteName: 'PromptHub',
-      locale: locale === 'ru' ? 'ru_RU' : 'en_US',
+      locale: 'ru_RU',
       type: 'website',
       images: [
         {
@@ -52,7 +50,7 @@ export function generateArticlesListMetadata(
       images: [`/og/articles-${locale}.png`]
     },
     robots: {
-      index: true,
+      index: locale === canonicalLocale,
       follow: true
     }
   };
@@ -68,7 +66,8 @@ export function generateArticleMetadata(
 ): Metadata {
   const title = locale === 'ru' ? article.titleRu : article.titleEn;
   const description = locale === 'ru' ? article.descriptionRu : article.descriptionEn;
-  const canonical = `${baseUrl}/${locale}/articles/${article.slug}`;
+  const canonicalLocale: Locale = 'ru';
+  const canonical = `${baseUrl}/${canonicalLocale}/articles/${article.slug}`;
 
   const tags = article.articleTags.map(at => at.tag.name);
   const keywords = [...tags, ...getBaseKeywords(locale)].join(', ');
@@ -81,12 +80,7 @@ export function generateArticleMetadata(
     description,
     keywords,
     alternates: {
-      canonical,
-      languages: {
-        ru: `${baseUrl}/ru/articles/${article.slug}`,
-        en: `${baseUrl}/en/articles/${article.slug}`,
-        'x-default': `${baseUrl}/ru/articles/${article.slug}`
-      }
+      canonical
     },
     authors: article.author.name ? [{ name: article.author.name }] : undefined,
     openGraph: {
@@ -94,7 +88,7 @@ export function generateArticleMetadata(
       description,
       url: canonical,
       siteName: 'PromptHub',
-      locale: locale === 'ru' ? 'ru_RU' : 'en_US',
+      locale: 'ru_RU',
       type: 'article',
       publishedTime,
       modifiedTime,
@@ -127,7 +121,7 @@ export function generateArticleMetadata(
         : [`/og/article-${article.slug}.png`]
     },
     robots: {
-      index: article.status === 'published',
+      index: locale === canonicalLocale && article.status === 'published',
       follow: article.status === 'published'
     }
   };

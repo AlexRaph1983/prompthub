@@ -11,6 +11,7 @@ import { Copy, Star, Eye } from 'lucide-react'
 import { AuthorProfileBadge } from '@/components/AuthorProfileBadge'
 import { useSearchTracking } from '@/hooks/useSearchTracking'
 import { useRealTimeSearchTracking } from '@/hooks/useRealTimeSearchTracking'
+import Link from 'next/link'
 
 interface Prompt {
   id: string
@@ -142,7 +143,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
     
     // Сбрасываем позицию скролла при переходе
     window.scrollTo(0, 0)
-    router.push(`/prompt/${promptId}`)
+    router.push(`/${locale}/prompt/${promptId}`)
   }
 
 
@@ -173,6 +174,7 @@ export default function PromptsClient({ prompts, authorInfo, authorId, locale }:
                   reputationRatingsCnt: authorInfo.reputationRatingsCnt,
                   reputationCommentsCnt: authorInfo.reputationCommentsCnt,
                 }}
+                locale={locale}
               />
             </div>
           )}
@@ -245,7 +247,14 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
       <CardContent className="p-6 flex flex-col h-full min-w-0">
         <div className="flex items-start justify-between mb-3 gap-2 min-w-0">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words min-w-0">{prompt.title}</h3>
+            <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 break-words min-w-0">
+              <Link
+                href={`/${locale}/prompt/${prompt.id}`}
+                className="hover:text-violet-700"
+              >
+                {prompt.title}
+              </Link>
+            </h3>
           </div>
           <Badge variant="outline" className="text-xs whitespace-nowrap flex-shrink-0">
             {prompt.license}
@@ -300,19 +309,23 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
         <div className="mt-auto flex flex-col gap-3 min-w-0">
           <div className="flex items-center justify-between text-xs text-gray-400 flex-wrap gap-2 min-w-0">
             <div className="flex items-center gap-2 flex-wrap min-w-0 flex-1">
-              <span className="min-w-0">By <button
-                type="button"
-                className="underline hover:text-gray-600 truncate max-w-[120px] inline-block"
-                onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
-                disabled={!prompt.authorId}
-                title={prompt.author}
-              >{prompt.author}</button></span>
+              <span className="min-w-0">By {prompt.authorId ? (
+                <Link
+                  href={`/${locale}/author/${encodeURIComponent(prompt.authorId)}`}
+                  className="underline hover:text-gray-600 truncate max-w-[120px] inline-block"
+                  title={prompt.author}
+                >
+                  {prompt.author}
+                </Link>
+              ) : (
+                <span title={prompt.author}>{prompt.author}</span>
+              )}</span>
             </div>
           </div>
 
           {prompt.authorProfile && (
             <div className="min-w-0">
-              <AuthorProfileBadge author={prompt.authorProfile} />
+              <AuthorProfileBadge author={prompt.authorProfile} locale={locale} />
             </div>
           )}
 
@@ -339,4 +352,3 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
     </Card>
   )
 }
-

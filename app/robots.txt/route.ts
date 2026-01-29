@@ -34,7 +34,7 @@ Disallow: /*?*q=*
 Disallow: /*?*sort=*
 Disallow: /*?*order=*
 Disallow: /*?*cursor=*
-Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&sort&order&cursor&page&limit&q
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&sort&order&cursor&page&limit&q&authorId&tag&nsfw&model&lang&category
 
 Host: ${baseUrl.replace('https://', '').replace('http://', '')}
 Sitemap: ${baseUrl}/sitemap.xml

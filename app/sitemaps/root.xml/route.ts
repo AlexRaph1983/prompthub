@@ -4,8 +4,6 @@ import {
   XML_TEMPLATES, 
   SITEMAP_PRIORITIES,
   formatLastMod,
-  urlBuilders,
-  generateHreflangLinks,
   getCached 
 } from '@/lib/sitemap';
 
@@ -17,27 +15,13 @@ export async function GET(request: NextRequest) {
       const now = new Date();
       const { priority, changefreq } = SITEMAP_PRIORITIES.root;
       
-      // Главная страница (x-default = ru)
-      const homeUrl = urlBuilders.home('ru');
-      const homeHreflang = generateHreflangLinks('/home', SITEMAP_CONFIG.LOCALES, 'ru');
-      
       return [
-        // RU версия главной (x-default)
         {
           loc: `${SITEMAP_CONFIG.BASE_URL}/ru/home`,
           lastmod: formatLastMod(now),
           changefreq,
           priority,
-          hreflang: homeHreflang,
         },
-        // EN версия главной
-        {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/en/home`,
-          lastmod: formatLastMod(now),
-          changefreq,
-          priority,
-        },
-        // Каталог промптов
         {
           loc: `${SITEMAP_CONFIG.BASE_URL}/ru/prompts`,
           lastmod: formatLastMod(now),
@@ -45,20 +29,19 @@ export async function GET(request: NextRequest) {
           priority: '0.9',
         },
         {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/en/prompts`,
-          lastmod: formatLastMod(now),
-          changefreq: 'daily',
-          priority: '0.9',
-        },
-        // Лидеры
-        {
           loc: `${SITEMAP_CONFIG.BASE_URL}/ru/leaders`,
           lastmod: formatLastMod(now),
           changefreq: 'weekly',
           priority: '0.6',
         },
         {
-          loc: `${SITEMAP_CONFIG.BASE_URL}/en/leaders`,
+          loc: `${SITEMAP_CONFIG.BASE_URL}/ru/privacy`,
+          lastmod: formatLastMod(now),
+          changefreq: 'yearly',
+          priority: '0.3',
+        },
+        {
+          loc: `${SITEMAP_CONFIG.BASE_URL}/ru/articles`,
           lastmod: formatLastMod(now),
           changefreq: 'weekly',
           priority: '0.6',

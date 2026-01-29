@@ -294,7 +294,7 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
             <span>By <button
               type="button"
               className="underline hover:text-gray-600"
-              onClick={() => prompt.authorId && router.push(`/${locale}/prompts?authorId=${encodeURIComponent(prompt.authorId)}`)}
+              onClick={() => prompt.authorId && router.push(`/${locale}/author/${encodeURIComponent(prompt.authorId)}`)}
               disabled={!prompt.authorId}
             >{prompt.author}</button></span>
           </div>
@@ -328,4 +328,3 @@ function PromptCard({ prompt, onCopy, onViewDetails, locale }: PromptCardProps) 
     </Card>
   )
 }
-

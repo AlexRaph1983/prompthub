@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning>
       <body className={`${inter.className} overflow-x-hidden`}>
         {children}
       </body>

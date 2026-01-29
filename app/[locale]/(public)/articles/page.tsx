@@ -10,10 +10,26 @@ interface ArticlesPageProps {
   searchParams: { page?: string };
 }
 
-export async function generateMetadata({ params }: ArticlesPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: ArticlesPageProps): Promise<Metadata> {
   const { locale } = params;
   const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
-  return generateArticlesListMetadata(locale, baseUrl);
+  const metadata = generateArticlesListMetadata(locale, baseUrl);
+  const canonicalLocale: Locale = 'ru';
+  const canonical = `${baseUrl}/${canonicalLocale}/articles`;
+  const hasPageParam = Boolean(searchParams?.page && searchParams.page !== '1');
+
+  metadata.alternates = { canonical };
+  metadata.openGraph = {
+    ...metadata.openGraph,
+    url: canonical,
+    locale: 'ru_RU'
+  };
+  metadata.robots = {
+    index: locale === canonicalLocale && !hasPageParam,
+    follow: true
+  };
+
+  return metadata;
 }
 
 export default async function ArticlesPage({ params, searchParams }: ArticlesPageProps) {

@@ -28,6 +28,10 @@ export async function GET(request: NextRequest) {
           lastmod: formatLastMod(now),
         },
         {
+          loc: `${baseUrl}/sitemaps/authors.xml`,
+          lastmod: formatLastMod(now),
+        },
+        {
           loc: `${baseUrl}/sitemaps/articles.xml`,
           lastmod: formatLastMod(now),
         },

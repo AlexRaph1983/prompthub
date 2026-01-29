@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export const SITEMAP_CONFIG = {
   BASE_URL: 'https://prompt-hub.site',
-  LOCALES: ['ru', 'en'] as const,
+  LOCALES: ['ru'] as const,
   PROMPTS_PER_PAGE: 10000, // Лимит URL на карту
   REVALIDATE_TIME: 3600, // 1 час
 } as const;

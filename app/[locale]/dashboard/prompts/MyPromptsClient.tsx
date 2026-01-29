@@ -26,9 +26,10 @@ type PromptRow = {
 
 type Props = {
   prompts: PromptRow[]
+  locale: string
 }
 
-export default function MyPromptsClient({ prompts }: Props) {
+export default function MyPromptsClient({ prompts, locale }: Props) {
   const [items, setItems] = React.useState<PromptRow[]>(() => prompts)
   const [editingId, setEditingId] = React.useState<string | null>(null)
   const [form, setForm] = React.useState<PromptRow | null>(null)
@@ -151,7 +152,7 @@ export default function MyPromptsClient({ prompts }: Props) {
                       {prompt.updatedAt && (
                         <span>Обновлён: <time suppressHydrationWarning>{new Date(prompt.updatedAt).toISOString().slice(0, 10)}</time></span>
                       )}
-                      <Link href={`/prompt/${prompt.id}`} className="inline-flex items-center gap-1 text-violet-700 hover:underline">
+                      <Link href={`/${locale}/prompt/${prompt.id}`} className="inline-flex items-center gap-1 text-violet-700 hover:underline">
                         <ExternalLink className="w-4 h-4" /> Открыть
                       </Link>
                     </div>

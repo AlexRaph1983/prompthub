@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import HomePage from '@/components/pages/HomePage'
 import { generateHomeMetadata } from '@/lib/seo'
+import { generateWebSiteSchema } from '@/lib/structured-data'
 import type { Metadata } from 'next'
 import type { Locale } from '@/i18n/index'
 
@@ -12,6 +13,7 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = params
   const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'
+  const canonicalLocale: Locale = 'ru'
   
   // Обновляем title для RU с целевыми запросами
   const metadata = generateHomeMetadata(locale, baseUrl)
@@ -22,21 +24,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     metadata.keywords = 'маркетплейс промптов, база промптов, каталог промптов, библиотека промптов, промпты для ИИ, ChatGPT, Claude, Gemini'
   }
   
-  // Обновляем canonical и hreflang
-  metadata.alternates = {
-    canonical: `${baseUrl}/${locale}/home`,
-    languages: {
-      ru: `${baseUrl}/ru/home`,
-      en: `${baseUrl}/en/home`,
-      'x-default': `${baseUrl}/ru/home`
-    }
+  // Обновляем canonical
+  const canonical = `${baseUrl}/${canonicalLocale}/home`
+  metadata.alternates = { canonical }
+  metadata.openGraph = {
+    ...metadata.openGraph,
+    url: canonical,
+    locale: 'ru_RU'
+  }
+  metadata.robots = {
+    index: locale === canonicalLocale,
+    follow: true
   }
   
   return metadata
 }
 
-export default function Page() {
-  return <HomePage />
+export default function Page({ params }: PageProps) {
+  const canonicalLocale: Locale = 'ru'
+  const structuredData = generateWebSiteSchema(canonicalLocale)
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <HomePage />
+    </>
+  )
 }
 
 

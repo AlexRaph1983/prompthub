@@ -2,6 +2,8 @@ import { unstable_setRequestLocale } from 'next-intl/server'
 import LeadersClient from './LeadersClient'
 import { prisma } from '@/lib/prisma'
 import { calculateReputation } from '@/lib/reputation'
+import type { Metadata } from 'next'
+import type { Locale } from '@/i18n/index'
 
 interface User {
   id: string
@@ -72,6 +74,32 @@ async function getLeaderboard(): Promise<User[]> {
   }
 }
 
+export async function generateMetadata({
+  params: { locale }
+}: {
+  params: { locale: Locale }
+}): Promise<Metadata> {
+  const canonicalLocale: Locale = 'ru'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site'
+  const canonical = `${baseUrl}/${canonicalLocale}/leaders`
+  const title = locale === 'ru'
+    ? 'Лидеры — рейтинг авторов промптов | PromptHub'
+    : 'Leaders — top prompt authors | PromptHub'
+  const description = locale === 'ru'
+    ? 'Рейтинг авторов по репутации и активности на PromptHub.'
+    : 'Ranking of authors by reputation and activity on PromptHub.'
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    robots: {
+      index: locale === canonicalLocale,
+      follow: true
+    }
+  }
+}
+
 export default async function LeadersPage({
   params: { locale }
 }: {
@@ -88,5 +116,4 @@ export default async function LeadersPage({
     />
   )
 }
-
 

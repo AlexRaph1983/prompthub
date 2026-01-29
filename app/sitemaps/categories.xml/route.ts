@@ -5,7 +5,6 @@ import {
   SITEMAP_PRIORITIES,
   formatLastMod,
   urlBuilders,
-  generateHreflangLinks,
   getCached,
   getCategoryLastMod 
 } from '@/lib/sitemap';
@@ -25,9 +24,6 @@ export async function GET(request: NextRequest) {
         const categorySlug = encodeURIComponent(category.name);
         const lastmod = await getCategoryLastMod(category.name);
         
-        // Генерируем hreflang для категории
-        const hreflang = generateHreflangLinks(`/category/${categorySlug}`, SITEMAP_CONFIG.LOCALES, 'en');
-        
         // Добавляем URL для каждой локали
         for (const locale of SITEMAP_CONFIG.LOCALES) {
           urls.push({
@@ -35,7 +31,6 @@ export async function GET(request: NextRequest) {
             lastmod: formatLastMod(lastmod),
             changefreq,
             priority,
-            hreflang: locale === 'en' ? hreflang : undefined, // hreflang только для первой записи
           });
         }
       }

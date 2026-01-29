@@ -5,6 +5,8 @@ import { Metadata } from 'next';
 import InfinitePromptList from '@/components/InfinitePromptList';
 import type { Locale } from '@/i18n/index';
 import { YandexShareBlock } from './YandexShareBlock';
+import { generateBreadcrumbSchema, generateItemListSchema } from '@/lib/structured-data';
+import { promptRepository } from '@/lib/repositories/promptRepository';
 
 interface TagPageProps {
   params: {
@@ -16,6 +18,8 @@ interface TagPageProps {
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const { locale, slug } = params;
   const t = await getTranslations({ locale, namespace: 'metadata' }) as any;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
+  const canonicalLocale: Locale = 'ru';
 
   try {
     // Декодируем slug из URL
@@ -24,14 +28,14 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     // Ищем тег по slug (как закодированному, так и декодированному)
     let tag = await prisma.tag.findUnique({
       where: { slug },
-      select: { name: true, description: true }
+      select: { name: true, description: true, slug: true, promptCount: true }
     });
 
     // Если не найден по оригинальному slug, пробуем декодированный
     if (!tag && decodedSlug !== slug) {
       tag = await prisma.tag.findUnique({
         where: { slug: decodedSlug },
-        select: { name: true, description: true }
+        select: { name: true, description: true, slug: true, promptCount: true }
       });
     }
 
@@ -45,32 +49,30 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
             { slug: decodedSlug }
           ]
         },
-        select: { name: true, slug: true, description: true }
+        select: { name: true, slug: true, description: true, promptCount: true }
       });
     }
 
     if (!tag) {
       return {
         title: t('title'),
-        description: t('description')
+        description: t('description'),
+        robots: { index: false, follow: false }
       };
     }
 
     const title = `${tag.name} — ${t('title')}`;
     const description = tag.description || `${tag.name} - популярные промпты и шаблоны`;
+    const canonicalSlug = tag.slug || slug;
+    const canonical = `${baseUrl}/${canonicalLocale}/tag/${canonicalSlug}`;
+    const hasContent = (tag.promptCount ?? 0) > 0;
 
     return {
       title,
       description,
-      alternates: {
-        languages: {
-          ru: `/ru/tag/${slug}`,
-          en: `/en/tag/${slug}`,
-          'x-default': `/ru/tag/${slug}`
-        }
-      },
+      alternates: { canonical },
       robots: {
-        index: true,
+        index: locale === canonicalLocale && hasContent,
         follow: true
       }
     };
@@ -144,9 +146,50 @@ export default async function TagPage({ params }: TagPageProps) {
       notFound();
     }
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_HOST || 'https://prompt-hub.site';
+    const canonicalLocale: Locale = 'ru';
+    const canonicalSlug = tag.slug || slug;
+    const tagKey = tag.slug || tag.name;
+
+    const { items: initialPrompts, nextCursor } = await promptRepository.listPrompts({
+      limit: 20,
+      cursor: null,
+      sort: 'createdAt',
+      order: 'desc',
+      tag: tagKey
+    });
+    const breadcrumbData = generateBreadcrumbSchema(
+      [
+        { name: 'Главная', url: `${baseUrl}/${canonicalLocale}/home` },
+        { name: 'Теги', url: `${baseUrl}/${canonicalLocale}/prompts` },
+        { name: tag.name, url: `${baseUrl}/${canonicalLocale}/tag/${canonicalSlug}` }
+      ],
+      canonicalLocale
+    );
+
+    const itemListData = generateItemListSchema(
+      `Промпты по тегу ${tag.name}`,
+      `Список промптов по тегу ${tag.name}`,
+      `${baseUrl}/${canonicalLocale}/tag/${canonicalSlug}`,
+      initialPrompts.map((prompt) => ({
+        name: prompt.title,
+        url: `${baseUrl}/${canonicalLocale}/prompt/${prompt.id}`
+      })),
+      tag.promptCount || initialPrompts.length
+    );
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListData) }}
+        />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
           
           {/* Hero секция с заголовком */}
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-violet-500/10 via-purple-500/10 to-pink-500/10 dark:from-violet-900/20 dark:via-purple-900/20 dark:to-pink-900/20 backdrop-blur-sm border border-violet-200/50 dark:border-violet-700/30 p-8 md:p-12">
@@ -269,13 +312,14 @@ export default async function TagPage({ params }: TagPageProps) {
             
             <InfinitePromptList 
               locale={locale}
-              tag={tag.slug || tag.name}
-              initialPrompts={[]}
-              initialNextCursor={null}
+              tag={tagKey}
+              initialPrompts={initialPrompts}
+              initialNextCursor={nextCursor}
             />
           </div>
+          </div>
         </div>
-      </div>
+      </>
     );
   } catch (error) {
     console.error('Error loading tag page:', error);

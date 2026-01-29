@@ -20,6 +20,13 @@ export const metadata: Metadata = {
     description:
       'Находите и публикуйте лучшие промпты для ChatGPT, Claude, Gemini и других. Подборки, рейтинги, мультиязычность. Открыто и бесплатно.',
   },
+  alternates: {
+    canonical: 'https://prompt-hub.site/ru/home'
+  },
+  robots: {
+    index: false,
+    follow: true
+  }
 }
 
 export default function Page() {
