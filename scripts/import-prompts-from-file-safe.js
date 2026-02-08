@@ -24,19 +24,19 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const PROMPT_MODELS = new Set([
-  'GPT-5',
+  'GPT',
   'OpenAI Sora',
-  'Claude Opus 4.1',
-  'Gemini 2.5 Pro',
-  'Gemini 2.5 Flash',
-  'Gemini 2.5 Flash-Lite',
-  'Google Veo 3',
-  'Llama 3.1',
+  'Claude Opus',
+  'Gemini Pro',
+  'Gemini Flash',
+  'Gemini Flash Lite',
+  'Google Veo',
+  'Llama',
   'Mistral Large',
   'DeepSeek',
   'Suno',
   'AIVA',
-  'Runway Gen-2',
+  'Runway',
   'Яндекс Алиса'
 ])
 

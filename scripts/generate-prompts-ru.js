@@ -34,19 +34,19 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
 const PROMPT_MODELS = [
-  'GPT-5',
+  'GPT',
   'OpenAI Sora',
-  'Claude Opus 4.1',
-  'Gemini 2.5 Pro',
-  'Gemini 2.5 Flash',
-  'Gemini 2.5 Flash-Lite',
-  'Google Veo 3',
-  'Llama 3.1',
+  'Claude Opus',
+  'Gemini Pro',
+  'Gemini Flash',
+  'Gemini Flash Lite',
+  'Google Veo',
+  'Llama',
   'Mistral Large',
   'DeepSeek',
   'Suno',
   'AIVA',
-  'Runway Gen-2',
+  'Runway',
   'Яндекс Алиса'
 ]
 
@@ -197,9 +197,9 @@ function modelForCategorySlug(slug) {
     case 'audio':
       return 'AIVA'
     case 'video':
-      return 'Runway Gen-2'
+      return 'Runway'
     default:
-      return 'GPT-5'
+      return 'GPT'
   }
 }
 
@@ -621,7 +621,7 @@ async function main() {
       const promptText = clampPromptText(baseBody, { min: 500, max: 1000 })
 
       const model = modelForCategorySlug(cat.slug)
-      const safeModel = PROMPT_MODELS.includes(model) ? model : 'GPT-5'
+      const safeModel = PROMPT_MODELS.includes(model) ? model : 'GPT'
 
       const description = buildDescriptionFromPrompt(promptText)
       const tags = Array.from(new Set([...(tpl.tags || []), cat.slug])).slice(0, 12)

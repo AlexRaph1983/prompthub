@@ -37,16 +37,16 @@ export interface PromptFormData {
 
 export const PROMPT_MODELS = [
   // OpenAI
-  "GPT-5", "OpenAI Sora",
+  "GPT", "OpenAI Sora",
   
   // Anthropic
-  "Claude Opus 4.1",
+  "Claude Opus",
   
   // Google
-  "Gemini 2.5 Pro", "Gemini 2.5 Flash", "Gemini 2.5 Flash-Lite", "Google Veo 3",
+  "Gemini Pro", "Gemini Flash", "Gemini Flash Lite", "Google Veo",
   
   // Meta
-  "Llama 3.1",
+  "Llama",
   
   // Mistral
   "Mistral Large",
@@ -58,7 +58,7 @@ export const PROMPT_MODELS = [
   "Suno", "AIVA",
   
   // Video Generation
-  "Runway Gen-2",
+  "Runway",
   
   // Russian AI
   "Яндекс Алиса"
@@ -71,4 +71,3 @@ export const PROMPT_CATEGORIES = [
 ] as const
 
 export const PROMPT_LANGS = ["English", "Русский", "Español", "Deutsch"] as const 
-
