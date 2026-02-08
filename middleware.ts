@@ -6,7 +6,7 @@ import { locales, defaultLocale } from './i18n/index'
 const intlMiddleware = createIntlMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed'
+  localePrefix: 'always'
 })
 
 const PUBLIC_FILE = /\.(.*)$/
@@ -55,6 +55,17 @@ export function middleware(request: NextRequest) {
   if (pathname === '/') {
     const locale = defaultLocale
     return NextResponse.redirect(new URL(`/${locale}/home`, request.url))
+  }
+
+  // If the path already includes a locale prefix, skip next-intl middleware
+  // to avoid redirect loops between /ru/* and non-prefixed routes.
+  if (
+    pathname === '/ru' ||
+    pathname.startsWith('/ru/') ||
+    pathname === '/en' ||
+    pathname.startsWith('/en/')
+  ) {
+    return NextResponse.next()
   }
 
   // 2.5) Канонизация публичных URL без префикса локали -> /ru/...
